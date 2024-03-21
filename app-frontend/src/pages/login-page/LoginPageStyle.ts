@@ -22,5 +22,11 @@ export const imageStyle: React.CSSProperties = {
 export const formStyle: React.CSSProperties = {
     display: 'flex', 
     flexDirection: 'column', 
-    width: 300
+    width: '70%'
+}
+
+export const submitButtonStyle = {
+    backgroundColor: '#84B1F2', 
+    color: 'white',
+    // width: '30%'
 }

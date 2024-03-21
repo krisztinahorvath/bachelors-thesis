@@ -1,27 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../../constants";
 import {
 	Button,
-	Card,
-	CardActions,
-	CardContent,
-	IconButton,
 	TextField,
-    Container,
-    ThemeProvider,
-    createTheme,
-    useTheme,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { User, UserType } from "../../models/User";
 import { setEmail, setToken, setUserType } from "../../utils/auth-utils";
 import { displayErrorMessage, displaySuccessMessage } from "../../components/ToastMessage";
-import {formStyle, imageStyle, leftGridItemStyle, rightGridItemStyle} from "./LoginPageStyle";
-import React from "react";
+import {formStyle, imageStyle, leftGridItemStyle, rightGridItemStyle, submitButtonStyle} from "./LoginPageStyle";
 import Grid from '@mui/material/Grid';
-import { styled } from '@mui/material/styles';
 
 // const Item = styled(Paper)(({ theme }) => ({
 //   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -95,7 +84,7 @@ export const LoginPage = () => {
       <Grid item xs={5} style={rightGridItemStyle}>
        
         <h1>Welcome back</h1>
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', width: 300 }}>
+        <form onSubmit={handleLogin} style={formStyle}>
             <TextField
               id="username"
               label="Username"
@@ -110,7 +99,7 @@ export const LoginPage = () => {
               onChange={(event) => setUser({...user, password: event.target.value})}
             />
 
-            <Button type="submit">Login</Button>
+            <Button type="submit" style={submitButtonStyle}>Login</Button>
           </form>
 
       </Grid>
