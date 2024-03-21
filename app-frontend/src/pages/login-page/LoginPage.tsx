@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../../constants";
 import {
@@ -9,12 +9,29 @@ import {
 	CardContent,
 	IconButton,
 	TextField,
-    Container
+    Container,
+    ThemeProvider,
+    createTheme,
+    useTheme,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { User, UserType } from "../../models/User";
 import { setEmail, setToken, setUserType } from "../../utils/auth-utils";
 import { displayErrorMessage, displaySuccessMessage } from "../../components/ToastMessage";
+import {formStyle, imageStyle, leftGridItemStyle, rightGridItemStyle} from "./LoginPageStyle";
+import React from "react";
+import Grid from '@mui/material/Grid';
+import { styled } from '@mui/material/styles';
+
+// const Item = styled(Paper)(({ theme }) => ({
+//   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+//   ...theme.typography.body2,
+//   padding: theme.spacing(1),
+//   textAlign: 'center',
+//   color: theme.palette.text.secondary,
+// }));
+
+
 
 export const LoginPage = () => {
     const navigate = useNavigate();
@@ -23,6 +40,14 @@ export const LoginPage = () => {
         email: "",
         password: "",
     });
+
+    useEffect(() => {
+      document.body.style.backgroundColor = '#ECF3F9';
+      
+      return () => {
+          document.body.style.backgroundColor = '';
+      };
+    }, []);
 
     const handleLogin = async (event: {preventDefault: () => void }) => {
         event.preventDefault();
@@ -35,10 +60,10 @@ export const LoginPage = () => {
           displaySuccessMessage("The login was successful!");
 
           if(response.data.userType === UserType.Student){
-            navigate("/student-homepage");
+            navigate("/student-dashboard");
           }
           else if(response.data.userType === UserType.Teacher){
-            navigate("/teacher-homepage");
+            navigate("/teacher-dashboard");
           }
           else{
             displayErrorMessage("An error occured while logging in");
@@ -55,34 +80,41 @@ export const LoginPage = () => {
         }      
     };
 
-  return (
-    <Container>
-      <h1>Login</h1>
-        <Card>
-            <CardContent>
-                <IconButton component={Link} sx={{ mr: 3 }} to={`/`}>
-                    <ArrowBackIcon />
-                </IconButton>{" "}
-                <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', width: 300 }}>
-                    <TextField
-                        id="email"
-                        label="Email"
-                        variant="outlined"
-                        onChange={(event) => setUser({...user, name: event.target.value})}
-                    />
-                    <TextField
-                        id="password"
-                        label="Password"
-                        variant="outlined"
-                        type="password"
-                        onChange={(event) => setUser({...user, password: event.target.value})}
-                    />
 
-                    <Button type="submit">Login</Button>
-                </form>
-            </CardContent>
-            <CardActions></CardActions>
-        </Card>
-    </Container>
-);
+
+  return (
+    <Grid sx={{ flexGrow: 1, height: '100vh' }} container spacing={0}>
+      <Grid item xs={7} style={leftGridItemStyle}>
+          <Grid item>
+              <a href="https://www.vecteezy.com/free-vector/flat-design">
+                <img src="src/images/signInPage.jpg" alt="Flat Design Vectors by Vecteezy" style={imageStyle}/>
+              </a>
+          </Grid>
+      </Grid>
+
+      <Grid item xs={5} style={rightGridItemStyle}>
+       
+        <h1>Welcome back</h1>
+        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', width: 300 }}>
+            <TextField
+              id="username"
+              label="Username"
+              variant="outlined"
+              onChange={(event) => setUser({...user, name: event.target.value})}
+            />
+            <TextField
+              id="password"
+              label="Password"
+              variant="outlined"
+              type="password"
+              onChange={(event) => setUser({...user, password: event.target.value})}
+            />
+
+            <Button type="submit">Login</Button>
+          </form>
+
+      </Grid>
+      
+    </Grid>
+  );
 };
