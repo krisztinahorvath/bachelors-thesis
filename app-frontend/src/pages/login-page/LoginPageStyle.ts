@@ -41,8 +41,8 @@ export const submitButtonStyle = {
     backgroundColor: '#84B1F2', 
     color: 'white',
     borderRadius: '10px',
-    border: 'none',
-    boxShadow: '0 0 5% #84B1F2', 
+    // border: 'none',
+    boxShadow: '0 0 10px #84B1F2', 
     padding: '3%', // width
     marginTop: '15%',
     marginBottom: '10%'
