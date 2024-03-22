@@ -2,11 +2,13 @@ import './App.css'
 import React from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { LoginPage} from './pages/login-page/LoginPage';
 import { HomePage } from './pages/home-page/HomePage';
 import { StudentHomePage } from './pages/student-home-page/StudentHomePage';
 import { TeacherHomePage } from './pages/teacher-home-page/TeacherHomePage';
+import { UserType } from './models/User';
+import { PrivateRoute } from './utils/route-utils';
 
 function App() {
   return (
@@ -17,9 +19,7 @@ function App() {
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
-        rtl={false}
         pauseOnFocusLoss
-        draggable
         pauseOnHover
         theme="light"
     />
@@ -28,8 +28,14 @@ function App() {
         <Routes>
           <Route path="/" element={< HomePage />} />
           <Route path = "/login" element={<LoginPage />} />
-          <Route path="/student-dashboard" element={<StudentHomePage/>}/>
-          <Route path="/teacher-dashboard" element={<TeacherHomePage/>}/>
+          <Route 
+            path="/student-dashboard" 
+            element={<PrivateRoute allowedUsers={[UserType.Student]} element={<StudentHomePage/>}/>} 
+          />
+          <Route 
+            path="/teacher-dashboard" 
+            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<TeacherHomePage/>}/>} 
+          />
         </Routes>
       </Router>
     </React.Fragment>
