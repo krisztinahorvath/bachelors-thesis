@@ -4,13 +4,18 @@ import {useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../../constants";
 import {
 	Button,
+	IconButton,
+	InputAdornment,
 	TextField,
+  outlinedInputClasses,
+  styled,
 } from "@mui/material";
 import { User, UserType } from "../../models/User";
 import { setEmail, setToken, setUserType } from "../../utils/auth-utils";
 import { displayErrorMessage, displaySuccessMessage } from "../../components/ToastMessage";
-import {formStyle, imageStyle, leftGridItemStyle, rightGridItemStyle, submitButtonStyle} from "./LoginPageStyle";
+import {formStyle, imageStyle, leftGridItemStyle, rightGridItemStyle, submitButtonStyle, textFieldStyle} from "./LoginPageStyle";
 import Grid from '@mui/material/Grid';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 // const Item = styled(Paper)(({ theme }) => ({
 //   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -20,23 +25,40 @@ import Grid from '@mui/material/Grid';
 //   color: theme.palette.text.secondary,
 // }));
 
-
+const StyledTextField = styled(TextField)({
+  [`& .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
+    borderColor: "#f5f5f5"
+  },
+  [`&:hover .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
+    borderColor: "#84B1F2"
+  },
+  [`& .${outlinedInputClasses.root}`]: {
+    borderRadius: "10px", 
+  },
+});
 
 export const LoginPage = () => {
-    const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-    const [user, setUser] = useState<User>({
-        email: "",
-        password: "",
-    });
+  const [user, setUser] = useState<User>({
+    email: "",
+    password: "",
+  });
 
-    useEffect(() => {
-      document.body.style.backgroundColor = '#ECF3F9';
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+  
+  useEffect(() => {
+    document.body.style.backgroundColor = '#ECF3F9';
       
-      return () => {
-          document.body.style.backgroundColor = '';
-      };
-    }, []);
+    return () => {
+      document.body.style.backgroundColor = '';
+    };
+  }, []);
 
     const handleLogin = async (event: {preventDefault: () => void }) => {
         event.preventDefault();
@@ -84,26 +106,43 @@ export const LoginPage = () => {
       <Grid item xs={5} style={rightGridItemStyle}>
        
         <h1>Welcome back</h1>
+        <p> To log into your account please enter your email and password.</p>
         <form onSubmit={handleLogin} style={formStyle}>
-            <TextField
-              id="username"
-              label="Username"
-              variant="outlined"
-              onChange={(event) => setUser({...user, name: event.target.value})}
-            />
-            <TextField
-              id="password"
-              label="Password"
-              variant="outlined"
-              type="password"
-              onChange={(event) => setUser({...user, password: event.target.value})}
-            />
-
-            <Button type="submit" style={submitButtonStyle}>Login</Button>
+          <StyledTextField 
+            id="email" 
+            label="Email" 
+            variant="outlined"
+            style={textFieldStyle}
+            onChange={(event) => setUser({...user, email: event.target.value})}
+          />
+          <StyledTextField 
+            id="password" 
+            label="Password" 
+            variant="outlined"
+            type={showPassword ? 'text' : 'password'}
+            style={textFieldStyle}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            onChange={(event) => setUser({...user, password: event.target.value})}
+          />
+          <Button 
+            type="submit" 
+            style={submitButtonStyle}>
+            Log In
+          </Button>
           </form>
-
       </Grid>
-      
     </Grid>
   );
 };
