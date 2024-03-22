@@ -14,6 +14,7 @@ namespace app_server
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
             builder.Services.AddControllers(options =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -74,7 +75,7 @@ namespace app_server
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                ;
+                app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             }
 
             app.UseHttpsRedirection();

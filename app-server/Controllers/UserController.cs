@@ -110,7 +110,7 @@ namespace app_server.Controllers
             // Generate JWT token
             string token = GenerateJwtToken(user);
 
-            return Ok(new { token });
+            return Ok(new { token, user.UserType, user.Email });
         }
 
         private string GenerateJwtToken(User user)

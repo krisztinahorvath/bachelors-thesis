@@ -12,10 +12,10 @@ import {
 } from "@mui/material";
 import { User, UserType } from "../../models/User";
 import { setEmail, setToken, setUserType } from "../../utils/auth-utils";
-import { displayErrorMessage, displaySuccessMessage } from "../../components/ToastMessage";
 import {formStyle, imageStyle, leftGridItemStyle, rightGridItemStyle, submitButtonStyle, textFieldStyle} from "./LoginPageStyle";
 import Grid from '@mui/material/Grid';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { displayErrorMessage, displaySuccessMessage } from "../../components/ToastMessage";
 
 // const Item = styled(Paper)(({ theme }) => ({
 //   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -68,7 +68,7 @@ export const LoginPage = () => {
           setUserType(response.data.userType);
           setEmail(response.data.email);
 
-          displaySuccessMessage("The login was successful!");
+          displaySuccessMessage("You logged in successfully!");
 
           if(response.data.userType === UserType.Student){
             navigate("/student-dashboard");
@@ -77,7 +77,7 @@ export const LoginPage = () => {
             navigate("/teacher-dashboard");
           }
           else{
-            displayErrorMessage("An error occured while logging in");
+            displayErrorMessage("An unexpected error occured while logging in");
           }
          
         } catch (error: any) {
@@ -124,11 +124,10 @@ export const LoginPage = () => {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
+                  <IconButton 
+                    onClick={handleClickShowPassword} 
                     onMouseDown={handleMouseDownPassword}
-                  >
+                    >
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>

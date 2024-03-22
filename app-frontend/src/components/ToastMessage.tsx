@@ -1,15 +1,9 @@
-import { toast, ToastPosition } from "react-toastify";
+import { toast} from "react-toastify";
 
 export const displayErrorMessage = (message: string) => {
-    const position: ToastPosition = 'top-center';
-    toast.error(message, {
-        position: position,
-    });
+    toast.error(message);
 }
 
 export const displaySuccessMessage = (message: string) => {
-    const position: ToastPosition = 'top-center';
-    toast.success(message, {
-      position: position,
-    });
+    toast.success(message);
 };
