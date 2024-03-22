@@ -8,7 +8,7 @@ import { HomePage } from './pages/home-page/HomePage';
 import { StudentHomePage } from './pages/student-home-page/StudentHomePage';
 import { TeacherHomePage } from './pages/teacher-home-page/TeacherHomePage';
 import { UserType } from './models/User';
-import { PrivateRoute } from './utils/route-utils';
+import { PrivateRoute } from './utils/private-route-utils';
 
 function App() {
   return (
