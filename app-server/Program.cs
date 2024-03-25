@@ -1,4 +1,5 @@
 using app_server.Models;
+using app_server.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -48,6 +49,8 @@ namespace app_server
                         ClockSkew = TimeSpan.Zero
                     };
                 });
+
+            builder.Services.AddSingleton<Validate>();
 
             var connectionString = builder.Configuration.GetConnectionString("StudentsRegisterDatabase");
             builder.Services.AddDbContext<StudentsRegisterContext>(options =>

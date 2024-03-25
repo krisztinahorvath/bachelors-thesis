@@ -41,62 +41,32 @@ namespace app_server.Controllers
                 .ToListAsync();
         }
 
-        // POST: api/users/register-student
-        [HttpPost("register-student")]
+        // POST: api/users/register
+        [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<ActionResult<StudentDTO>> Register(StudentDTO studentDTO)
+        public async Task<ActionResult<User>> Register(UserRegisterDTO userRegisterDTO)
         {
             // ************************************
-            // TODO: call a validate fields method for students 
+            // TODO: call a validate fields methods common to all user types 
             // ************************************
 
-            if (await _context.Students.AnyAsync(s => s.Nickname == studentDTO.Nickname))
-                return BadRequest("Username already exists! Please choose another one!");
+            //if (await _context.Students.AnyAsync(s => s.Nickname == studentDTO.Nickname))
+            //    return BadRequest("Username already exists! Please choose another one!");
 
-            var student = new Student
-            {
-                Name = studentDTO.Name,
-                Email = studentDTO.Email,
-                Password = HashPassword(studentDTO.Password),
-                Nickname = studentDTO.Nickname,
-                UserType = UserType.Student
-            };
 
-            _context.Students.Add(student);
+            userRegisterDTO.Password = HashPassword(userRegisterDTO.Password);
+            User newUser = UserFactory.CreateUser(userRegisterDTO);
+
+            _context.Add(newUser);
             await _context.SaveChangesAsync();
 
-            return studentDTO;
+            return newUser;
         }
-
-
-        // POST: api/users/register-teacher
-        [HttpPost("register-teacher")]
-        [AllowAnonymous]
-        public async Task<ActionResult<TeacherDTO>> Register(TeacherDTO teacherDTO)
-        {
-            // ************************************
-            // TODO: call a validate fields method for teachers 
-            // ************************************
-
-            var teacher = new Teacher
-            {
-                Name = teacherDTO.Name,
-                Email = teacherDTO.Email,
-                Password = HashPassword(teacherDTO.Password),
-                UserType = UserType.Teacher
-            };
-
-            _context.Teachers.Add(teacher);
-            await _context.SaveChangesAsync();
-
-            return teacherDTO;
-        }
-
 
         // POST: api/users/login
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(UserDTO userDTO)
+        public async Task<IActionResult> Login(UserLoginDTO userDTO)
         {
             // Find user by username and password
             User user = await _context.Users
