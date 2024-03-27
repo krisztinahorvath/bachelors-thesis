@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using app_server.Models;
 
@@ -11,9 +12,11 @@ using app_server.Models;
 namespace app_server.Migrations
 {
     [DbContext(typeof(StudentsRegisterContext))]
-    partial class StudentsRegisterContextModelSnapshot : ModelSnapshot
+    [Migration("20240327202809_UpdateAssigmnetCourseIdRemoved")]
+    partial class UpdateAssigmnetCourseIdRemoved
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,7 +51,7 @@ namespace app_server.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Assignments");
+                    b.ToTable("Assignment");
                 });
 
             modelBuilder.Entity("app_server.Models.Course", b =>
@@ -69,7 +72,7 @@ namespace app_server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Courses");
+                    b.ToTable("Course");
                 });
 
             modelBuilder.Entity("app_server.Models.CourseTeacher", b =>
@@ -128,7 +131,7 @@ namespace app_server.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Grades");
+                    b.ToTable("Grade");
                 });
 
             modelBuilder.Entity("app_server.Models.User", b =>

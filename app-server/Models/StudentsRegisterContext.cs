@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 namespace app_server.Models
 {
-    public class StudentsRegisterContext: DbContext
+    public class StudentsRegisterContext : DbContext
     {
         public StudentsRegisterContext() { }
 
@@ -13,10 +12,14 @@ namespace app_server.Models
         }
 
         public virtual DbSet<User> Users { get; set; }
+        //public virtual DbSet<UserPreferences> GetUserPreferences {get; set;}
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
         public virtual DbSet<Enrollment> Enrollments { get; set; }
         public virtual DbSet<CourseTeacher> CourseTeachers { get; set; }
+        public virtual DbSet<Assignment> Assignments { get; set; }
+        public virtual DbSet<Grade> Grades { get; set; }
+        public virtual DbSet<Course> Courses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

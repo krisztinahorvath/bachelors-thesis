@@ -1,5 +1,9 @@
 ﻿using app_server.Models;
+using app_server.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace app_server.Controllers
 {
@@ -13,10 +17,6 @@ namespace app_server.Controllers
         {
             _context = context;
         }
-
-        // ************************************
-        // TODO: create a new course
-        // ************************************
 
         // ************************************
         // TODO: create assignmnet for a given course
@@ -40,10 +40,6 @@ namespace app_server.Controllers
 
         // ************************************
         // TODO: teacher wants to enroll to course => give permission?
-        // ************************************
-
-        // ************************************
-        // TODO: generate new enrollment key
         // ************************************
     }
 }
