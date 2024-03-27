@@ -27,7 +27,7 @@ namespace app_server.Controllers
         // ************************************
 
         // ************************************
-        // TODO: modify assigment details
+        // TODO: modify assigment 
         // ************************************
 
         // ************************************
@@ -42,5 +42,8 @@ namespace app_server.Controllers
         // TODO: teacher wants to enroll to course => give permission?
         // ************************************
 
+        // ************************************
+        // TODO: generate new enrollment key
+        // ************************************
     }
 }

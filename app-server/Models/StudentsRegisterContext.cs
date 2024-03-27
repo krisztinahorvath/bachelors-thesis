@@ -15,6 +15,8 @@ namespace app_server.Models
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
+        public virtual DbSet<Enrollment> Enrollments { get; set; }
+        public virtual DbSet<CourseTeacher> CourseTeachers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +28,12 @@ namespace app_server.Models
             .WithOne(e => e.Student)
             .HasForeignKey<UserPreferences>(e => e.StudentId)
             .IsRequired();
+
+            modelBuilder.Entity<Enrollment>()
+                .HasKey(t => new { t.StudentId, t.CourseId });
+
+            modelBuilder.Entity<CourseTeacher>()
+                .HasKey(t => new { t.TeacherId, t.CourseId });
         }
     }
 }
