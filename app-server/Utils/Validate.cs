@@ -6,6 +6,12 @@ namespace app_server.Utils
     {
         public Validate() { }
 
+
+        // ************************************
+        // TODO: one validation method for the user
+        //       that calls multiple smaller validations based on type
+        // ************************************
+
         public bool IsEmailUnique(in StudentsRegisterContext _context, string email)
         {
             return !_context.Users.Any(a => a.Email == email);
