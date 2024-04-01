@@ -12,6 +12,15 @@ using System.Text;
 
 namespace app_server.Controllers
 {
+    // ************************************
+    // TODO: Add a method that checks if the token is valid/hasn't expired yet
+    // ************************************
+
+    // ************************************
+    // TODO: create a logout with jwt blacklist and when i check if a token is blacklisted, remove the tokens that are expired, 
+    //       or remove them another time, make it efficient???
+    // ************************************
+
 
     [Route("api/users")]
     [ApiController]

@@ -125,6 +125,57 @@ namespace app_server.Controllers
             return teachers;
         }
 
+
+        // ************************************
+        // TODO: view all students at a course
+        // ************************************
+        [HttpGet("students/{courseId}")]
+        public async Task<ActionResult<IEnumerable<CourseDTO>>> GetAllStudentsAtCourse (long courseId)
+        {
+            return Ok();
+        }
+
+        [HttpGet("all/{courseId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<RegisterDTO>>> GetAllCourseStudentsAssignmentGrades(long courseId)
+        {
+            // TODO: check if user is teacher at that course
+
+            // select all students from course and all assignments from that course
+            var studentsAndAssignments = await _context.Enrollments
+                .Where(e => e.CourseId == courseId)
+                .SelectMany(e => _context.Courses
+                    .Where(c => c.Id == courseId)
+                    .SelectMany(c => c.Assignments.Select(a => new RegisterDTO
+                    {
+                        StudentId = e.StudentId,
+                        StudentName = e.Student.Nickname,
+                        AssignmentId = a.Id,
+                        AssignmentName = a.Name
+                    })))
+                .ToListAsync();
+
+            // select grades
+            var courseStudentsGrades = studentsAndAssignments.Select(dto =>
+            {
+                var grade = _context.Grades.FirstOrDefault(g =>
+                    g.StudentId == dto.StudentId &&
+                    g.AssignmentId == dto.AssignmentId);
+
+                return new RegisterDTO
+                {
+                    StudentId = dto.StudentId,
+                    StudentName = dto.StudentName,
+                    AssignmentId = dto.AssignmentId,
+                    AssignmentName = dto.AssignmentName,
+                    Score = grade != null ? grade.Score.ToString() : "" 
+                };
+            }).ToList();
+
+            return Ok(courseStudentsGrades);
+        }
+
+
         // POST: api/courses
         [HttpPost]
         public async Task<ActionResult<CourseDTO>> CreateCourse(CourseDTO courseDTO)
@@ -256,6 +307,7 @@ namespace app_server.Controllers
         }
 
         // DELETE: api/courses/5
+        [HttpDelete("id")]
         public async Task<ActionResult> DeleteCourse(long id)
         {
             if(_context.Courses == null)
@@ -274,6 +326,14 @@ namespace app_server.Controllers
 
             return NoContent();
         }
+
+        // ************************************
+        // TODO: maybe move the jwt token checks to UserController and make them static methods
+        // ************************************
+
+        // ************************************
+        // TODO: create separate functions for validations, have cleaner more understandable code
+        // ************************************
 
         // ************************************
         // TODO: 1.endpoint for generating random unique enrollment key

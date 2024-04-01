@@ -12,7 +12,7 @@ namespace app_server.Models
         }
 
         public virtual DbSet<User> Users { get; set; }
-        //public virtual DbSet<UserPreferences> GetUserPreferences {get; set;}
+        public virtual DbSet<UserPreference> UserPreferences {get; set;}
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
         public virtual DbSet<Enrollment> Enrollments { get; set; }
@@ -27,16 +27,27 @@ namespace app_server.Models
             modelBuilder.Entity<Student>().ToTable("Students");
 
             modelBuilder.Entity<Student>()
-            .HasOne(e => e.UserPreferences)
-            .WithOne(e => e.Student)
-            .HasForeignKey<UserPreferences>(e => e.StudentId)
-            .IsRequired();
+                .HasIndex(s => s.Nickname)
+                .IsUnique();
+
+            modelBuilder.Entity<Student>()
+                .HasIndex(s => s.UniqueIdentificationCode)
+                .IsUnique();
+
+            modelBuilder.Entity<UserPreference>() 
+                .HasOne(e => e.Student) 
+                .WithOne(e => e.UserPreferences)
+                .HasForeignKey<Student>(e => e.UserPreferencesId)
+                .IsRequired();
 
             modelBuilder.Entity<Enrollment>()
                 .HasKey(t => new { t.StudentId, t.CourseId });
 
             modelBuilder.Entity<CourseTeacher>()
                 .HasKey(t => new { t.TeacherId, t.CourseId });
+
+            modelBuilder.Entity<Grade>()
+                .HasKey(g => new { g.AssignmentId, g.StudentId });
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using app_server.Models;
 
@@ -11,9 +12,11 @@ using app_server.Models;
 namespace app_server.Migrations
 {
     [DbContext(typeof(StudentsRegisterContext))]
-    partial class StudentsRegisterContextModelSnapshot : ModelSnapshot
+    [Migration("20240401182232_AddStudentUniqueIdCode")]
+    partial class AddStudentUniqueIdCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +33,7 @@ namespace app_server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("CourseId")
+                    b.Property<long?>("CourseId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Description")
@@ -205,13 +208,9 @@ namespace app_server.Migrations
 
             modelBuilder.Entity("app_server.Models.Assignment", b =>
                 {
-                    b.HasOne("app_server.Models.Course", "Course")
+                    b.HasOne("app_server.Models.Course", null)
                         .WithMany("Assignments")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
+                        .HasForeignKey("CourseId");
                 });
 
             modelBuilder.Entity("app_server.Models.CourseTeacher", b =>
