@@ -2,8 +2,8 @@
 
 namespace app_server.Models
 {
-    public class UserFactory
-    {
+    public class UserFactory // TODO: change to have a separate factory for Student and another for Teacher 
+    { 
         public static User CreateUser(UserRegisterDTO user)
         {
             return user.UserType switch
