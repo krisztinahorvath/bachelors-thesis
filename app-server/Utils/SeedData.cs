@@ -10,14 +10,44 @@ namespace app_server.Utils
         private const int NO_TEACHERS = 20;
         private const int NO_STUDENTS = 200;
         private const int NO_COURSES = 5;
-        private const int NO_ASSIGNMENTS = 5;
+
+        // a random number is chose between 0 and 5 to add that number of assignments to each course
+        private const int NO_ASSIGNMENTS = 5; 
+
+        private const int NO_GRADES = 100; 
 
         private static readonly string PASSWORD = UserController.HashPassword("test");
+
+        private static readonly List<string> COURSE_NAMES = new List<string>
+        {
+            "Fundamentals of Programming",
+            "Algorithms and Data Structures",
+            "Computer Networks",
+            "Operating Systems",
+            "Database Management Systems",
+            "Software Engineering",
+            "Artificial Intelligence",
+            "Machine Learning",
+            "Computer Graphics",
+            "Cybersecurity",
+            "Web Development",
+            "Mobile Applications",
+            "Computer Vision",
+            "Natural Language Processing",
+            "Parallel and Distributed Programming",
+            "Cloud Computing",
+            "Human-Computer Interaction",
+            "Game Development",
+            "Data Mining and Analysis",
+            "Internet of Things (IoT)"
+        };
 
         public static async Task Start(IServiceProvider serviceProvider) 
         {
             using (var context = new StudentsRegisterContext(serviceProvider.GetRequiredService<DbContextOptions<StudentsRegisterContext>>()))
             {
+                //await ClearAllTables(context);
+
                 if (!await context.Teachers.AnyAsync())
                     await SeedTeachers(context, NO_TEACHERS);
 
@@ -33,10 +63,11 @@ namespace app_server.Utils
                 if (!await context.Enrollments.AnyAsync())
                     await SeedEnrollments(context);
 
+                if (!await context.Assignments.AnyAsync())
+                    await SeedAssignments(context, NO_ASSIGNMENTS);
 
-                // TODO: SeedAssignment
-
-                // TODO: SeedGrade
+                if (!await context.Grades.AnyAsync())
+                    await SeedGrades(context, NO_GRADES);
             }
         }
 
@@ -45,7 +76,7 @@ namespace app_server.Utils
             var teachers = new List<Teacher>();
             var faker = new Faker("en");
 
-            for(int i = 0; i < noTeachers; i++)
+            for (int i = 0; i < noTeachers; i++)
             {
                 var teacher = new Teacher
                 {
@@ -57,6 +88,14 @@ namespace app_server.Utils
 
                 teachers.Add(teacher);
             }
+
+            //var generateTeachers = new Faker<Teacher>()
+            //    .RuleFor(t => t.Name, f => f.Name.FullName())
+            //    .RuleFor(t => t.Email, f => f.Internet.Email())
+            //    .RuleFor(t => t.Password, PASSWORD)
+            //    .RuleFor(t => t.UserType, UserType.Teacher);
+
+            //var teachers = generateTeachers.Generate(noTeachers);
 
             await context.Teachers.AddRangeAsync(teachers);
             await context.SaveChangesAsync();
@@ -95,6 +134,7 @@ namespace app_server.Utils
 
                 }; // end student creation
 
+                students.Add(student);
                 existingNicknames.Add(student.Nickname);
                 existingUniqueIdentificationCodes.Add(student.UniqueIdentificationCode);
             } // end for
@@ -107,7 +147,7 @@ namespace app_server.Utils
         {
             var courses = new List<Course>();
             var faker = new Faker("en");
-
+            Random random = new Random();
 
             var existingEnrollmentKeys = new List<string>();
 
@@ -115,11 +155,12 @@ namespace app_server.Utils
             {
                 var course = new Course
                 {
-                    Name = faker.Commerce.ProductName(),
+                    Name = COURSE_NAMES[random.Next(COURSE_NAMES.Count)],
                     EnrollmentKey = GenerateUniqueAlphaNumeric(existingEnrollmentKeys, faker),
                 };
 
                 existingEnrollmentKeys.Add(course.EnrollmentKey);
+                courses.Add(course);
             }
 
             await context.Courses.AddRangeAsync(courses);
@@ -188,7 +229,73 @@ namespace app_server.Utils
 
         private static async Task SeedAssignments(StudentsRegisterContext context, int noAssignments)
         {
+            var assignments = new List<Assignment>();
+            var courseIds = await context.Courses.Select(c => c.Id).ToListAsync();
+            
+            var faker = new Faker("en");
+            Random random = new Random();
+            courseIds = courseIds.OrderBy(c => random.Next()).ToList();
 
+            for (int i = 0; i < courseIds.Count; i++)
+            {
+                int randomNoAssignemnts = random.Next(0, noAssignments);
+                for(int j = 0; j < randomNoAssignemnts; j++)
+                {
+                    var description = new Bogus.DataSets.Lorem(locale: "en");
+                    var assignment = new Assignment
+                    {
+                        Name = "A" + j,
+                        Description = description.Sentence(5),
+                        DueDate = faker.Date.Between(DateTime.Now.AddMonths(-3), DateTime.Now),
+                        CourseId = courseIds[random.Next(courseIds.Count)],
+                    };
+
+                    assignments.Add(assignment);
+
+                    Console.WriteLine("Assignment name - " + assignment.Name);
+                }
+            }
+
+            await context.Assignments.AddRangeAsync(assignments);
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task SeedGrades(StudentsRegisterContext context, int noGrades)
+        {
+            var grades = new List<Grade>();
+
+            var studentIds = await context.Students.Select(t => t.Id).ToListAsync();
+            var assignmentIds = await context.Assignments.Select(c => c.Id).ToListAsync();
+
+            var faker = new Faker("en");
+            Random random = new Random();
+            studentIds = studentIds.OrderBy(t => random.Next()).ToList();
+            assignmentIds = assignmentIds.OrderBy(c => random.Next()).ToList();
+
+            HashSet<Tuple<long, long>> existingIds = new HashSet<Tuple<long, long>>();
+
+            for (int i = 0; i < noGrades; i++)
+            {
+                var newIdTuple = GenerateUniqueIdTuples(existingIds, studentIds, assignmentIds);
+                var assignmentDueDate = context.Assignments
+                             .Where(a => a.Id == newIdTuple.Item2) 
+                             .Select(a => a.DueDate) 
+                             .SingleOrDefault();
+
+                var grade = new Grade
+                {
+                    StudentId = newIdTuple.Item1,
+                    AssignmentId = newIdTuple.Item2,
+                    Score = (float)Math.Round((random.NextDouble() * 9) + 1, 2),
+                    DateReceived = faker.Date.Between(DateTime.Now.AddMonths(-3), assignmentDueDate),
+                };
+
+                grades.Add(grade);
+                existingIds.Add(newIdTuple);
+            }
+
+            await context.Grades.AddRangeAsync(grades);
+            await context.SaveChangesAsync();
         }
 
         private static async Task ClearAllTables(StudentsRegisterContext context)
@@ -229,14 +336,14 @@ namespace app_server.Utils
         {
             Random random = new Random();
 
-            int type1Index = (int)type1Ids[random.Next(type1Ids.Count)];
-            int type2Index = (int)type2Ids[random.Next(type2Ids.Count)];
+            int type1Index = random.Next(type1Ids.Count);
+            int type2Index = random.Next(type2Ids.Count);
             Tuple<long, long> newIdTuple = Tuple.Create(type1Ids[type1Index], type2Ids[type2Index]);
 
             while (ids.Contains(newIdTuple))
             {
-                type1Index = (int)type1Ids[random.Next(type1Ids.Count)];
-                type2Index = (int)type2Ids[random.Next(type2Ids.Count)];
+                type1Index = random.Next(type1Ids.Count);
+                type2Index = random.Next(type2Ids.Count);
 
                 newIdTuple = Tuple.Create(type1Ids[type1Index], type2Ids[type2Index]);
             }

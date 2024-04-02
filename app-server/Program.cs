@@ -72,6 +72,14 @@ namespace app_server
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<StudentsRegisterContext>();
+
+                if (!context.Users.Any()) // if the database is empty (no users, if there are no users, no other fields can be accessed)
+                    SeedData.Start(scope.ServiceProvider).Wait();
+            }
+
             app.UseSwagger();
             app.UseSwaggerUI();
 
