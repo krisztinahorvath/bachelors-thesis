@@ -103,7 +103,6 @@ namespace app_server.Utils
 
         private static async Task SeedStudentsAndUserPreferences(StudentsRegisterContext context, int noStudents)
         {
-            var students = new List<Student>();
             var faker = new Faker("en");
 
             var existingNicknames = new List<string>();
@@ -111,14 +110,6 @@ namespace app_server.Utils
 
             for (int i = 0; i < noStudents; i++)
             {
-                var userPreference = new UserPreference
-                {
-                    // TO BE ADDED
-                };
-
-                context.UserPreferences.Add(userPreference);
-                await context.SaveChangesAsync();
-
                 var student = new Student
                 {
                     // user data
@@ -130,17 +121,24 @@ namespace app_server.Utils
                     // student data
                     Nickname = GenerateUniqueNickname(existingNicknames, faker),
                     UniqueIdentificationCode = GenerateUniqueAlphaNumeric(existingUniqueIdentificationCodes, faker),
-                    UserPreferencesId = userPreference.Id,
+                    //UserPreferencesId = userPreference.Id,
 
                 }; // end student creation
-
-                students.Add(student);
                 existingNicknames.Add(student.Nickname);
                 existingUniqueIdentificationCodes.Add(student.UniqueIdentificationCode);
-            } // end for
 
-            await context.Students.AddRangeAsync(students);
-            await context.SaveChangesAsync();
+                context.Students.Add(student);
+                await context.SaveChangesAsync();
+
+                var userPreference = new UserPreference
+                {
+                    StudentId = student.Id,
+                    // TO BE ADDED
+                };
+
+                context.UserPreferences.Add(userPreference);
+                await context.SaveChangesAsync();                
+            } // end for
         }
 
         private static async Task SeedCourses(StudentsRegisterContext context, int noCourses)

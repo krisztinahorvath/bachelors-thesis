@@ -34,10 +34,10 @@ namespace app_server.Models
                 .HasIndex(s => s.UniqueIdentificationCode)
                 .IsUnique();
 
-            modelBuilder.Entity<UserPreference>() 
-                .HasOne(e => e.Student) 
-                .WithOne(e => e.UserPreferences)
-                .HasForeignKey<Student>(e => e.UserPreferencesId)
+            modelBuilder.Entity<Student>() 
+                .HasOne(e => e.UserPreferences) 
+                .WithOne(e => e.Student)
+                .HasForeignKey<UserPreference>(e => e.StudentId)
                 .IsRequired();
 
             modelBuilder.Entity<Enrollment>()

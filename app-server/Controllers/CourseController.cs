@@ -1,9 +1,9 @@
 ﻿using app_server.Models;
 using app_server.Models.DTOs;
+using app_server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using System.Text;
 
 namespace app_server.Controllers
@@ -13,10 +13,12 @@ namespace app_server.Controllers
     public class CourseController : ControllerBase
     {
         private readonly StudentsRegisterContext _context;
+        private readonly Validate _validate;
 
-        public CourseController(StudentsRegisterContext context)
+        public CourseController(StudentsRegisterContext context, Validate validate)
         {
             _context = context;
+            _validate = validate;
         }
 
         // GET: api/courses 
@@ -42,17 +44,10 @@ namespace app_server.Controllers
                 return Problem("Entity set 'StudentsRegisterContext.Courses'  is null.");
             }
 
-            // extract user role from the JWT token
-            if (!Enum.TryParse<UserType>(User.FindFirst(ClaimTypes.Role).Value, out var userRole) || userRole != UserType.Teacher)
-            {
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if(tokenData == null || (tokenData?.Item1 != teacherId && tokenData?.Item2 != UserType.Teacher))
                 return Unauthorized("Invalid token or user is not a teacher.");
-            }
-
-            // extract teacher id from the JWT token
-            if (!long.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out long userId) || userId != teacherId)
-            {
-                return Unauthorized("Invalid token.");
-            }
 
             var courses = await _context.CourseTeachers
                 .Where(t => t.TeacherId == teacherId)
@@ -71,17 +66,10 @@ namespace app_server.Controllers
                 return Problem("Entity set 'StudentsRegisterContext.Courses'  is null.");
             }
 
-            // extract user role from the JWT token
-            if (!Enum.TryParse<UserType>(User.FindFirst(ClaimTypes.Role).Value, out var userRole) || userRole != UserType.Student)
-            {
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 != studentId && tokenData?.Item2 != UserType.Student))
                 return Unauthorized("Invalid token or user is not a student.");
-            }
-
-            // extract student id from the JWT token
-            if (!long.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out long userId) || userId != studentId)
-            {
-                return Unauthorized("Invalid token.");
-            }
 
             var courses = await _context.Enrollments
                 .Where(t => t.StudentId == studentId)
@@ -100,20 +88,13 @@ namespace app_server.Controllers
                 return Problem("Entity set 'StudentsRegisterContext.Courses'  is null.");
             }
 
-            // extract user role from the JWT token
-            if (!Enum.TryParse<UserType>(User.FindFirst(ClaimTypes.Role).Value, out var userRole))
-            {
-                return Unauthorized("Invalid token.");
-            }
-
-            // extract student id from the JWT token
-            if (!long.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out long userId))
-            {
-                return Unauthorized("Invalid token.");
-            }
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 != null && tokenData?.Item2 != null))
+                return Unauthorized("Invalid token or user is not a student.");
 
             // verify if user id from token is valid
-            if(!_context.Users.Any(u => u.Id == userId))
+            if(!_context.Users.Any(u => u.Id == tokenData!.Item1))
             {
                 return Unauthorized("Invalid token.");
             }
@@ -185,17 +166,12 @@ namespace app_server.Controllers
                 return Problem("Entity set 'StudentsRegisterContext.Courses'  is null.");
             }
 
-            // extract user role from the JWT token
-            if (!Enum.TryParse<UserType>(User.FindFirst(ClaimTypes.Role).Value, out var userRole) || userRole != UserType.Teacher)
-            {
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 != null && tokenData?.Item2 != UserType.Teacher))
                 return Unauthorized("Invalid token or user is not a teacher.");
-            }
 
-            // extract teacher id from the JWT token
-            if (!long.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out long teacherId))
-            {
-                return Unauthorized("Invalid token.");
-            }
+            var teacherId = tokenData!.Item1;
 
             Course course = new Course
             {
@@ -245,17 +221,10 @@ namespace app_server.Controllers
                 return BadRequest("Invalid enrollment key, no course could be found with that key");
             }
 
-            // extract user role from the JWT token
-            if (!Enum.TryParse<UserType>(User.FindFirst(ClaimTypes.Role).Value, out var userRole) || userRole != UserType.Student)
-            {
-                return Unauthorized("Invalid token or user is not a student.");
-            }
-
-            // extract student id from the JWT token
-            if (!long.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out long userId) || userId != studentId)
-            {
-                return Unauthorized("Invalid token.");
-            }
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 != studentId && tokenData?.Item2 != UserType.Student))
+                return Unauthorized("Invalid token or user is not a teacher.");
 
             Enrollment enrollment = new Enrollment
             {
@@ -326,14 +295,6 @@ namespace app_server.Controllers
 
             return NoContent();
         }
-
-        // ************************************
-        // TODO: maybe move the jwt token checks to UserController and make them static methods
-        // ************************************
-
-        // ************************************
-        // TODO: create separate functions for validations, have cleaner more understandable code
-        // ************************************
 
         // ************************************
         // TODO: 1.endpoint for generating random unique enrollment key

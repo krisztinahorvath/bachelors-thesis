@@ -14,5 +14,7 @@
         public string Password { get; set; }
 
         public virtual UserType UserType { get; set; }
+
+        public abstract UserPreference CreateUserPreference();
     }
 }

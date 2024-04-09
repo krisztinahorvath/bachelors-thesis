@@ -2,16 +2,26 @@
 
 namespace app_server.Models
 {
-    public class UserFactory // TODO: change to have a separate factory for Student and another for Teacher 
-    { 
-        public static User CreateUser(UserRegisterDTO user)
+    public abstract class UserFactory
+    {
+        public abstract User CreateUser(UserRegisterDTO user);
+    }
+
+    public class StudentFactory : UserFactory
+    {
+        public override User CreateUser(UserRegisterDTO user)
         {
-            return user.UserType switch
-            {
-                UserType.Teacher => new Teacher {Name = user.Name, Email = user.Email, Password = user.Password, UserType = user.UserType},
-                UserType.Student => new Student {Name = user.Name, Email = user.Email, Password = user.Password, UserType = user.UserType, Nickname = user.Nickname!},
-                _ => throw new ArgumentException("Invalid user type!"),
-            };
+            return new Student { Name = user.Name, Email = user.Email, Password = user.Password, UserType = user.UserType, Nickname = user.Nickname! };
+        }
+    }
+
+    public class TeacherFactory : UserFactory
+    {
+        public override User CreateUser(UserRegisterDTO user)
+        {
+            return new Teacher { Name = user.Name, Email = user.Email, Password = user.Password, UserType = user.UserType };
         }
     }
 }
+
+
