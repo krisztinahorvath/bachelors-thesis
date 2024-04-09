@@ -12,6 +12,7 @@
 
         // student fields
         public string? Nickname { get; set; }
+        public string? UniqueIdentificationCode { get; set; }
 
         // teacher fields - do not exist now
     }
