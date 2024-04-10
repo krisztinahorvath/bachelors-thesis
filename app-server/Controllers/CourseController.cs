@@ -35,8 +35,35 @@ namespace app_server.Controllers
                 .Select(x => CourseToDTO(x)).ToListAsync();
         }
 
+        // GET: api/courses/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CourseDTO>> GetCourseById(int id)
+        {
+            if (_context.Courses == null)
+                return NotFound();
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || tokenData?.Item1 == null )
+                return Unauthorized("Invalid token.");
+
+            var userId = tokenData.Item1;
+
+            // check if user is a course teacher or it is a student enrolled to that course
+            if (!_context.Enrollments.Any(e => e.CourseId == id && e.StudentId == userId) &&
+                !_context.CourseTeachers.Any(c => c.CourseId == id && c.TeacherId == userId))
+                return Unauthorized("You aren't authorized to see information about this course.");
+
+            var course = await _context.Courses.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (course == null)
+                return NotFound();
+
+            return CourseToDTO(course);
+        }
+
         // GET: api/courses/courses-of-teacher/5
-        [HttpGet("courses-of-teacher/{teacherId}")]
+        [HttpGet("courses-of-teacher/{teacherId}")] // get all courses of a teacher
         public async Task<ActionResult<IEnumerable<CourseDTO>>> GetCoursesOfTeacher(long teacherId)
         {
             if (_context.Courses == null)
@@ -46,7 +73,7 @@ namespace app_server.Controllers
 
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if(tokenData == null || (tokenData?.Item1 != teacherId && tokenData?.Item2 != UserType.Teacher))
+            if(tokenData == null || (tokenData?.Item1 != teacherId || tokenData?.Item2 != UserType.Teacher))
                 return Unauthorized("Invalid token or user is not a teacher.");
 
             var courses = await _context.CourseTeachers
@@ -58,7 +85,7 @@ namespace app_server.Controllers
         }
 
         // GET: api/courses/courses-of-student/5
-        [HttpGet("courses-of-student/{studentId}")]
+        [HttpGet("courses-of-student/{studentId}")] // get all courses of a student
         public async Task<ActionResult<IEnumerable<CourseDTO>>> GetCoursesOfStudent(long studentId)
         {
             if (_context.Courses == null)
@@ -68,7 +95,7 @@ namespace app_server.Controllers
 
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 != studentId && tokenData?.Item2 != UserType.Student))
+            if (tokenData == null || (tokenData?.Item1 != studentId || tokenData?.Item2 != UserType.Student))
                 return Unauthorized("Invalid token or user is not a student.");
 
             var courses = await _context.Enrollments
@@ -80,7 +107,7 @@ namespace app_server.Controllers
         }
 
         // GET: api/courses/teachers/{courseId}
-        [HttpGet("teachers/{courseId}")]
+        [HttpGet("teachers/{courseId}")] // get all teachers that teach at a certain course
         public async Task<ActionResult<IEnumerable<Teacher>>> GetTeachersOfACourse(long courseId)
         {
             if (_context.Courses == null)
@@ -90,14 +117,15 @@ namespace app_server.Controllers
 
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 != null && tokenData?.Item2 != null))
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != null))
                 return Unauthorized("Invalid token or user is not a student.");
 
-            // verify if user id from token is valid
-            if(!_context.Users.Any(u => u.Id == tokenData!.Item1))
-            {
-                return Unauthorized("Invalid token.");
-            }
+            var userId = tokenData!.Item1;
+
+            // check if user is a course teacher or it is a student enrolled to that course
+            if (!_context.Enrollments.Any(e => e.CourseId == courseId && e.StudentId == userId) &&
+                !_context.CourseTeachers.Any(c => c.CourseId == courseId && c.TeacherId == userId))
+                return Unauthorized("You aren't authorized to see information about this course.");
 
             var teachers = await _context.CourseTeachers
                 .Where(c => c.CourseId == courseId)
@@ -168,15 +196,20 @@ namespace app_server.Controllers
 
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 != null && tokenData?.Item2 != UserType.Teacher))
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
                 return Unauthorized("Invalid token or user is not a teacher.");
 
             var teacherId = tokenData!.Item1;
 
+            // valid teacher id
+            if (!_context.Teachers.Any(t => t.Id == teacherId)){
+                return Unauthorized("User is not a registered teacher.");
+            }
+
             Course course = new Course
             {
                 Name = courseDTO.Name,
-                EnrollmentKey = courseDTO.EnrollmentKey,
+                EnrollmentKey = await GenerateUniqueEnrollmentKey(8),
             };
 
             _context.Courses.Add(course);
@@ -223,7 +256,7 @@ namespace app_server.Controllers
 
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 != studentId && tokenData?.Item2 != UserType.Student))
+            if (tokenData == null || (tokenData?.Item1 != studentId || tokenData?.Item2 != UserType.Student))
                 return Unauthorized("Invalid token or user is not a teacher.");
 
             Enrollment enrollment = new Enrollment
@@ -238,13 +271,61 @@ namespace app_server.Controllers
             return Ok(enrollment);
         }
 
-        // PUT: api/course/5
+        // PATCH: api/courses/new-enrollment-key/5
+        [HttpPatch("new-enrollment-key/{courseId}")]
+        public async Task<ActionResult<string>> PatchNewEnrollmentKey(long courseId)
+        {
+            if (_context.Courses == null)
+            {
+                return Problem("Entity set 'StudentsRegisterContext.Courses'  is null.");
+            }
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+                return Unauthorized("Invalid token or user is not a teacher.");
+
+            var teacherId = tokenData!.Item1;
+
+            // make sure the person deleting the course is a teacher at that course
+            if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == courseId))
+            {
+                return Unauthorized("You can't delete courses that you aren't a teacher for.");
+            }
+
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course == null)
+            {
+                return NotFound(); 
+            }
+            
+            course.EnrollmentKey = await GenerateUniqueEnrollmentKey(8);
+            await _context.SaveChangesAsync();
+           
+            
+            return Ok(course.EnrollmentKey);
+        }
+        
+        // PUT: api/courses/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCourse(int id, CourseDTO courseDTO)
+        public async Task<IActionResult> PutCourse(long id, CourseDTO courseDTO)
         {
             if(id != courseDTO.Id)
             {
                 return BadRequest();
+            }
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+                return Unauthorized("Invalid token or user is not a teacher.");
+
+            var teacherId = tokenData!.Item1;
+
+            // make sure the person updating the course is a teacher at that course
+            if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == id))
+            {
+                return Unauthorized("You can't update courses that you aren't a teacher for");
             }
 
             var course = await _context.Courses.FindAsync(id);
@@ -276,12 +357,24 @@ namespace app_server.Controllers
         }
 
         // DELETE: api/courses/5
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCourse(long id)
         {
             if(_context.Courses == null)
             {
                 return NotFound();
+            }
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+                return Unauthorized("Invalid token or user is not a teacher.");
+
+            var teacherId = tokenData!.Item1;
+
+            // make sure the person deleting the course is a teacher at that course
+            if(!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == id)) {
+                return Unauthorized("You can't delete courses that you aren't a teacher for");
             }
 
             var course = await _context.Courses.FindAsync(id);
@@ -296,18 +389,20 @@ namespace app_server.Controllers
             return NoContent();
         }
 
-        // ************************************
-        // TODO: 1.endpoint for generating random unique enrollment key
-        //       2.change create course too, to make sure that the enrollment key is unique in the db
-        //       3.add unique constraint on EnrollmentKey
-        // ************************************
-
-        // PUT: api/courses/generate-enrollment-key
-
-
         private bool CourseExists(long id)
         {
             return (_context.Courses?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private async Task<string> GenerateUniqueEnrollmentKey(int length)
+        {
+            string enrollmentKey;
+            do
+            {
+                enrollmentKey = GenerateRandomString(length);
+            } while (await _context.Courses.AnyAsync(course => course.EnrollmentKey == enrollmentKey));
+
+            return enrollmentKey;
         }
 
         private static string GenerateRandomString(int length)

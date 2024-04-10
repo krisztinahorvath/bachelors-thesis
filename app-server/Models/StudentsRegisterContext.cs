@@ -30,6 +30,10 @@ namespace app_server.Models
                 .HasIndex(s => s.Nickname)
                 .IsUnique();
 
+            modelBuilder.Entity<Course>()
+                .HasIndex(s => s.EnrollmentKey)
+                .IsUnique();
+
             modelBuilder.Entity<Student>()
                 .HasIndex(s => s.UniqueIdentificationCode)
                 .IsUnique();
