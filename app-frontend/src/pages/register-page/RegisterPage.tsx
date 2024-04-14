@@ -10,6 +10,7 @@ import { displaySuccessMessage, displayErrorMessage } from '../../components/Toa
 import { BACKEND_URL } from '../../constants';
 import { setToken, setUserType, setEmail } from '../../utils/auth-utils';
 import { StyledTextField, formStyle, submitButtonStyle, textFieldStyle } from './RegisterPageStyle';
+import { HomeAppBar } from '../../components/HomeAppBar';
 
 export const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,11 +35,47 @@ export const RegisterPage = () => {
 
   const handleRegister = async (event: {preventDefault: () => void }) => {
     event.preventDefault();
-    // Your registration logic
-  };
+    try {
+      const response = await axios.post(`${BACKEND_URL}/users/register`, user);
+      setToken(response.data.token);
+      setUserType(response.data.userType);
+      setEmail(response.data.email);
+
+      displaySuccessMessage("You created an account successfully!");
+      navigate("/login");
+
+      if(response.data.userType === UserType.Student){
+        navigate("/student-dashboard");
+      }
+      else if(response.data.userType === UserType.Teacher){
+        navigate("/teacher-dashboard");
+      }
+      else{
+        displayErrorMessage("An unexpected error occured while logging in");
+      }
+     
+    } catch (error: any) {
+      console.log(error);
+      if (error.response) {
+        const errorMessage = error.response.data;
+        displayErrorMessage(errorMessage);
+      } else {
+        displayErrorMessage("An error occurred while logging in.");
+      }
+    }      
+};
+
+  // useEffect(() => {
+  //   document.body.style.backgroundColor = '#ECF3F9';
+      
+  //   return () => {
+  //     document.body.style.backgroundColor = '';
+  //   };
+  // }, []);
 
   return (
     <React.Fragment>
+      {/* <HomeAppBar/> */}
       <h1>Create an account</h1>
       <FormControl component="fieldset">
         <FormLabel component="legend" id="demo-row-radio-buttons-group-label">Choose account type </FormLabel>
@@ -106,14 +143,21 @@ export const RegisterPage = () => {
         <form onSubmit={handleRegister} style={formStyle}>
             <StyledTextField 
               id="email" 
-              label="Enter your email" 
+              label="Name" 
+              variant="outlined"
+              style={textFieldStyle}
+              onChange={(event) => setUser({...user, email: event.target.value})}
+            />
+            <StyledTextField 
+              id="email" 
+              label="Email" 
               variant="outlined"
               style={textFieldStyle}
               onChange={(event) => setUser({...user, email: event.target.value})}
             />
             <StyledTextField 
               id="password" 
-              label="Choose a password" 
+              label="Password" 
               variant="outlined"
               type={showPassword ? 'text' : 'password'}
               style={textFieldStyle}
@@ -152,13 +196,21 @@ export const RegisterPage = () => {
               onChange={(event) => setUser({...user, password: event.target.value})}
             />
             {isStudentSelected && (
-              <StyledTextField
-              id="nickname"
-              label="Choose a unique nickname"
-              variant="outlined"
-              style={textFieldStyle}
-              //onChange={(event) => setUser({ ...user, nickname: event.target.value })}
-            />
+              <>
+                <StyledTextField
+                  id="nickname"
+                  label="Nickname"
+                  variant="outlined"
+                  style={textFieldStyle} 
+                />
+                <StyledTextField
+                  id="idcode"
+                  label="Your unique identification code provided by your institution"
+                  variant="outlined"
+                  style={textFieldStyle}
+                  onChange={(event) => setUser({ ...user, email: event.target.value })} 
+                />
+              </>
             )}
             <Button 
               type="submit" 

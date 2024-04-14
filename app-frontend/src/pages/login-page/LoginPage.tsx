@@ -13,6 +13,8 @@ import {StyledTextField, formStyle, imageStyle, leftGridItemStyle, rightGridItem
 import Grid from '@mui/material/Grid';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { displayErrorMessage, displaySuccessMessage } from "../../components/ToastMessage";
+import React from "react";
+import { HomeAppBar } from "../../components/HomeAppBar";
 
 // const Item = styled(Paper)(({ theme }) => ({
 //   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -80,7 +82,9 @@ export const LoginPage = () => {
 
 
   return (
-    <Grid sx={{ flexGrow: 1, height: '100vh' }} container spacing={0}>
+    <React.Fragment>
+      {/* <HomeAppBar/> */}
+        <Grid sx={{ flexGrow: 1, height: '100vh' }} container spacing={0}>
       <Grid item xs={7} style={leftGridItemStyle}>
           <Grid item>
               <a href="https://www.vecteezy.com/free-vector/flat-design">
@@ -129,5 +133,6 @@ export const LoginPage = () => {
           </form>
       </Grid>
     </Grid>
+    </React.Fragment>
   );
 };
