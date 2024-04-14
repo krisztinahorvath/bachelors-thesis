@@ -1,9 +1,9 @@
 import {
-  TextField,
-  outlinedInputClasses,
-  styled,
+    TextField,
+    outlinedInputClasses,
+    styled,
 } from "@mui/material";
-
+  
 import React from "react";
 
 export const StyledTextField = styled(TextField)({
@@ -17,33 +17,11 @@ export const StyledTextField = styled(TextField)({
       borderRadius: "10px", 
     },
   });
-  
-export const leftGridItemStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-}
-
-export const rightGridItemStyle: React.CSSProperties = {
-    backgroundColor: 'white',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center', 
-    justifyContent: 'center',
-};
-
-export const imageStyle: React.CSSProperties = {
-    display: 'block',
-    marginRight: 'auto',
-    marginLeft: 'auto',
-    width: '75%', 
-    padding: 'auto'
-}
 
 export const formStyle: React.CSSProperties = {
     display: 'flex', 
     flexDirection: 'column', 
-    width: '65%', 
+    width: '40%', 
 }
 
 export const textFieldStyle = {
@@ -64,7 +42,3 @@ export const submitButtonStyle = {
     marginTop: '15%',
     marginBottom: '10%'
 };
-
-
-// const styleSheet = document.styleSheets[0];
-// styleSheet.insertRule(glowAnimation);

@@ -6,13 +6,10 @@ import {
 	Button,
 	IconButton,
 	InputAdornment,
-	TextField,
-  outlinedInputClasses,
-  styled,
 } from "@mui/material";
 import { User, UserType } from "../../models/User";
 import { setEmail, setToken, setUserType } from "../../utils/auth-utils";
-import {formStyle, imageStyle, leftGridItemStyle, rightGridItemStyle, submitButtonStyle, textFieldStyle} from "./LoginPageStyle";
+import {StyledTextField, formStyle, imageStyle, leftGridItemStyle, rightGridItemStyle, submitButtonStyle, textFieldStyle} from "./LoginPageStyle";
 import Grid from '@mui/material/Grid';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { displayErrorMessage, displaySuccessMessage } from "../../components/ToastMessage";
@@ -25,17 +22,6 @@ import { displayErrorMessage, displaySuccessMessage } from "../../components/Toa
 //   color: theme.palette.text.secondary,
 // }));
 
-const StyledTextField = styled(TextField)({
-  [`& .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
-    borderColor: "#f5f5f5"
-  },
-  [`&:hover .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {
-    borderColor: "#84B1F2"
-  },
-  [`& .${outlinedInputClasses.root}`]: {
-    borderRadius: "10px", 
-  },
-});
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -98,7 +84,7 @@ export const LoginPage = () => {
       <Grid item xs={7} style={leftGridItemStyle}>
           <Grid item>
               <a href="https://www.vecteezy.com/free-vector/flat-design">
-                <img src="src/images/signInPage.jpg" alt="Flat Design Vectors by Vecteezy" style={imageStyle}/>
+                <img src="/signInPage.jpg" alt="Flat Design Vectors by Vecteezy" style={imageStyle}/>
               </a>
           </Grid>
       </Grid>

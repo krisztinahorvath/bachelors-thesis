@@ -57,7 +57,7 @@ export const HomePage = () => {
                
                 <div style={divStyle}>
                     <a href="https://www.vecteezy.com/free-vector/online-learning" target="_blank" rel="noopener noreferrer">
-                        <img src="src/images/homePage.jpg" alt="Online Learning Vectors by Vecteezy" style={imageStyle} />
+                        <img src="/homePage.jpg" alt="Online Learning Vectors by Vecteezy" style={imageStyle} />
                     </a>
                 </div>
                 

@@ -9,6 +9,8 @@ import { StudentHomePage } from './pages/student-home-page/StudentHomePage';
 import { TeacherHomePage } from './pages/teacher-home-page/TeacherHomePage';
 import { UserType } from './models/User';
 import { PrivateRoute } from './utils/private-route-utils';
+import {RegisterPage} from './pages/register-page/RegisterPage';
+// import { StudentGradesPage } from './pages/student-grades-page/StudentGradesPage';
 
 function App() {
   return (
@@ -28,6 +30,9 @@ function App() {
         <Routes>
           <Route path="/" element={< HomePage />} />
           <Route path = "/login" element={<LoginPage />} />
+          <Route path = "/register" element={<RegisterPage />} />
+          {/* <Route path = "/grades" element={<StudentGradesPage/>} /> */}
+        
           <Route 
             path="/student-dashboard" 
             element={<PrivateRoute allowedUsers={[UserType.Student]} element={<StudentHomePage/>}/>} 
