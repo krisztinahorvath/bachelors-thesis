@@ -45,7 +45,11 @@ export const CourseCards = () => {
                 <Grid container spacing={3}>
                 {courses.map((course, index) => (
                     <Grid item xs={12} sm={6} md={3} key={course.id}>
-                        <Link to={`/courses/${index}/details`} title="View course details"> {/* send the course id to the page but dont show its id */}
+                        <Link 
+                            to={`/course/${index}/details`} 
+                            state={course.id}
+                            title="View course details"
+                        > {/* send the course id to the page but dont show its id */}
                             <Card>
                                 <CardMedia
                                     sx={{ height: 100 }} 

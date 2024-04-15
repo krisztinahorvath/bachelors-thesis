@@ -10,7 +10,7 @@ import { TeacherHomePage } from './pages/teacher-home-page/TeacherHomePage';
 import { UserType } from './models/User';
 import { PrivateRoute } from './utils/private-route-utils';
 import {RegisterPage} from './pages/register-page/RegisterPage';
-// import { StudentGradesPage } from './pages/student-grades-page/StudentGradesPage';
+import { CourseDetailsForTeacher } from './pages/CourseDetailsTeacher';
 
 function App() {
   return (
@@ -37,10 +37,16 @@ function App() {
             path="/student-dashboard" 
             element={<PrivateRoute allowedUsers={[UserType.Student]} element={<StudentHomePage/>}/>} 
           />
+
+          {/* Teacher routes */}
           <Route 
             path="/teacher-dashboard" 
             element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<TeacherHomePage/>}/>} 
           />
+          <Route path="/course/:courseIndex/details" 
+            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<CourseDetailsForTeacher/>}/>} 
+          />
+
         </Routes>
       </Router>
     </React.Fragment>
