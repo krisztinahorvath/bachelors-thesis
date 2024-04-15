@@ -2,7 +2,7 @@ import { AppBar, Box, Button, Container, Toolbar, Typography} from "@mui/materia
 import { Link} from "react-router-dom";
 
 const appBarStyles = {
-    position: 'fixed',
+    position: 'static',
     backgroundColor: '#ffffff',
     color: '#3d3d5c',
     boxShadow: 'none'

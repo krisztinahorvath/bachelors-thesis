@@ -3,23 +3,53 @@ import studentSVG from '../../assets/student1.svg';
 import teacherSVG from '../../assets/teacher1.svg';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, UserType } from '../../models/User';
+import {UserType } from '../../models/User';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 import { displaySuccessMessage, displayErrorMessage } from '../../components/ToastMessage';
 import { BACKEND_URL } from '../../constants';
-import { setToken, setUserType, setEmail } from '../../utils/auth-utils';
 import { StyledTextField, formStyle, submitButtonStyle, textFieldStyle } from './RegisterPageStyle';
 import { HomeAppBar } from '../../components/HomeAppBar';
+import { UserRegisterDTO } from '../../models/UserRegisterDTO';
 
 export const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [retypedPassword, setRetypedPassword] = useState("");
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<User>({
+  const [user, setUser] = useState<UserRegisterDTO>({
+    name: "",
     email: "",
     password: "",
+    userType: UserType.Student,
+    nickname: "",
+    uniqueIdentificationCode: "",
   });
+
+  const handlePasswordChange = (event: { target: { value: any; }; }) => {
+    const newPassword = event.target.value;
+    setUser({...user, password: newPassword});
+  
+    if (retypedPassword && newPassword !== retypedPassword) {
+      setPasswordError(true);
+    } else {
+      setPasswordError(false);
+    }
+  };
+
+
+  const handleRetypePasswordChange = (event: { target: { value: any; }; }) => {
+    const retypePassword = event.target.value;
+    setRetypedPassword(retypePassword);
+    
+    if (user.password && retypePassword !== user.password) {
+      setPasswordError(true);
+    } else {
+      setPasswordError(false);
+      setUser({...user, password: retypePassword});
+    }
+  };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -35,24 +65,25 @@ export const RegisterPage = () => {
 
   const handleRegister = async (event: {preventDefault: () => void }) => {
     event.preventDefault();
+
     try {
       const response = await axios.post(`${BACKEND_URL}/users/register`, user);
-      setToken(response.data.token);
-      setUserType(response.data.userType);
-      setEmail(response.data.email);
+      // setToken(response.data.token);
+      // setUserType(response.data.userType);
+      // setEmail(response.data.email);
 
       displaySuccessMessage("You created an account successfully!");
       navigate("/login");
 
-      if(response.data.userType === UserType.Student){
-        navigate("/student-dashboard");
-      }
-      else if(response.data.userType === UserType.Teacher){
-        navigate("/teacher-dashboard");
-      }
-      else{
-        displayErrorMessage("An unexpected error occured while logging in");
-      }
+      // if(response.data.userType === UserType.Student){
+      //   navigate("/student-dashboard");
+      // }
+      // else if(response.data.userType === UserType.Teacher){
+      //   navigate("/teacher-dashboard");
+      // }
+      // else{
+      //   displayErrorMessage("An unexpected error occured while logging in");
+      // }
      
     } catch (error: any) {
       console.log(error);
@@ -65,17 +96,11 @@ export const RegisterPage = () => {
     }      
 };
 
-  // useEffect(() => {
-  //   document.body.style.backgroundColor = '#ECF3F9';
-      
-  //   return () => {
-  //     document.body.style.backgroundColor = '';
-  //   };
-  // }, []);
 
   return (
     <React.Fragment>
-      {/* <HomeAppBar/> */}
+      <HomeAppBar/>
+      
       <h1>Create an account</h1>
       <FormControl component="fieldset">
         <FormLabel component="legend" id="demo-row-radio-buttons-group-label">Choose account type </FormLabel>
@@ -104,6 +129,7 @@ export const RegisterPage = () => {
                 </div>
               }
               labelPlacement="top"
+              onChange={() => setUser({...user, userType: UserType.Student})}
             />
           </Grid>
 
@@ -125,6 +151,7 @@ export const RegisterPage = () => {
                 </div>
               }
               labelPlacement="top"
+              onChange={() => setUser({...user, userType: UserType.Teacher})}
             />
           </Grid>
         </RadioGroup>
@@ -132,23 +159,21 @@ export const RegisterPage = () => {
 
         <Grid
           container
-          // xs={7}
           direction="column"
           justifyContent="center"
           alignItems="center"
-          // spacing={12}
-          // width={"70%"}
         >
-        {/* <Grid item> */}
         <form onSubmit={handleRegister} style={formStyle}>
             <StyledTextField 
-              id="email" 
+              required
+              id="name" 
               label="Name" 
               variant="outlined"
               style={textFieldStyle}
-              onChange={(event) => setUser({...user, email: event.target.value})}
+              onChange={(event) => setUser({...user, name: event.target.value})}
             />
             <StyledTextField 
+              required
               id="email" 
               label="Email" 
               variant="outlined"
@@ -156,6 +181,7 @@ export const RegisterPage = () => {
               onChange={(event) => setUser({...user, email: event.target.value})}
             />
             <StyledTextField 
+              required
               id="password" 
               label="Password" 
               variant="outlined"
@@ -173,9 +199,10 @@ export const RegisterPage = () => {
                   </InputAdornment>
                 ),
               }}
-              onChange={(event) => setUser({...user, password: event.target.value})}
+              onChange={handlePasswordChange}
             />
             <StyledTextField 
+              required
               id="retype-password" 
               label="Retype password" 
               variant="outlined"
@@ -193,22 +220,27 @@ export const RegisterPage = () => {
                   </InputAdornment>
                 ),
               }}
-              onChange={(event) => setUser({...user, password: event.target.value})}
+              onChange={handleRetypePasswordChange}
+              error={passwordError} 
+              helperText={passwordError ? "Passwords do not match" : ""}
             />
             {isStudentSelected && (
               <>
                 <StyledTextField
+                  required
                   id="nickname"
                   label="Nickname"
                   variant="outlined"
                   style={textFieldStyle} 
+                  onChange={(event) => setUser({ ...user, nickname: event.target.value })} 
                 />
                 <StyledTextField
+                  required
                   id="idcode"
                   label="Your unique identification code provided by your institution"
                   variant="outlined"
                   style={textFieldStyle}
-                  onChange={(event) => setUser({ ...user, email: event.target.value })} 
+                  onChange={(event) => setUser({ ...user, uniqueIdentificationCode: event.target.value })} 
                 />
               </>
             )}
@@ -217,7 +249,8 @@ export const RegisterPage = () => {
               style={submitButtonStyle}>
               Create account
             </Button>
-            </form></Grid> 
+            </form>
+        </Grid> 
     </React.Fragment>
   );
 };
