@@ -25,8 +25,8 @@ const appBarStyles = {
     backgroundColor: '#ffffff',
     color: '#3d3d5c',
     boxShadow: 'none',
-    paddingLeft: '2.5%',
-    paddingRight: '2.5%'
+    // paddingLeft: '2.5%',
+    // paddingRight: '2.5%'
 };
 
 const toolBarStyle = {
