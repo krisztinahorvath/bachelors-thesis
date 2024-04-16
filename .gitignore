@@ -399,3 +399,5 @@ FodyWeavers.xsd
 /app-server/.vs
 /app-server/bin
 /app-server/obj/Debug
+/app-server/.vs/app-server/v17
+/app-server/.vs/ProjectEvaluation
