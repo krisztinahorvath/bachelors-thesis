@@ -3,7 +3,6 @@ import { Button, Container, Grid } from '@mui/material';
 import { TeacherAppBar } from '../components/TeacherAppBar';
 import { UploadImage } from '../components/UploadImage';
 import React from 'react';
-import { Course } from '../models/Course';
 import { displayErrorMessage, displaySuccessMessage } from '../components/ToastMessage';
 import axios from 'axios';
 import { BACKEND_URL } from '../constants';
@@ -82,58 +81,6 @@ export const AddCoursePage = () => {
     setImageUrl('');
   };
 
-  const transformImageToString = (): Promise<string> => {
-    return new Promise<string>((resolve, reject) => {
-        if (!imageData) {
-            reject(new Error("No file data available."));
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            if (event.target?.result) {
-                const base64String = event.target.result as string;
-                resolve(base64String);
-            } else {
-                reject(new Error("Failed to read file."));
-            }
-        };
-
-        reader.onerror = () => {
-            reject(new DOMException("Failed to read file."));
-        };
-
-        reader.readAsDataURL(imageData);
-    });
-};
-
-const transformImageToByteArray = (): Promise<ArrayBuffer> => {
-    return new Promise<ArrayBuffer>((resolve, reject) => {
-        if (!imageData) {
-            reject(new Error("No file data available."));
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            if (event.target?.result) {
-                const arrayBuffer = event.target.result as ArrayBuffer;
-                resolve(arrayBuffer);
-            } else {
-                reject(new Error("Failed to read file."));
-            }
-        };
-
-        reader.onerror = () => {
-            reject(new Error("Failed to read file."));
-        };
-
-        reader.readAsArrayBuffer(imageData);
-    });
-};
-
 
 const handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
@@ -153,12 +100,18 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
             }
           });
           
-      console.log(response.data);
-      // Handle success
-    } catch (error) {
-      console.error('Error creating course:', error);
-      // Handle error
-    }
+          displaySuccessMessage("The course was created successfuly!");
+          navigate("/teacher-dashboard");
+       
+      } catch (error: any) {
+        console.log(error);
+        if (error.response) {
+          const errorMessage = error.response.data;
+          displayErrorMessage(errorMessage);
+        } else {
+          displayErrorMessage("An error occurred while trying to create course.");
+        }
+      }      
   };
   
 

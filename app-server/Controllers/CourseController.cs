@@ -268,8 +268,6 @@ namespace app_server.Controllers
                 Image = courseDTO.Image
             };
 
-            
-
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
 

@@ -31,6 +31,8 @@ export const TeacherHomePage = () => {
             </Container>
             
             <CourseCards/>
+
+            <br/>
         </Container>
     )
 }
