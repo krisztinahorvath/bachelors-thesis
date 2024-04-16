@@ -11,6 +11,7 @@ import { UserType } from './models/User';
 import { PrivateRoute } from './utils/private-route-utils';
 import {RegisterPage} from './pages/register-page/RegisterPage';
 import { CourseDetailsForTeacher } from './pages/CourseDetailsTeacher';
+import { AddCoursePage } from './pages/AddCoursePage';
 
 function App() {
   return (
@@ -46,6 +47,15 @@ function App() {
           <Route path="/course/:courseIndex/details" 
             element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<CourseDetailsForTeacher/>}/>} 
           />
+          <Route path="/course/add" 
+            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<AddCoursePage/>}/>} 
+          />
+          {/* <Route path="/course/update" 
+            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<UpdateCoursePage/>}/>} 
+          />
+          <Route path="/course/delete" 
+            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<DeleteCoursePage/>}/>} 
+          /> */}
 
         </Routes>
       </Router>

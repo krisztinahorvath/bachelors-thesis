@@ -4,6 +4,7 @@ using app_server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Text;
 
 namespace app_server.Controllers
@@ -62,9 +63,9 @@ namespace app_server.Controllers
             return CourseToDTO(course);
         }
 
-        // GET: api/courses/courses-of-teacher/5
-        [HttpGet("courses-of-teacher/{teacherId}")] // get all courses of a teacher
-        public async Task<ActionResult<IEnumerable<CourseDTO>>> GetCoursesOfTeacher(long teacherId)
+        // GET: api/courses/courses-of-teacher
+        [HttpGet("courses-of-teacher")] // get all courses of a teacher
+        public async Task<ActionResult<IEnumerable<CourseDTO>>> GetCoursesOfTeacher()
         {
             if (_context.Courses == null)
             {
@@ -73,11 +74,11 @@ namespace app_server.Controllers
 
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if(tokenData == null || (tokenData?.Item1 != teacherId || tokenData?.Item2 != UserType.Teacher))
+            if(tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
                 return Unauthorized("Invalid token or user is not a teacher.");
 
             var courses = await _context.CourseTeachers
-                .Where(t => t.TeacherId == teacherId)
+                .Where(t => t.TeacherId == tokenData.Item1)
                 .Select(x => CourseToDTO(x.Course))
                 .ToListAsync();
 
@@ -184,6 +185,58 @@ namespace app_server.Controllers
             return Ok(courseStudentsGrades);
         }
 
+        [HttpPost("create")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreateCourse([FromForm] string courseDTO, [FromForm] IFormFile image)
+        {
+            // Deserialize courseDTO JSON string to CourseDTO object
+            var courseInput = JsonConvert.DeserializeObject<CourseDTO>(courseDTO);
+
+            // Convert IFormFile to byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await image.CopyToAsync(memoryStream);
+                courseInput.Image = memoryStream.ToArray();
+            }
+
+            // validate token data
+            //var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            //if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+            //    return Unauthorized("Invalid token or user is not a teacher.");
+
+            //var teacherId = tokenData!.Item1;
+
+            //// valid teacher id
+            //if (!_context.Teachers.Any(t => t.Id == teacherId))
+            //{
+            //    return Unauthorized("User is not a registered teacher.");
+            //}
+
+            Course course = new Course
+            {
+                Name = courseInput.Name,
+                EnrollmentKey = await GenerateUniqueEnrollmentKey(8),
+                Image = courseInput.Image
+            };
+
+            _context.Courses.Add(course);
+            await _context.SaveChangesAsync();
+
+            CourseTeacher courseTeacher = new CourseTeacher
+            {
+                CourseId = course.Id,
+                TeacherId = 1813,
+            };
+
+
+            _context.CourseTeachers.Add(courseTeacher);
+            await _context.SaveChangesAsync();
+
+
+            return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, course);
+        }
+
+
 
         // POST: api/courses
         [HttpPost]
@@ -206,11 +259,16 @@ namespace app_server.Controllers
                 return Unauthorized("User is not a registered teacher.");
             }
 
+            Console.WriteLine("IMAGEDTO: " + courseDTO.Image.ToString());
+
             Course course = new Course
             {
                 Name = courseDTO.Name,
                 EnrollmentKey = await GenerateUniqueEnrollmentKey(8),
+                Image = courseDTO.Image
             };
+
+            
 
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
@@ -426,7 +484,8 @@ namespace app_server.Controllers
             {
                 Id = course.Id,
                 Name = course.Name,
-                EnrollmentKey = course.EnrollmentKey
+                EnrollmentKey = course.EnrollmentKey,
+                Image = course.Image
             };
         }
     }

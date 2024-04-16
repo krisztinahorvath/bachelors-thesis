@@ -46,14 +46,14 @@ export const CourseCards = () => {
                 {courses.map((course, index) => (
                     <Grid item xs={12} sm={6} md={3} key={course.id}>
                         <Link 
-                            to={`/course/${index}/details`} 
+                            to={`/course/${index+1}/details`} 
                             state={course.id}
                             title="View course details"
                         > {/* send the course id to the page but dont show its id */}
                             <Card>
                                 <CardMedia
                                     sx={{ height: 100 }} 
-                                    image="https://wallup.net/wp-content/uploads/2019/09/432739-lake-pond-golden-trees-tropical-forest-stream-leaves-hdr-ultrahd-black-white-hd-4k-wallpaper-3840x2160.jpg"
+                                    image={`data:image/jpg;base64,${course.image}`}
                                 />
                                 <CardContent>
                                     <Typography variant="subtitle1" component="h2">

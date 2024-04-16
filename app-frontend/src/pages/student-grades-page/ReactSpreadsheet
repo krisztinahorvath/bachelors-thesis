@@ -1,0 +1,85 @@
+// import React, { useState, useEffect } from "react";
+// import Spreadsheet, { Matrix } from "react-spreadsheet";
+// import axios from "axios";
+// import { BACKEND_URL } from "../../constants";
+
+// interface RegisterDTO {
+//     studentId: number;
+//     studentName: string;
+//     gradeId: number;
+//     score: string;
+//     assignmentId: number;
+//     assignmentName: string;
+// }
+
+// export const StudentGradesPage = () => {
+//     const [data, setData] = useState<Matrix<{ value: string; }>>([]);
+//     const [filterText, setFilterText] = useState<string>("");
+//     const [backendDataMatrix, setBackendDataMatrix] = useState<Matrix<{ studentId: number; assignmentId: number }>>([]);
+
+//     const courseId = 11; 
+
+//     useEffect(() => {
+//         const fetchData = async () => {
+//             try {
+//                 const response = await axios.get<RegisterDTO[]>(`${BACKEND_URL}/courses/all/${courseId}`);
+//                 const courseStudentsGrades: RegisterDTO[] = response.data;
+
+//                 // extract unique student names and assignment names
+//                 const studentNames = Array.from(new Set(courseStudentsGrades.map(grade => grade.studentName)));
+//                 const assignmentNames = Array.from(new Set(courseStudentsGrades.map(grade => grade.assignmentName)));
+
+//                 // create headers with student names followed by assignment names
+//                 const headers = ["Students", ...assignmentNames].map(value => ({ value, readOnly: true, style: { backgroundColor: "green" } }));
+
+//                 // initialize data matrix with empty values
+//                 const displayDataMatrix: Matrix<{ value: string; }> = studentNames.map(studentName => {
+//                     const row: { value: string; }[] = [{ value: studentName }];
+//                     assignmentNames.forEach(assignmentName => {
+//                         const grade = courseStudentsGrades.find(grade => grade.studentName === studentName && grade.assignmentName === assignmentName);
+//                         row.push({ value: grade ? grade.score.toString() : "" });
+//                     });
+//                     return row;
+//                 });
+
+//                 // initialize backend data matrix with studentId and assignmentId in each cell
+//                 const newBackendDataMatrix: Matrix<{ studentId: number; assignmentId: number }> = studentNames.map(studentName => {
+//                     const row: { studentId: number; assignmentId: number }[] = [{ studentId: 0, assignmentId: 0 }];
+//                     assignmentNames.forEach(assignmentName => {
+//                         const grade = courseStudentsGrades.find(grade => grade.studentName === studentName && grade.assignmentName === assignmentName);
+//                         row.push({ studentId: grade ? grade.studentId : 0, assignmentId: grade ? grade.assignmentId : 0 });
+//                     });
+//                     return row;
+//                 });
+
+
+//                 // set the state with the headers and data matrix
+//                 setBackendDataMatrix(newBackendDataMatrix);
+//                 setData([headers, ...displayDataMatrix]);
+//             } catch (error) {
+//                 console.error("Error fetching data:", error);
+//             }
+//         };
+
+//         fetchData();
+//     }, [courseId]);
+
+//     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//         setFilterText(e.target.value);
+//     };
+
+//     // filter function to check if the cell contains the filter text
+//     const filterCells = (cell: { value: string; } | undefined): cell is { value: string; } => {
+//         return !!cell && cell.value.toLowerCase().includes(filterText.toLowerCase());
+//     };
+
+//     // filter the data based on the filter text
+//     const filteredData = data.map(row => row.filter(filterCells));
+    
+//     return (
+//         <div>
+//             <input type="text" value={filterText} onChange={handleFilterChange} placeholder="Find student by name" />
+//             <Spreadsheet data={filteredData}/>
+//         </div>
+//     );
+// };
