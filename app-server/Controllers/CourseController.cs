@@ -38,7 +38,7 @@ namespace app_server.Controllers
 
         // GET: api/courses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CourseDTO>> GetCourseById(int id)
+        public async Task<ActionResult<CourseDTO>> GetCourseById(long id)
         {
             if (_context.Courses == null)
                 return NotFound();

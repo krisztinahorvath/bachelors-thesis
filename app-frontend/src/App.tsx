@@ -1,17 +1,18 @@
-import './App.css'
-import React from 'react'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
-import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import { LoginPage} from './pages/login-page/LoginPage';
-import { HomePage } from './pages/home-page/HomePage';
-import { StudentHomePage } from './pages/student-home-page/StudentHomePage';
-import { TeacherHomePage } from './pages/teacher-home-page/TeacherHomePage';
-import { UserType } from './models/User';
-import { PrivateRoute } from './utils/private-route-utils';
-import {RegisterPage} from './pages/register-page/RegisterPage';
-import { CourseDetailsForTeacher } from './pages/CourseDetailsTeacher';
-import { AddCoursePage } from './pages/AddCoursePage';
+import "./App.css";
+import React from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { LoginPage } from "./pages/login-page/LoginPage";
+import { HomePage } from "./pages/home-page/HomePage";
+import { StudentHomePage } from "./pages/student-home-page/StudentHomePage";
+import { TeacherHomePage } from "./pages/teacher-home-page/TeacherHomePage";
+import { UserType } from "./models/User";
+import { PrivateRoute } from "./utils/private-route-utils";
+import { RegisterPage } from "./pages/register-page/RegisterPage";
+import { CourseDetailsForTeacher } from "./pages/CourseDetailsTeacher";
+import { AddCoursePage } from "./pages/AddCoursePage";
+import { StudentUserPreferences } from "./pages/StudentUserPreferences";
 
 function App() {
   return (
@@ -25,30 +26,62 @@ function App() {
         pauseOnFocusLoss
         pauseOnHover
         theme="light"
-    />
+      />
 
       <Router>
         <Routes>
-          <Route path="/" element={< HomePage />} />
-          <Route path = "/login" element={<LoginPage />} />
-          <Route path = "/register" element={<RegisterPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           {/* <Route path = "/grades" element={<StudentGradesPage/>} /> */}
-        
-          <Route 
-            path="/student-dashboard" 
-            element={<PrivateRoute allowedUsers={[UserType.Student]} element={<StudentHomePage/>}/>} 
+
+          <Route
+            path="/student-dashboard"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Student]}
+                element={<StudentHomePage />}
+              />
+            }
+          />
+
+          <Route
+            path="/student-preferences"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Student]}
+                element={<StudentUserPreferences />}
+              />
+            }
           />
 
           {/* Teacher routes */}
-          <Route 
-            path="/teacher-dashboard" 
-            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<TeacherHomePage/>}/>} 
+          <Route
+            path="/teacher-dashboard"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Teacher]}
+                element={<TeacherHomePage />}
+              />
+            }
           />
-          <Route path="/course/:courseIndex/details" 
-            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<CourseDetailsForTeacher/>}/>} 
+          <Route
+            path="/course/:courseIndex/details"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Teacher]}
+                element={<CourseDetailsForTeacher />}
+              />
+            }
           />
-          <Route path="/course/add" 
-            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<AddCoursePage/>}/>} 
+          <Route
+            path="/course/add"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Teacher]}
+                element={<AddCoursePage />}
+              />
+            }
           />
           {/* <Route path="/course/update" 
             element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<UpdateCoursePage/>}/>} 
@@ -56,11 +89,10 @@ function App() {
           <Route path="/course/delete" 
             element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<DeleteCoursePage/>}/>} 
           /> */}
-
         </Routes>
       </Router>
     </React.Fragment>
-  )
+  );
 }
 
-export default App
+export default App;
