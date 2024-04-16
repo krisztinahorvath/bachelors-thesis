@@ -149,7 +149,7 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
         const response = await axios.post(`${BACKEND_URL}/courses/create`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
-            //   'Authorization': `Bearer ${getToken()}`
+              'Authorization': `Bearer ${getToken()}`
             }
           });
           
@@ -210,7 +210,6 @@ const handleSubmit = async (event: { preventDefault: () => void; }) => {
                     style={textFieldStyle}
                     onChange={(event) => setCourse({ ...course, name: event.target.value })} 
                 />
-                
                 <UploadImage
                     imageUrl={imageUrl}
                     handleFileChange={handleFileChange}

@@ -186,7 +186,7 @@ namespace app_server.Controllers
         }
 
         [HttpPost("create")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IActionResult> CreateCourse([FromForm] string courseDTO, [FromForm] IFormFile image)
         {
             // Deserialize courseDTO JSON string to CourseDTO object
@@ -200,17 +200,17 @@ namespace app_server.Controllers
             }
 
             // validate token data
-            //var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            //if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
-            //    return Unauthorized("Invalid token or user is not a teacher.");
+           var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+                return Unauthorized("Invalid token or user is not a teacher.");
 
-            //var teacherId = tokenData!.Item1;
+            var teacherId = tokenData!.Item1;
 
-            //// valid teacher id
-            //if (!_context.Teachers.Any(t => t.Id == teacherId))
-            //{
-            //    return Unauthorized("User is not a registered teacher.");
-            //}
+            // valid teacher id
+            if (!_context.Teachers.Any(t => t.Id == teacherId))
+            {
+                return Unauthorized("User is not a registered teacher.");
+            }
 
             Course course = new Course
             {
@@ -225,7 +225,7 @@ namespace app_server.Controllers
             CourseTeacher courseTeacher = new CourseTeacher
             {
                 CourseId = course.Id,
-                TeacherId = 1813,
+                TeacherId = teacherId,
             };
 
 
