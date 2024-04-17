@@ -5,13 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "CI='' tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@faker-js/faker": "^8.4.1",
     "@mui/icons-material": "^5.15.13",
     "@mui/material": "^5.15.15",
     "@mui/x-data-grid": "^7.2.0",
