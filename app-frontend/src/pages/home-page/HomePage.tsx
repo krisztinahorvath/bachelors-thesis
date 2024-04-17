@@ -5,9 +5,8 @@ import {
   Container,
   Toolbar,
   Typography,
-  useTheme,
 } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import React from "react";
 import {
   appBarStyles,
@@ -24,9 +23,9 @@ import {
 
 const pages = ["About us", "Log In", "Register"];
 export const HomePage = () => {
-  const theme = useTheme();
-  const location = useLocation();
-  const path = location.pathname;
+  // const theme = useTheme();
+  // const location = useLocation();
+  // const path = location.pathname;
 
   return (
     <React.Fragment>

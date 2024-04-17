@@ -118,8 +118,8 @@ namespace app_server.Controllers
 
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != null))
-                return Unauthorized("Invalid token or user is not a student.");
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 == null))
+                return Unauthorized("Invalid token.");
 
             var userId = tokenData!.Item1;
 
@@ -140,9 +140,30 @@ namespace app_server.Controllers
         // TODO: view all students at a course
         // ************************************
         [HttpGet("students/{courseId}")]
-        public async Task<ActionResult<IEnumerable<CourseDTO>>> GetAllStudentsAtCourse (long courseId)
+        public async Task<ActionResult<IEnumerable<EnrolledStudentDTO>>> GetAllStudentsAtCourse (long courseId)
         {
-            return Ok();
+            if (_context.Courses == null)
+            {
+                return Problem("Entity set 'StudentsRegisterContext.Courses'  is null.");
+            }
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 == null))
+                return Unauthorized("Invalid token.");
+
+            var userId = tokenData!.Item1;
+
+            // check if user is a course teacher or it is a student enrolled to that course
+            if (!_context.Enrollments.Any(e => e.CourseId == courseId && e.StudentId == userId) &&
+                !_context.CourseTeachers.Any(c => c.CourseId == courseId && c.TeacherId == userId))
+                return Unauthorized("You aren't authorized to see information about this course.");
+
+            var students = await _context.Enrollments
+                .Where(e => e.CourseId == courseId)
+                .Select(s => StudentToEnrolledStudentDTO(s.Student)).ToListAsync();
+
+            return students;
         }
 
         [HttpGet("all/{courseId}")]
@@ -484,6 +505,16 @@ namespace app_server.Controllers
                 Name = course.Name,
                 EnrollmentKey = course.EnrollmentKey,
                 Image = course.Image
+            };
+        }
+
+        private static EnrolledStudentDTO StudentToEnrolledStudentDTO(Student student)
+        {
+            return new EnrolledStudentDTO
+            {
+                Id = student.Id,
+                Name = student.Name,
+                Email = student.Email
             };
         }
     }

@@ -1,18 +1,13 @@
-import * as React from "react";
 import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Collapse from "@mui/material/Collapse";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import StarBorder from "@mui/icons-material/StarBorder";
 import HomeIcon from "@mui/icons-material/Home";
 import { Typography } from "@mui/material";
-import classroomSVG from "../assets/classroom.svg";
-import { useLocation, useNavigate } from "react-router-dom";
+import classroomSVG from "../../assets/classroom.svg";
+import { useNavigate } from "react-router-dom";
 import SchoolIcon from "@mui/icons-material/School";
 import InfoIcon from "@mui/icons-material/Info";
 import GradingIcon from "@mui/icons-material/Grading";
@@ -22,13 +17,7 @@ export const CourseSideBar = ({
 }: {
   onSelectTab: (tabName: string) => void;
 }) => {
-  const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleClick = () => {
-    setOpen(!open);
-  };
 
   const handleNavigateToStudents = () => {
     onSelectTab("students");
@@ -49,7 +38,7 @@ export const CourseSideBar = ({
   return (
     // use collapse for making it small
     <List
-      sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+      sx={{ width: "100%", maxWidth: 360, bgcolor: "pink" }} // background.paper
       component="nav"
       aria-labelledby="nested-list-subheader"
       subheader={

@@ -29,23 +29,23 @@ const appBarStyles = {
   paddingRight: "2.5%",
 };
 
-const toolBarStyle = {
-  paddingLeft: "2.5%",
-  paddingRight: "2.5%",
-};
-const typographyStyle1 = {
-  mr: 2,
-  display: { xs: "none", md: "flex" },
-  color: "inherit",
-  textDecoration: "none",
-  textTransform: "capitalize",
-};
+// const toolBarStyle = {
+//   paddingLeft: "2.5%",
+//   paddingRight: "2.5%",
+// };
+// const typographyStyle1 = {
+//   mr: 2,
+//   display: { xs: "none", md: "flex" },
+//   color: "inherit",
+//   textDecoration: "none",
+//   textTransform: "capitalize",
+// };
 
-const boxStyle = {
-  flexGrow: 1,
-  display: { xs: "none", md: "flex" },
-  justifyContent: "flex-end",
-};
+// const boxStyle = {
+//   flexGrow: 1,
+//   display: { xs: "none", md: "flex" },
+//   justifyContent: "flex-end",
+// };
 
 const buttonStyle = {
   my: 2,
@@ -56,7 +56,7 @@ const buttonStyle = {
 };
 
 const pages = ["Courses", "Blog"];
-const settings = ["Profile", "My Account", "Settings", "Logout"];
+// const settings = ["Profile", "My Account", "Settings", "Logout"];
 export const StudentAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null

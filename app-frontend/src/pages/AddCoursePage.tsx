@@ -99,16 +99,12 @@ export const AddCoursePage = () => {
 
     try {
       // const headers = {headers: {Authorization: `Bearer ${getToken()}`}, 'Content-Type': 'multipart/form-data'};
-      const response = await axios.post(
-        `${BACKEND_URL}/courses/create`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
-      );
+      await axios.post(`${BACKEND_URL}/courses/create`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
 
       displaySuccessMessage("The course was created successfuly!");
       navigate("/teacher-dashboard");
@@ -123,40 +119,40 @@ export const AddCoursePage = () => {
     }
   };
 
-  const handleCreateCourse = async (event: { preventDefault: () => void }) => {
-    event.preventDefault();
+  // const handleCreateCourse = async (event: { preventDefault: () => void }) => {
+  //   event.preventDefault();
 
-    try {
-      if (!imageData) {
-        displayErrorMessage("Please upload an image for the course.");
-        return;
-      }
+  //   try {
+  //     if (!imageData) {
+  //       displayErrorMessage("Please upload an image for the course.");
+  //       return;
+  //     }
 
-      const headers = {
-        headers: { Authorization: `Bearer ${getToken()}` },
-        "Content-Type": "multipart/form-data",
-      };
+  //     const headers = {
+  //       headers: { Authorization: `Bearer ${getToken()}` },
+  //       "Content-Type": "multipart/form-data",
+  //     };
 
-      console.log(course.image);
+  //     console.log(course.image);
 
-      const response = await axios.post(
-        `${BACKEND_URL}/courses/create`,
-        course,
-        headers
-      );
+  //     const response = await axios.post(
+  //       `${BACKEND_URL}/courses/create`,
+  //       course,
+  //       headers
+  //     );
 
-      displaySuccessMessage("The course was created successfuly!");
-      navigate("/teacher-dashboard");
-    } catch (error: any) {
-      console.log(error);
-      if (error.response) {
-        const errorMessage = error.response.data;
-        displayErrorMessage(errorMessage);
-      } else {
-        displayErrorMessage("An error occurred while trying to create course.");
-      }
-    }
-  };
+  //     displaySuccessMessage("The course was created successfuly!");
+  //     navigate("/teacher-dashboard");
+  //   } catch (error: any) {
+  //     console.log(error);
+  //     if (error.response) {
+  //       const errorMessage = error.response.data;
+  //       displayErrorMessage(errorMessage);
+  //     } else {
+  //       displayErrorMessage("An error occurred while trying to create course.");
+  //     }
+  //   }
+  // };
 
   return (
     <React.Fragment>

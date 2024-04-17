@@ -1,33 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Course } from "../models/Course";
 import { BACKEND_URL } from "../constants";
 import { Card, CardMedia, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import { displayErrorMessage } from "../components/ToastMessage";
 import { getToken } from "../utils/auth-utils";
-import { CourseSideBar } from "../components/CourseSideBar";
+import { CourseSideBar } from "../components/teachers/CourseSideBar";
 import { ShowStudentsAtCourse } from "../components/teachers/ShowStudentsAtCourse";
 import { ShowAssignmentsAtCourse } from "../components/teachers/ShowCourseAssignments";
 
-const leftGridItemStyle = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-};
+// const leftGridItemStyle = {
+//   display: "flex",
+//   alignItems: "center",
+//   justifyContent: "center",
+// };
 
-const rightGridItemStyle: React.CSSProperties = {
-  backgroundColor: "white",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-};
+// const rightGridItemStyle: React.CSSProperties = {
+//   backgroundColor: "white",
+//   display: "flex",
+//   flexDirection: "column",
+//   alignItems: "center",
+//   justifyContent: "center",
+// };
 
 export const CoursePageTeacher = () => {
   const location = useLocation();
   const courseId = location.state;
-  const currentPath = location.pathname;
   const [selectedTab, setSelectedTab] = useState("");
   const [course, setCourse] = useState<Course>({
     id: -1,
@@ -111,7 +110,7 @@ export const CoursePageTeacher = () => {
             </Typography>
           </Card>
 
-          <h1> Course with id {courseId} </h1>
+          {/* <h1> Course with id {courseId} </h1> */}
           {selectedTab === "students" && (
             <ShowStudentsAtCourse courseId={courseId} />
           )}

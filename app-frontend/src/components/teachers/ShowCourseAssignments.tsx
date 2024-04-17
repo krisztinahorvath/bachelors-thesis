@@ -1,5 +1,3 @@
-import { useLocation } from "react-router-dom";
-
 interface ShowAssignmentsAtCourseProps {
   courseId: any; // Define the courseId prop
 }
@@ -7,7 +5,6 @@ interface ShowAssignmentsAtCourseProps {
 export const ShowAssignmentsAtCourse: React.FC<
   ShowAssignmentsAtCourseProps
 > = ({ courseId }) => {
-  const location = useLocation();
   // const courseId = location.state as any as number;
   //   const [course, setCourse] = useState<Course>({
   //     id: -1,
