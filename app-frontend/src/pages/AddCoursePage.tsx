@@ -53,7 +53,7 @@ const submitButtonStyle = {
 
 export const AddCoursePage = () => {
   const navigate = useNavigate();
-  // const [imageData, setImageData] = useState<File | undefined>();
+  const [imageData, setImageData] = useState<File | undefined>();
   const [imageUrl, setImageUrl] = useState("");
   const [course, setCourse] = useState({
     name: "",
