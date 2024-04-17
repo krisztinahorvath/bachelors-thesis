@@ -90,6 +90,8 @@ function App() {
           <Route path="/course/delete" 
             element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<DeleteCoursePage/>}/>} 
           /> */}
+
+          {/* <Route path="*" element={< NoPage/>}/> */}
         </Routes>
       </Router>
     </React.Fragment>

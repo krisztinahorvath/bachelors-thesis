@@ -28,12 +28,17 @@ export const CoursePageTeacher = () => {
   const location = useLocation();
   const courseId = location.state;
   const currentPath = location.pathname;
+  const [selectedTab, setSelectedTab] = useState("");
   const [course, setCourse] = useState<Course>({
     id: -1,
     name: "",
     enrollmentKey: "",
     image: "",
   });
+
+  const handleTabSelect = (tabName: React.SetStateAction<string>) => {
+    setSelectedTab(tabName);
+  };
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -65,7 +70,7 @@ export const CoursePageTeacher = () => {
       {/* <TeacherAppBar /> */}
       <Grid sx={{ flexGrow: 1, height: "100vh" }} container spacing={0}>
         <Grid item xs={2}>
-          <CourseSideBar />
+          <CourseSideBar onSelectTab={handleTabSelect} />
           {/* <p>Some stuff here</p> */}
         </Grid>
         <Grid
@@ -107,20 +112,26 @@ export const CoursePageTeacher = () => {
           </Card>
 
           <h1> Course with id {courseId} </h1>
-          <Routes>
+          {selectedTab === "students" && (
+            <ShowStudentsAtCourse courseId={courseId} />
+          )}
+          {selectedTab === "assignments" && (
+            <ShowAssignmentsAtCourse courseId={courseId} />
+          )}
+          {/* <Routes>
             {/* <Route
               path="*"
               element={<ShowStudentsAtCourse courseId={courseId} />}
             /> */}
-            <Route
-              path="students"
-              element={<ShowStudentsAtCourse courseId={courseId} />}
-            />
-            <Route
-              path="assignments"
-              element={<ShowAssignmentsAtCourse courseId={courseId} />}
-            />
-          </Routes>
+          {/* <Route
+            path="students"
+            element={<ShowStudentsAtCourse courseId={courseId} />}
+          />
+          <Route
+            path="assignments"
+            element={<ShowAssignmentsAtCourse courseId={courseId} />}
+          /> */}
+          {/* </Routes> */}
         </Grid>
       </Grid>
     </React.Fragment>

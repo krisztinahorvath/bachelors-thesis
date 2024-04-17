@@ -15,8 +15,13 @@ import { Typography } from "@mui/material";
 import classroomSVG from "../assets/classroom.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import SchoolIcon from "@mui/icons-material/School";
+import InfoIcon from "@mui/icons-material/Info";
 
-export const CourseSideBar = () => {
+export const CourseSideBar = ({
+  onSelectTab,
+}: {
+  onSelectTab: (tabName: string) => void;
+}) => {
   const [open, setOpen] = React.useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,15 +31,11 @@ export const CourseSideBar = () => {
   };
 
   const handleNavigateToStudents = () => {
-    if (!location.pathname.endsWith("/students")) {
-      navigate(`${location.pathname}/students`);
-    }
+    onSelectTab("students");
   };
 
   const handleNavigateToAssignments = () => {
-    if (!location.pathname.endsWith("/assignments")) {
-      navigate(`${location.pathname}/assignments`);
-    }
+    onSelectTab("assignments");
   };
 
   return (
