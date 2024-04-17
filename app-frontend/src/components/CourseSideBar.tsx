@@ -5,7 +5,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
-import DraftsIcon from "@mui/icons-material/Drafts";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -16,6 +15,7 @@ import classroomSVG from "../assets/classroom.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import SchoolIcon from "@mui/icons-material/School";
 import InfoIcon from "@mui/icons-material/Info";
+import GradingIcon from "@mui/icons-material/Grading";
 
 export const CourseSideBar = ({
   onSelectTab,
@@ -38,6 +38,14 @@ export const CourseSideBar = ({
     onSelectTab("assignments");
   };
 
+  const handleNavigateToDetails = () => {
+    onSelectTab("");
+  };
+
+  const handleNavigateToTeacherDashboard = () => {
+    navigate("/teacher-dashboard");
+  };
+
   return (
     // use collapse for making it small
     <List
@@ -50,20 +58,16 @@ export const CourseSideBar = ({
         </ListSubheader>
       }
     >
-      <ListItemButton
-        onClick={() => {
-          navigate("/teacher-dashboard");
-        }}
-      >
+      <ListItemButton onClick={handleNavigateToTeacherDashboard}>
         <ListItemIcon>
           <HomeIcon />
         </ListItemIcon>
         <ListItemText primary="Home Page" />
       </ListItemButton>
 
-      <ListItemButton>
+      <ListItemButton onClick={handleNavigateToDetails}>
         <ListItemIcon>
-          <DraftsIcon />
+          <InfoIcon />
         </ListItemIcon>
         <ListItemText primary="Course Details" />
       </ListItemButton>
@@ -80,6 +84,13 @@ export const CourseSideBar = ({
           <AssignmentIcon />
         </ListItemIcon>
         <ListItemText primary="Assignments" />
+      </ListItemButton>
+
+      <ListItemButton onClick={handleNavigateToAssignments}>
+        <ListItemIcon>
+          <GradingIcon />
+        </ListItemIcon>
+        <ListItemText primary="Grades" />
       </ListItemButton>
 
       {/* <ListItemButton onClick={handleClick}>
