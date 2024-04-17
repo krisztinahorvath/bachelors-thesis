@@ -13,9 +13,6 @@ import { RegisterPage } from "./pages/register-page/RegisterPage";
 import { CoursePageTeacher } from "./pages/CoursePageTeacher";
 import { AddCoursePage } from "./pages/AddCoursePage";
 import { StudentUserPreferences } from "./pages/StudentUserPreferences";
-import { HomeAppBar } from "./components/HomeAppBar";
-import { ShowStudentsAtCourse } from "./components/teachers/ShowStudentsAtCourse";
-import { ShowAssignmentsAtCourse } from "./components/teachers/ShowCourseAssignments";
 
 function App() {
   return (

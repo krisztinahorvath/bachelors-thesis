@@ -53,7 +53,7 @@ const submitButtonStyle = {
 
 export const AddCoursePage = () => {
   const navigate = useNavigate();
-  const [imageData, setImageData] = useState<File | undefined>();
+  // const [imageData, setImageData] = useState<File | undefined>();
   const [imageUrl, setImageUrl] = useState("");
   const [course, setCourse] = useState({
     name: "",
@@ -72,7 +72,7 @@ export const AddCoursePage = () => {
   const handleFileChange = (event: any) => {
     const file = event.target.files[0];
     if (file && isValidFileType(file)) {
-      setImageData(event.target.files[0]);
+      // setImageData(event.target.files[0]);
       setCourse({ ...course, image: event.target.files[0] });
       const url = URL.createObjectURL(file);
       setImageUrl(url);
