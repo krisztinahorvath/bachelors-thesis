@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { TeacherAppBar } from "../components/TeacherAppBar";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { Course } from "../models/Course";
 import { BACKEND_URL } from "../constants";
-import { Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
+import { Card, CardMedia, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import { displayErrorMessage } from "../components/ToastMessage";
 import { getToken } from "../utils/auth-utils";
 import { CourseSideBar } from "../components/CourseSideBar";
+import { ShowStudentsAtCourse } from "../components/teachers/ShowStudentsAtCourse";
+import { ShowAssignmentsAtCourse } from "../components/teachers/ShowCourseAssignments";
 
 const leftGridItemStyle = {
   display: "flex",
@@ -23,9 +24,10 @@ const rightGridItemStyle: React.CSSProperties = {
   justifyContent: "center",
 };
 
-export const CourseDetailsForTeacher = () => {
+export const CoursePageTeacher = () => {
   const location = useLocation();
   const courseId = location.state;
+  const currentPath = location.pathname;
   const [course, setCourse] = useState<Course>({
     id: -1,
     name: "",
@@ -34,20 +36,28 @@ export const CourseDetailsForTeacher = () => {
   });
 
   useEffect(() => {
-    const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
-    axios
-      .get(`${BACKEND_URL}/courses/${courseId}`, headers)
-      .then((response) => {
-        setCourse(response.data);
-      })
-      .catch((error: any) => {
-        if (error.response) {
-          const errorMessage = error.response.data;
-          displayErrorMessage(errorMessage);
-        } else {
-          displayErrorMessage("An error occurred while fetching the courses.");
-        }
-      });
+    const fetchCourse = async () => {
+      const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
+      axios
+        .get(`${BACKEND_URL}/courses/${courseId}`, headers)
+        .then((response) => {
+          setCourse(response.data);
+        })
+        .catch((error: any) => {
+          if (error.response) {
+            const errorMessage = error.response.data;
+            displayErrorMessage(errorMessage);
+          } else {
+            displayErrorMessage(
+              "An error occurred while fetching the courses."
+            );
+          }
+        });
+    };
+
+    if (courseId != null) {
+      fetchCourse();
+    }
   }, [courseId]);
 
   return (
@@ -97,6 +107,20 @@ export const CourseDetailsForTeacher = () => {
           </Card>
 
           <h1> Course with id {courseId} </h1>
+          <Routes>
+            {/* <Route
+              path="*"
+              element={<ShowStudentsAtCourse courseId={courseId} />}
+            /> */}
+            <Route
+              path="students"
+              element={<ShowStudentsAtCourse courseId={courseId} />}
+            />
+            <Route
+              path="assignments"
+              element={<ShowAssignmentsAtCourse courseId={courseId} />}
+            />
+          </Routes>
         </Grid>
       </Grid>
     </React.Fragment>

@@ -17,7 +17,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { Settings } from "@mui/icons-material";
 import Divider from "@mui/material/Divider";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { handleLogoutUtil } from "../utils/auth-utils";
+import { handleLogoutUtil } from "../../utils/auth-utils";
 import { Link } from "react-router-dom";
 
 const appBarStyles = {

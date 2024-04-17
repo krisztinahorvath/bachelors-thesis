@@ -5,25 +5,40 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import DraftsIcon from "@mui/icons-material/Drafts";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import SendIcon from "@mui/icons-material/Send";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorder from "@mui/icons-material/StarBorder";
 import HomeIcon from "@mui/icons-material/Home";
 import { Typography } from "@mui/material";
 import classroomSVG from "../assets/classroom.svg";
+import { useLocation, useNavigate } from "react-router-dom";
+import SchoolIcon from "@mui/icons-material/School";
 
 export const CourseSideBar = () => {
   const [open, setOpen] = React.useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClick = () => {
     setOpen(!open);
   };
 
+  const handleNavigateToStudents = () => {
+    if (!location.pathname.endsWith("/students")) {
+      navigate(`${location.pathname}/students`);
+    }
+  };
+
+  const handleNavigateToAssignments = () => {
+    if (!location.pathname.endsWith("/assignments")) {
+      navigate(`${location.pathname}/assignments`);
+    }
+  };
+
   return (
+    // use collapse for making it small
     <List
       sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
       component="nav"
@@ -34,7 +49,11 @@ export const CourseSideBar = () => {
         </ListSubheader>
       }
     >
-      <ListItemButton>
+      <ListItemButton
+        onClick={() => {
+          navigate("/teacher-dashboard");
+        }}
+      >
         <ListItemIcon>
           <HomeIcon />
         </ListItemIcon>
@@ -45,10 +64,24 @@ export const CourseSideBar = () => {
         <ListItemIcon>
           <DraftsIcon />
         </ListItemIcon>
-        <ListItemText primary="Drafts" />
+        <ListItemText primary="Course Details" />
       </ListItemButton>
 
-      <ListItemButton onClick={handleClick}>
+      <ListItemButton onClick={handleNavigateToStudents}>
+        <ListItemIcon>
+          <SchoolIcon />
+        </ListItemIcon>
+        <ListItemText primary="Enrolled Students" />
+      </ListItemButton>
+
+      <ListItemButton onClick={handleNavigateToAssignments}>
+        <ListItemIcon>
+          <AssignmentIcon />
+        </ListItemIcon>
+        <ListItemText primary="Assignments" />
+      </ListItemButton>
+
+      {/* <ListItemButton onClick={handleClick}>
         <ListItemIcon>
           <AssignmentIcon />
         </ListItemIcon>
@@ -64,7 +97,7 @@ export const CourseSideBar = () => {
             <ListItemText primary="Starred" />
           </ListItemButton>
         </List>
-      </Collapse>
+      </Collapse> */}
       <br />
       <div>
         <img src={classroomSVG} alt="student" style={{ width: "80%" }} />

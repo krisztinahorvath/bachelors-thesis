@@ -10,9 +10,10 @@ import { TeacherHomePage } from "./pages/teacher-home-page/TeacherHomePage";
 import { UserType } from "./models/User";
 import { PrivateRoute } from "./utils/private-route-utils";
 import { RegisterPage } from "./pages/register-page/RegisterPage";
-import { CourseDetailsForTeacher } from "./pages/CourseDetailsTeacher";
+import { CoursePageTeacher } from "./pages/CoursePageTeacher";
 import { AddCoursePage } from "./pages/AddCoursePage";
 import { StudentUserPreferences } from "./pages/StudentUserPreferences";
+import { HomeAppBar } from "./components/HomeAppBar";
 
 function App() {
   return (
@@ -66,11 +67,11 @@ function App() {
             }
           />
           <Route
-            path="/course/:courseIndex/details"
+            path="/course/:courseIndex/details/*"
             element={
               <PrivateRoute
                 allowedUsers={[UserType.Teacher]}
-                element={<CourseDetailsForTeacher />}
+                element={<CoursePageTeacher />}
               />
             }
           />

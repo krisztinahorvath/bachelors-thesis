@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Container, Grid } from "@mui/material";
-import { TeacherAppBar } from "../components/TeacherAppBar";
-import { UploadImage } from "../components/UploadImage";
+import { TeacherAppBar } from "../components/teachers/TeacherAppBar";
+import { UploadImage } from "../components/teachers/UploadImage";
 import React from "react";
 import {
   displayErrorMessage,

@@ -1,12 +1,13 @@
-import { TeacherAppBar } from "../../components/TeacherAppBar";
+import { TeacherAppBar } from "../../components/teachers/TeacherAppBar";
 import { CourseCards } from "../../components/CourseCards";
 import { Container, Tooltip } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import Fab from "@mui/material/Fab";
 
 export const TeacherHomePage = () => {
+  const location = useLocation();
+
   return (
     <Container
       sx={{
@@ -26,6 +27,11 @@ export const TeacherHomePage = () => {
           justifyContent: "flex-end", // 'flex-start'
         }}
       >
+        {/* <Routes>
+          <Route path={`${location}/course/add`}>
+            <AddCoursePage/>
+          </Route>
+        </Routes> */}
         <Link to={`/course/add`}>
           <Tooltip title="Create a course">
             <Fab
