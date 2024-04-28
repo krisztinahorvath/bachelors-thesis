@@ -31,7 +31,7 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
   const [students, setStudents] = useState<Student[]>([]);
 
   // const pageSize = 10;
-  const [noOfPages, setNoOfPages] = useState(0);
+  const [noOfPages] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -79,7 +79,7 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
   };
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     value: number
   ) => {
     page = value;
@@ -113,7 +113,7 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
                   <Th align="center">Name</Th>
                   <Th align="center">Unique Code</Th>
                   <Th align="center">Email</Th>
-                  <Th align="center">Action</Th>
+                  <Th align="center">Remove</Th>
                 </Tr>
               </Thead>
               <Tbody>
