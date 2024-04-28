@@ -466,6 +466,42 @@ namespace app_server.Controllers
             return NoContent();
         }
 
+        // DELETE: api/courses/unenroll/5/5
+        [HttpDelete("unenroll/{courseId}/{studentId}")]
+        public async Task<ActionResult> UnenrollFromCourse(long courseId, long studentId)
+        {
+            if (_context.Courses == null)
+            {
+                return NotFound();
+            }
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+                return Unauthorized("Invalid token or user is not a teacher.");
+
+            var teacherId = tokenData!.Item1;
+
+            // make sure the person deleting the course is a teacher at that course
+            if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == courseId))
+            {
+                return Unauthorized("You can't remove a student from a courses that you aren't a teacher for");
+            }
+
+            var enrollment = await _context.Enrollments
+                .FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == courseId);
+
+            if (enrollment == null)
+            {
+                return NotFound();
+            }
+
+            _context.Enrollments.Remove(enrollment);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private bool CourseExists(long id)
         {
             return (_context.Courses?.Any(e => e.Id == id)).GetValueOrDefault();
@@ -514,7 +550,8 @@ namespace app_server.Controllers
             {
                 Id = student.Id,
                 Name = student.Name,
-                Email = student.Email
+                Email = student.Email,
+                UniqueIdentificationCode = student.UniqueIdentificationCode,
             };
         }
     }
