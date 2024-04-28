@@ -128,9 +128,9 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
                         {student.name}
                       </Link>
                     </Td>
-                    <Td align="right">{student.uniqueIdentificationCode}</Td>
-                    <Td align="right">{student.email}</Td>
-                    <Td align="right">
+                    <Td>{student.uniqueIdentificationCode}</Td>
+                    <Td>{student.email}</Td>
+                    <Td align="center">
                       <IconButton onClick={() => handleDelete(student.id)}>
                         <DeleteIcon sx={{ color: "red" }} />
                       </IconButton>
