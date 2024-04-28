@@ -7,20 +7,18 @@ import { BACKEND_URL } from "../../constants";
 import { displayErrorMessage } from "../ToastMessage";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import {
   CircularProgress,
   Container,
   IconButton,
   Pagination,
-  Paper,
   Stack,
-  TableContainer,
   Tooltip,
 } from "@mui/material";
+import "../../components/responsive-table/ResponsiveTable.css";
 
 interface ShowStudentsAtCourseProps {
-  courseId: any; // Define the courseId prop
+  courseId: any;
 }
 
 let page = 1;
@@ -105,41 +103,45 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
 
       {!loading && students.length > 0 && (
         <Container>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <Thead>
-                <Tr style={{ backgroundColor: "#f5f5f5" }}>
-                  <Th align="center">#</Th>
-                  <Th align="center">Name</Th>
-                  <Th align="center">Unique Code</Th>
-                  <Th align="center">Email</Th>
-                  <Th align="center">Remove</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {students.map((student, index) => (
-                  <Tr key={(page - 1) * 10 + index + 1}>
-                    <Td>{(page - 1) * 10 + index + 1}</Td>
-                    <Td>
-                      <Link
-                        to={`/books/${student.id}/details`}
-                        title="View student profile"
-                      >
-                        {student.name}
-                      </Link>
-                    </Td>
-                    <Td>{student.uniqueIdentificationCode}</Td>
-                    <Td>{student.email}</Td>
-                    <Td>
-                      <IconButton onClick={() => handleDelete(student.id)}>
-                        <DeleteIcon sx={{ color: "red" }} />
-                      </IconButton>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Unique Code</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((student) => (
+                <tr key={student.id}>
+                  <td>
+                    <span className="cell-header">#</span> {student.id}
+                  </td>
+                  <td>
+                    <span className="cell-header">Name:</span> {student.name}
+                  </td>
+                  <td>
+                    <span className="cell-header">Unique Code:</span>{" "}
+                    {student.uniqueIdentificationCode}
+                  </td>
+                  <td>
+                    <span className="cell-header">Email:</span> {student.email}
+                  </td>
+                  <td>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => handleDelete(student.id)}
+                    >
+                      <DeleteIcon sx={{ color: "red" }} />
+                    </IconButton>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
           <Container
             style={{
               backgroundColor: "white",

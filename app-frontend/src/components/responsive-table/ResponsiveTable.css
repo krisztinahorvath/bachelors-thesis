@@ -1,0 +1,38 @@
+table {
+  font-family: Arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+tr {
+  border-bottom: 1px solid #ccc;
+}
+th,
+td {
+  text-align: left;
+  padding: 8px;
+  white-space: nowrap;
+}
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+.cell-header {
+  display: none;
+}
+@media screen and (max-width: 600px) {
+  th {
+    display: none;
+  }
+  .cell-header {
+    display: block;
+    font-weight: bold;
+  }
+  td {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+tr:hover {
+  background-color: #ddd; /* Change background color */
+}
