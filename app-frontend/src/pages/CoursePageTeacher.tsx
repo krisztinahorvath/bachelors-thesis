@@ -9,7 +9,6 @@ import { getToken } from "../utils/auth-utils";
 import { CourseSideBar } from "../components/teachers/CourseSideBar";
 import { ShowStudentsAtCourse } from "../components/teachers/ShowStudentsAtCourse";
 import { ShowAssignmentsAtCourse } from "../components/teachers/ShowCourseAssignments";
-
 // const leftGridItemStyle = {
 //   display: "flex",
 //   alignItems: "center",
