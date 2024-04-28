@@ -106,7 +106,7 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
       {!loading && students.length > 0 && (
         <Container>
           <TableContainer component={Paper}>
-            <Table>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <Thead>
                 <Tr style={{ backgroundColor: "#f5f5f5" }}>
                   <Th align="center">#</Th>
@@ -130,7 +130,7 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
                     </Td>
                     <Td>{student.uniqueIdentificationCode}</Td>
                     <Td>{student.email}</Td>
-                    <Td align="center">
+                    <Td>
                       <IconButton onClick={() => handleDelete(student.id)}>
                         <DeleteIcon sx={{ color: "red" }} />
                       </IconButton>
@@ -140,7 +140,6 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
               </Tbody>
             </Table>
           </TableContainer>
-
           <Container
             style={{
               backgroundColor: "white",
