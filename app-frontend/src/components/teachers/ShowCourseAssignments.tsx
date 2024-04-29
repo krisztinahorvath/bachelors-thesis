@@ -8,17 +8,9 @@ interface ShowAssignmentsAtCourseProps {
 export const ShowAssignmentsAtCourse: React.FC<
   ShowAssignmentsAtCourseProps
 > = ({ courseId }) => {
-  // const courseId = location.state as any as number;
-  //   const [course, setCourse] = useState<Course>({
-  //     id: -1,
-  //     name: "",
-  //     enrollmentKey: "",
-  //     image: "",
-  //   });
-
   return (
     <Container>
-      <h2>Assignmets at course {courseId}</h2>
+      <h2>Assignments</h2>
       <AssignmentsCards courseId={courseId} />
     </Container>
   );
