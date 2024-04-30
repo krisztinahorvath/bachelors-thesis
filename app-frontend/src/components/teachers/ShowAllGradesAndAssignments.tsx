@@ -72,7 +72,6 @@ export const ShowAllGradesAndAssignments: React.FC<
           }
         );
 
-        // Sort rows alphabetically by student name
         const sortedRows = rowData.sort((a, b) =>
           a.StudentName.localeCompare(b.StudentName)
         );
@@ -130,37 +129,44 @@ export const ShowAllGradesAndAssignments: React.FC<
       if (!params.isEditable) {
         return;
       }
+
+      // Ignore portal
       if (
         (event.target as any).nodeType === 1 &&
         !event.currentTarget.contains(event.target as Element)
       ) {
         return;
       }
-      setCellModesModel((prevModel) => ({
-        ...Object.keys(prevModel).reduce(
-          (acc, id) => ({
-            ...acc,
-            [id]: Object.keys(prevModel[id]).reduce(
-              (acc2, field) => ({
-                ...acc2,
+
+      setCellModesModel((prevModel) => {
+        return {
+          // Revert the mode of the other cells from other rows
+          ...Object.keys(prevModel).reduce(
+            (acc, id) => ({
+              ...acc,
+              [id]: Object.keys(prevModel[id]).reduce(
+                (acc2, field) => ({
+                  ...acc2,
+                  [field]: { mode: GridCellModes.View },
+                }),
+                {}
+              ),
+            }),
+            {}
+          ),
+          [params.id]: {
+            // Revert the mode of other cells in the same row
+            ...Object.keys(prevModel[params.id] || {}).reduce(
+              (acc, field) => ({
+                ...acc,
                 [field]: { mode: GridCellModes.View },
               }),
               {}
             ),
-          }),
-          {}
-        ),
-        [params.id]: {
-          ...Object.keys(prevModel[params.id] || {}).reduce(
-            (acc, field) => ({
-              ...acc,
-              [field]: { mode: GridCellModes.View },
-            }),
-            {}
-          ),
-          [params.field]: { mode: GridCellModes.Edit },
-        },
-      }));
+            [params.field]: { mode: GridCellModes.Edit },
+          },
+        };
+      });
     },
     []
   );
@@ -179,13 +185,15 @@ export const ShowAllGradesAndAssignments: React.FC<
       {loading && <CircularProgress />}
 
       {!loading && (
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          cellModesModel={cellModesModel}
-          onCellModesModelChange={handleCellModesModelChange}
-          onCellClick={handleCellClick}
-        />
+        <Container sx={{ height: 600, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            cellModesModel={cellModesModel}
+            onCellModesModelChange={handleCellModesModelChange}
+            onCellClick={handleCellClick}
+          />
+        </Container>
       )}
     </Container>
   );

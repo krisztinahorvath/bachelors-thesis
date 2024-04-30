@@ -396,7 +396,7 @@ namespace app_server.Controllers
                         Grades = grades.OrderBy(g => g.AssignmentId).ToList() // Order grades by assignment
                     }
                 )
-                .OrderBy(dto => dto.StudentName)
+                //.OrderBy(dto => dto.StudentName)
                 .ToList(); // Materialize the query here
 
             //Create a dictionary to store the student data
@@ -421,7 +421,7 @@ namespace app_server.Controllers
 
                     return studentData;
                 })
-                .Take(30)
+                //.Take(30)
                 .ToDictionary(item => $"{item["StudentId"]}");
 
             return Ok(studentsData);
