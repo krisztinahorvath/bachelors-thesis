@@ -187,6 +187,8 @@ export const ShowAllGradesAndAssignments: React.FC<
           key.startsWith("assignment")
         );
 
+        let changedCell = false; // Flag to track if dateReceived was updated
+
         // Iterate through updated fields to find the one that changed
         for (const updatedField of updatedFields) {
           const assignmentId = parseInt(
@@ -198,12 +200,20 @@ export const ShowAllGradesAndAssignments: React.FC<
 
           // Check if the field value changed
           if (originalValue !== updatedValue) {
+            changedCell = true;
             const dateReceivedKey = `dateReceived${assignmentId}`;
             let dateReceived = updatedRow[dateReceivedKey];
 
             // Set dateReceived to current time if it's empty
             if (!dateReceived) {
               dateReceived = new Date();
+              updatedRow[dateReceivedKey] = dateReceived;
+            }
+
+            // Check if the corresponding grade is null
+            const gradeKey = `grade${assignmentId}`;
+            if (updatedRow[gradeKey] === null) {
+              updatedRow[gradeKey] = 0;
             }
 
             // Construct the payload to send to the server
@@ -231,6 +241,59 @@ export const ShowAllGradesAndAssignments: React.FC<
 
             // Return the updated row to update the Data Grid internal state
             return updatedRow;
+          }
+        }
+
+        // If no fields were updated, check if any dateReceived fields were updated
+        if (!changedCell) {
+          const dateReceivedFields = Object.keys(updatedRow).filter((key) =>
+            key.startsWith("dateReceived")
+          );
+
+          for (const dateReceivedField of dateReceivedFields) {
+            const assignmentId = parseInt(
+              dateReceivedField.replace("dateReceived", ""),
+              10
+            );
+            const originalValue = originalRow[dateReceivedField];
+            const updatedValue = updatedRow[dateReceivedField];
+
+            // Check if the field value changed
+            if (originalValue !== updatedValue) {
+              // Check if the corresponding grade is null
+              const gradeKey = `assignment${assignmentId}`;
+              if (updatedRow[gradeKey] === null) {
+                updatedRow[gradeKey] = 0;
+              }
+
+              // Construct the payload to send to the server
+              console.log(updatedRow[gradeKey]);
+              const gradeDTO = {
+                studentId,
+                assignmentId,
+                score: updatedRow[gradeKey], // Use the existing grade value
+                dateReceived: updatedValue,
+              };
+
+              const headers = {
+                headers: { Authorization: `Bearer ${getToken()}` },
+              };
+
+              // Send the payload to the server and await the response
+              const response = await axios.post(
+                `${BACKEND_URL}/grades/create`,
+                gradeDTO,
+                headers
+              );
+
+              // Update the updated row with the new data returned by the server
+              updatedRow[dateReceivedField] = new Date(
+                response.data.dateReceived
+              );
+
+              // Return the updated row to update the Data Grid internal state
+              return updatedRow;
+            }
           }
         }
 
