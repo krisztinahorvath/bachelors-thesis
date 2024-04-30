@@ -207,13 +207,6 @@ export const ShowAllGradesAndAssignments: React.FC<
             // Set dateReceived to current time if it's empty
             if (!dateReceived) {
               dateReceived = new Date();
-              updatedRow[dateReceivedKey] = dateReceived;
-            }
-
-            // Check if the corresponding grade is null
-            const gradeKey = `grade${assignmentId}`;
-            if (updatedRow[gradeKey] === null) {
-              updatedRow[gradeKey] = 0;
             }
 
             // Construct the payload to send to the server
@@ -262,16 +255,17 @@ export const ShowAllGradesAndAssignments: React.FC<
             if (originalValue !== updatedValue) {
               // Check if the corresponding grade is null
               const gradeKey = `assignment${assignmentId}`;
-              if (updatedRow[gradeKey] === null) {
-                updatedRow[gradeKey] = 0;
+              let grade = updatedRow[gradeKey];
+
+              if (!grade) {
+                grade = 0;
               }
 
               // Construct the payload to send to the server
-              console.log(updatedRow[gradeKey]);
               const gradeDTO = {
                 studentId,
                 assignmentId,
-                score: updatedRow[gradeKey], // Use the existing grade value
+                score: grade, // Use the existing grade value
                 dateReceived: updatedValue,
               };
 
@@ -290,6 +284,7 @@ export const ShowAllGradesAndAssignments: React.FC<
               updatedRow[dateReceivedField] = new Date(
                 response.data.dateReceived
               );
+              updatedRow[gradeKey] = response.data.score;
 
               // Return the updated row to update the Data Grid internal state
               return updatedRow;
