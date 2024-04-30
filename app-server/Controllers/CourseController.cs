@@ -358,11 +358,9 @@ namespace app_server.Controllers
         //}
 
         [HttpGet("all/{courseId}")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<ActionResult<Dictionary<string, object>>> GetAllCourseStudentsAssignmentGrades(long courseId)
         {
-         
-
             // Fetch required data from the database
             var enrollments = await _context.Enrollments
                 .Where(e => e.CourseId == courseId)
@@ -408,9 +406,9 @@ namespace app_server.Controllers
                 {
                     var studentData = new Dictionary<string, object>
                     {
-                { "StudentId", key.StudentId },
-                { "StudentName", key.StudentName },
-                { "UniqueIdentificationCode", key.UniqueIdentificationCode }
+                        { "StudentId", key.StudentId },
+                        { "StudentName", key.StudentName },
+                        { "UniqueIdentificationCode", key.UniqueIdentificationCode }
                     };
 
                     // Populate scores and dates received based on the actual assignments in the course
