@@ -183,46 +183,54 @@ export const ShowAllGradesAndAssignments: React.FC<
       try {
         // Extract necessary data from the updated row
         const studentId = updatedRow.id;
-        const updatedField = Object.keys(updatedRow).find((key) =>
+        const updatedFields = Object.keys(updatedRow).filter((key) =>
           key.startsWith("assignment")
         );
-        const assignmentId = updatedField
-          ? parseInt(updatedField.replace("assignment", ""), 10)
-          : null;
-        const score = updatedRow[`assignment${assignmentId}`];
-        let dateReceived = updatedRow[`dateReceived${assignmentId}`];
 
-        // Set dateReceived to current time if it's empty
-        if (!dateReceived) {
-          dateReceived = new Date();
+        // Iterate through updated fields to find the one that changed
+        for (const updatedField of updatedFields) {
+          const assignmentId = parseInt(
+            updatedField.replace("assignment", ""),
+            10
+          );
+          const originalValue = originalRow[updatedField];
+          const updatedValue = updatedRow[updatedField];
+
+          // Check if the field value changed
+          if (originalValue !== updatedValue) {
+            const dateReceivedKey = `dateReceived${assignmentId}`;
+            let dateReceived = updatedRow[dateReceivedKey];
+
+            // Set dateReceived to current time if it's empty
+            if (!dateReceived) {
+              dateReceived = new Date();
+            }
+
+            // Construct the payload to send to the server
+            const gradeDTO = {
+              studentId,
+              assignmentId,
+              score: updatedValue,
+              dateReceived,
+            };
+
+            const headers = {
+              headers: { Authorization: `Bearer ${getToken()}` },
+            };
+
+            // Send the payload to the server
+            await axios.post(`${BACKEND_URL}/grades/create`, gradeDTO, headers);
+
+            // Update the updated row with the new dateReceived value
+            updatedRow[dateReceivedKey] = dateReceived;
+
+            // Return the updated row to update the Data Grid internal state
+            return updatedRow;
+          }
         }
 
-        // Construct the payload to send to the server
-        const gradeDTO = {
-          studentId,
-          assignmentId,
-          score,
-          dateReceived,
-        };
-
-        const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
-
-        // Send the payload to the server
-        const response = await axios.post(
-          `${BACKEND_URL}/grades/create`,
-          gradeDTO,
-          headers
-        );
-
-        // Update the row with the new values from the server response
-        const updatedGradeDTO = response.data;
-        updatedRow[`assignment${assignmentId}`] = updatedGradeDTO.score;
-        updatedRow[`dateReceived${assignmentId}`] = new Date(
-          updatedGradeDTO.dateReceived
-        );
-
-        // Return the updated row to update the Data Grid internal state
-        return updatedRow;
+        // If no fields were updated, return the original row
+        return originalRow;
       } catch (error: any) {
         console.log(error);
         if (error.response) {
