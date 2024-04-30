@@ -11,7 +11,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../../constants";
 import { getToken } from "../../utils/auth-utils";
 import { displayErrorMessage } from "../ToastMessage";
-import { Container } from "@mui/material";
+import { CircularProgress, Container } from "@mui/material";
 
 interface AssignmentNameDTO {
   id: number;
@@ -72,8 +72,13 @@ export const ShowAllGradesAndAssignments: React.FC<
           }
         );
 
+        // Sort rows alphabetically by student name
+        const sortedRows = rowData.sort((a, b) =>
+          a.StudentName.localeCompare(b.StudentName)
+        );
+
         setAssignments(assignmentsData);
-        setRows(rowData);
+        setRows(sortedRows);
         setLoading(false);
       })
       .catch((error: any) => {
@@ -169,13 +174,19 @@ export const ShowAllGradesAndAssignments: React.FC<
 
   return (
     <Container>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        cellModesModel={cellModesModel}
-        onCellModesModelChange={handleCellModesModelChange}
-        onCellClick={handleCellClick}
-      />
+      <h2>Grades at all assignments:</h2>
+
+      {loading && <CircularProgress />}
+
+      {!loading && (
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          cellModesModel={cellModesModel}
+          onCellModesModelChange={handleCellModesModelChange}
+          onCellClick={handleCellClick}
+        />
+      )}
     </Container>
   );
 };
