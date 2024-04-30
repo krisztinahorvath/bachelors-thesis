@@ -218,11 +218,16 @@ export const ShowAllGradesAndAssignments: React.FC<
               headers: { Authorization: `Bearer ${getToken()}` },
             };
 
-            // Send the payload to the server
-            await axios.post(`${BACKEND_URL}/grades/create`, gradeDTO, headers);
+            // Send the payload to the server and await the response
+            const response = await axios.post(
+              `${BACKEND_URL}/grades/create`,
+              gradeDTO,
+              headers
+            );
 
-            // Update the updated row with the new dateReceived value
-            updatedRow[dateReceivedKey] = dateReceived;
+            // Update the updated row with the new data returned by the server
+            updatedRow[dateReceivedKey] = new Date(response.data.dateReceived);
+            updatedRow[updatedField] = response.data.score;
 
             // Return the updated row to update the Data Grid internal state
             return updatedRow;
@@ -232,6 +237,7 @@ export const ShowAllGradesAndAssignments: React.FC<
         // If no fields were updated, return the original row
         return originalRow;
       } catch (error: any) {
+        displayErrorMessage(error);
         console.log(error);
         if (error.response) {
           const errorMessage = error.response.data;
