@@ -75,6 +75,58 @@ namespace app_server.Controllers
             return Ok(grade);
         }
 
+        // POST: api/grades
+        [HttpPost("create")]
+        public async Task<ActionResult<GradeDTO>> CreateOrUpdateGrade(GradeDTO gradeDTO)
+        {
+            if (_context.Grades == null)
+            {
+                return Problem("Entity set 'StudentsRegisterContext.Grades' is null.");
+            }
+
+            // Validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+                return Unauthorized("Invalid token or user is not a teacher.");
+
+            var teacherId = tokenData!.Item1;
+
+            // Valid teacher id
+            if (!_context.Teachers.Any(t => t.Id == teacherId))
+            {
+                return Unauthorized("User is not a registered teacher.");
+            }
+
+            // Check if the grade already exists
+            var existingGrade = await _context.Grades
+                .FirstOrDefaultAsync(g => g.StudentId == gradeDTO.StudentId && g.AssignmentId == gradeDTO.AssignmentId);
+
+            if (existingGrade == null)
+            {
+                // Create new grade
+                var grade = new Grade
+                {
+                    StudentId = gradeDTO.StudentId,
+                    AssignmentId = gradeDTO.AssignmentId,
+                    Score = gradeDTO.Score,
+                    DateReceived = gradeDTO.DateReceived
+                };
+
+                _context.Grades.Add(grade);
+            }
+            else
+            {
+                // Update existing grade
+                existingGrade.Score = gradeDTO.Score;
+                existingGrade.DateReceived = gradeDTO.DateReceived;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(gradeDTO);
+        }
+
+
         // PUT: api/grades/5/5
         [HttpPut("{studentId}/assignmentId")]
         public async Task<IActionResult> PutGrade(long studentId, long assignmentId, GradeDTO gradeDTO)
