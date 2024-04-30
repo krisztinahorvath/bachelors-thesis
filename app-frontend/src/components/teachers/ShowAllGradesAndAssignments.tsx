@@ -37,7 +37,7 @@ interface RowData {
   id: number;
   StudentName: string;
   UniqueIdentificationCode: string;
-  [key: string]: number | string | null | undefined;
+  [key: string]: number | string | null | undefined | Date;
 }
 
 export const ShowAllGradesAndAssignments: React.FC<
@@ -88,14 +88,12 @@ export const ShowAllGradesAndAssignments: React.FC<
 
             studentData[assignmentKey] = score !== undefined ? score : null;
             studentData[dateReceivedKey] =
-              dateReceived !== undefined ? dateReceived : null;
+              dateReceived !== undefined ? new Date(dateReceived) : null; // Transform value into Date object
           });
 
           rowData.push(studentData);
         });
 
-        // Now you have the rowData ready to be used in your grid
-        console.log(rowData);
         setRows(rowData);
         setLoading(false);
       })
@@ -125,13 +123,15 @@ export const ShowAllGradesAndAssignments: React.FC<
       field: `assignment${assignment.id}`,
       headerName: assignment.name, // Assuming 'name' is the property containing the assignment name
       // width: 180,
+      // type: "float",
       editable: true,
     },
     {
       field: `dateReceived${assignment.id}`,
       headerName: "Date Received",
       width: 180,
-      editable: false, // TODO CHANGE THIS ************************************************
+      type: "dateTime",
+      editable: true, // TODO CHANGE THIS ************************************************
     },
   ]);
 
@@ -141,58 +141,18 @@ export const ShowAllGradesAndAssignments: React.FC<
       headerName: "Student Name",
       width: 200,
       editable: false,
+      hideable: false,
     },
     {
       field: "UniqueIdentificationCode",
       headerName: "Unique Id Code",
       width: 180,
       editable: false,
+      hideable: false,
+      sortable: false,
     },
     ...assignmentColumns,
   ];
-
-  // const rows: GridRowsProp = [
-  //   {
-  //     id: 1,
-  //     studentId: 1974,
-  //     studentName: "Adelle Trantow",
-  //     uniqueIdentificationCode: "npx170tm",
-  //     assignmentId: 55,
-  //     assignmentName: "A1",
-  //     score: "",
-  //     dateReceived: null,
-  //   },
-  //   {
-  //     id: 2,
-  //     studentId: 1974,
-  //     studentName: "Adelle Trantow",
-  //     uniqueIdentificationCode: "npx170tm",
-  //     assignmentId: 56,
-  //     assignmentName: "A2",
-  //     score: "",
-  //     dateReceived: null,
-  //   },
-  //   {
-  //     id: 3,
-  //     studentId: 1845,
-  //     studentName: "Ahmed Ledner",
-  //     uniqueIdentificationCode: "4owcazzl",
-  //     assignmentId: 55,
-  //     assignmentName: "A1",
-  //     score: "",
-  //     dateReceived: null,
-  //   },
-  //   {
-  //     id: 4,
-  //     studentId: 1845,
-  //     studentName: "Ahmed Ledner",
-  //     uniqueIdentificationCode: "4owcazzl",
-  //     assignmentId: 56,
-  //     assignmentName: "A2",
-  //     score: "",
-  //     dateReceived: null,
-  //   },
-  // ];
 
   const [cellModesModel, setCellModesModel] =
     React.useState<GridCellModesModel>({});

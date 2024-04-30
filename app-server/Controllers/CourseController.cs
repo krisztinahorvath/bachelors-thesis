@@ -421,6 +421,7 @@ namespace app_server.Controllers
 
                     return studentData;
                 })
+                .Take(30)
                 .ToDictionary(item => $"{item["StudentId"]}");
 
             return Ok(studentsData);
