@@ -295,6 +295,9 @@ namespace app_server.Controllers
                 )
                 .ToListAsync();
 
+            // Get distinct assignment IDs
+            var assignmentIds = _context.Assignments.Where(a => a.CourseId == courseId).Select(a => a.Id).OrderBy(a => a).ToList();
+
             // Perform the grouping operation client-side
             var groupedGrades = enrollments
                 .GroupJoin(
@@ -316,18 +319,31 @@ namespace app_server.Controllers
             // Create RegisterDTO instances from the grouped data
             var registerDTOs = groupedGrades.GroupBy(
                 result => new { result.StudentId, result.StudentName, result.UniqueIdentificationCode },
-                (key, group) => new RegisterDTO
+                (key, group) =>
                 {
-                    StudentId = key.StudentId,
-                    StudentName = key.StudentName,
-                    UniqueIdentificationCode = key.UniqueIdentificationCode,
-                    Scores = group.SelectMany(g => g.Grades.Select(grade => grade != null ? grade.Score : (float?)null)).ToList(),
-                    DatesReceived = group.SelectMany(g => g.Grades.Select(grade => grade != null ? (DateTime?)grade.DateReceived : null)).ToList()
+                    var scores = new List<float?>();
+                    var datesReceived = new List<DateTime?>();
+
+                    // Populate scores and dates received lists based on the actual assignments in the course
+                    foreach (var assignmentId in assignmentIds)
+                    {
+                        var grade = group.FirstOrDefault(g => g.AssignmentId == assignmentId)?.Grades.FirstOrDefault();
+                        scores.Add(grade?.Score);
+                        datesReceived.Add(grade?.DateReceived);
+                    }
+
+                    return new RegisterDTO
+                    {
+                        StudentId = key.StudentId,
+                        StudentName = key.StudentName,
+                        UniqueIdentificationCode = key.UniqueIdentificationCode,
+                        Scores = scores,
+                        DatesReceived = datesReceived
+                    };
                 });
 
             return Ok(registerDTOs);
         }
-
 
         [HttpPost("create")]
         //[AllowAnonymous]
