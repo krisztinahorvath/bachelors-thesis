@@ -274,10 +274,95 @@ namespace app_server.Controllers
         //    return Ok(registerDTOs);
         //}
 
+
+        // THIS IS THE GOOD ONE WITH LISTS:
+        //[HttpGet("all/{courseId}")]
+        ////[AllowAnonymous]
+        //public async Task<ActionResult<IEnumerable<RegisterDTO>>> GetAllCourseStudentsAssignmentGrades(long courseId)
+        //{
+        //    // validate token data
+        //    var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+        //    if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+        //        return Unauthorized("Invalid token or user is not a teacher.");
+
+
+        //    // check if user is a course teacher at that course
+        //    if (!_context.CourseTeachers.Any(c => c.CourseId == courseId && c.TeacherId == tokenData.Item1))
+        //        return Unauthorized("You aren't authorized to see grades at this course.");
+
+        //    // Fetch required data from the database
+        //    var enrollments = await _context.Enrollments
+        //        .Where(e => e.CourseId == courseId)
+        //        .Join(
+        //            _context.Students,
+        //            enrollment => enrollment.StudentId,
+        //            student => student.Id,
+        //            (enrollment, student) => new { enrollment, student }
+        //        )
+        //        .Join(
+        //            _context.Assignments.Where(a => a.CourseId == courseId),
+        //            enrollmentStudent => true,
+        //            assignment => true,
+        //            (enrollmentStudent, assignment) => new { enrollmentStudent, assignment }
+        //        )
+        //        .ToListAsync();
+
+        //    // Get distinct assignment IDs
+        //    var assignmentIds = _context.Assignments.Where(a => a.CourseId == courseId).Select(a => a.Id).OrderBy(a => a).ToList();
+
+        //    // Perform the grouping operation client-side
+        //    var groupedGrades = enrollments
+        //        .GroupJoin(
+        //            _context.Grades,
+        //            joinResult => new { StudentId = joinResult.enrollmentStudent.student.Id, AssignmentId = joinResult.assignment.Id },
+        //            grade => new { grade.StudentId, grade.AssignmentId },
+        //            (joinResult, grades) => new
+        //            {
+        //                StudentId = joinResult.enrollmentStudent.student.Id,
+        //                StudentName = joinResult.enrollmentStudent.student.Name,
+        //                UniqueIdentificationCode = joinResult.enrollmentStudent.student.UniqueIdentificationCode,
+        //                AssignmentId = joinResult.assignment.Id,
+        //                Grades = grades.OrderBy(g => g.AssignmentId).ToList() // Order grades by assignment
+        //            }
+        //        )
+        //        .OrderBy(dto => dto.StudentName)
+        //        .ToList(); // Materialize the query here
+
+        //    // Create RegisterDTO instances from the grouped data
+        //    var registerDTOs = groupedGrades.GroupBy(
+        //        result => new { result.StudentId, result.StudentName, result.UniqueIdentificationCode },
+        //        (key, group) =>
+        //        {
+        //            var scores = new List<float?>();
+        //            var datesReceived = new List<DateTime?>();
+
+        //            // Populate scores and dates received lists based on the actual assignments in the course
+        //            foreach (var assignmentId in assignmentIds)
+        //            {
+        //                var grade = group.FirstOrDefault(g => g.AssignmentId == assignmentId)?.Grades.FirstOrDefault();
+        //                scores.Add(grade?.Score);
+        //                datesReceived.Add(grade?.DateReceived);
+        //            }
+
+        //            return new RegisterDTO
+        //            {
+        //                StudentId = key.StudentId,
+        //                StudentName = key.StudentName,
+        //                UniqueIdentificationCode = key.UniqueIdentificationCode,
+        //                Scores = scores,
+        //                DatesReceived = datesReceived
+        //            };
+        //        });
+
+        //    return Ok(registerDTOs);
+        //}
+
         [HttpGet("all/{courseId}")]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<RegisterDTO>>> GetAllCourseStudentsAssignmentGrades(long courseId)
+        public async Task<ActionResult<Dictionary<string, object>>> GetAllCourseStudentsAssignmentGrades(long courseId)
         {
+         
+
             // Fetch required data from the database
             var enrollments = await _context.Enrollments
                 .Where(e => e.CourseId == courseId)
@@ -316,34 +401,34 @@ namespace app_server.Controllers
                 .OrderBy(dto => dto.StudentName)
                 .ToList(); // Materialize the query here
 
-            // Create RegisterDTO instances from the grouped data
-            var registerDTOs = groupedGrades.GroupBy(
+            //Create a dictionary to store the student data
+            var studentsData = groupedGrades.GroupBy(
                 result => new { result.StudentId, result.StudentName, result.UniqueIdentificationCode },
                 (key, group) =>
                 {
-                    var scores = new List<float?>();
-                    var datesReceived = new List<DateTime?>();
+                    var studentData = new Dictionary<string, object>
+                    {
+                { "StudentId", key.StudentId },
+                { "StudentName", key.StudentName },
+                { "UniqueIdentificationCode", key.UniqueIdentificationCode }
+                    };
 
-                    // Populate scores and dates received lists based on the actual assignments in the course
+                    // Populate scores and dates received based on the actual assignments in the course
                     foreach (var assignmentId in assignmentIds)
                     {
                         var grade = group.FirstOrDefault(g => g.AssignmentId == assignmentId)?.Grades.FirstOrDefault();
-                        scores.Add(grade?.Score);
-                        datesReceived.Add(grade?.DateReceived);
+                        studentData[$"assignment{assignmentId}"] = grade?.Score;
+                        studentData[$"dateReceived{assignmentId}"] = grade?.DateReceived;
                     }
 
-                    return new RegisterDTO
-                    {
-                        StudentId = key.StudentId,
-                        StudentName = key.StudentName,
-                        UniqueIdentificationCode = key.UniqueIdentificationCode,
-                        Scores = scores,
-                        DatesReceived = datesReceived
-                    };
-                });
+                    return studentData;
+                })
+                .ToDictionary(item => $"{item["StudentId"]}");
 
-            return Ok(registerDTOs);
+            return Ok(studentsData);
         }
+
+
 
         [HttpPost("create")]
         //[AllowAnonymous]

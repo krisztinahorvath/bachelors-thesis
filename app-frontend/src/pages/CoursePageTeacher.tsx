@@ -9,6 +9,7 @@ import { getToken } from "../utils/auth-utils";
 import { CourseSideBar } from "../components/teachers/CourseSideBar";
 import { ShowStudentsAtCourse } from "../components/teachers/ShowStudentsAtCourse";
 import { ShowAssignmentsAtCourse } from "../components/teachers/ShowCourseAssignments";
+import { ShowAllGradesAndAssignments } from "../components/teachers/ShowAllGradesAndAssignments";
 // const leftGridItemStyle = {
 //   display: "flex",
 //   alignItems: "center",
@@ -115,6 +116,10 @@ export const CoursePageTeacher = () => {
           )}
           {selectedTab === "assignments" && (
             <ShowAssignmentsAtCourse courseId={courseId} />
+          )}
+          {selectedTab === "grades" && (
+            <ShowAllGradesAndAssignments courseId={courseId} />
+            //<ShowAssignmentsAtCourse courseId={courseId} />
           )}
           {/* <Routes>
             {/* <Route

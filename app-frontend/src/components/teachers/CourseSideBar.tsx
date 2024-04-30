@@ -27,6 +27,10 @@ export const CourseSideBar = ({
     onSelectTab("assignments");
   };
 
+  const handleNavigateToGrades = () => {
+    onSelectTab("grades");
+  };
+
   const handleNavigateToDetails = () => {
     onSelectTab("");
   };
@@ -75,7 +79,7 @@ export const CourseSideBar = ({
         <ListItemText primary="Assignments" />
       </ListItemButton>
 
-      <ListItemButton onClick={handleNavigateToAssignments}>
+      <ListItemButton onClick={handleNavigateToGrades}>
         <ListItemIcon>
           <GradingIcon />
         </ListItemIcon>

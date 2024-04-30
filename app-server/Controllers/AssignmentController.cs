@@ -89,6 +89,33 @@ namespace app_server.Controllers
                 .Select(x => AssignmentToDTO(x)).ToListAsync();
         }
 
+        // GET: api/assignments/names/course/5
+        [HttpGet("names/course/{courseId}")]
+        public async Task<ActionResult<IEnumerable<AssignmentNameDTO>>> GetAllAssignmentNamesAtCourse(long courseId)
+        {
+            if (_context.Assignments == null)
+            {
+                return NotFound();
+            }
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || tokenData?.Item1 == null)
+                return Unauthorized("Invalid token.");
+
+            var userId = tokenData.Item1;
+
+            // check if user is a course teacher or it is a student enrolled to that course
+            if (!_context.Enrollments.Any(e => e.CourseId == courseId && e.StudentId == userId) &&
+                !_context.CourseTeachers.Any(c => c.CourseId == courseId && c.TeacherId == userId))
+                return Unauthorized("You aren't authorized to see information about this assignment.");
+
+            return await _context.Assignments
+                .Where(a => a.CourseId == courseId)
+                //.OrderBy(a => a.DueDate)
+                .Select(x => AssignmentNameToDTO(x)).ToListAsync();
+        }
+
         // POST: api/assignments
         [HttpPost]
         public async Task<ActionResult<AssignmentDTO>> CreateAssignment(AssignmentDTO assignmentDTO)
@@ -232,6 +259,15 @@ namespace app_server.Controllers
                 Description = assignment.Description,
                 DueDate = assignment.DueDate,
                 CourseId = assignment.CourseId
+            };
+        }
+
+        private static AssignmentNameDTO AssignmentNameToDTO(Assignment assignment)
+        {
+            return new AssignmentNameDTO
+            {
+                Id = assignment.Id,
+                Name = assignment.Name,
             };
         }
     }
