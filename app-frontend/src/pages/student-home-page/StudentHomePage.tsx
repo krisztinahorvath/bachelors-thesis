@@ -9,6 +9,7 @@ import { EnrollDialog } from "../../components/EnrollDialog";
 export const StudentHomePage = () => {
   const [open, setOpen] = useState(false);
   const [newEnrollment, setNewEnrollment] = useState(false);
+  const [courseCardsKey, setCourseCardsKey] = useState(0);
 
   const handleClose = () => {
     setOpen(false);
@@ -16,6 +17,9 @@ export const StudentHomePage = () => {
 
   useEffect(() => {
     if (newEnrollment) {
+      // increment the key to force CourseCards component to re-render
+      setCourseCardsKey((prevKey) => prevKey + 1);
+      // reset newEnrollment to false
       setNewEnrollment(false);
     }
   }, [newEnrollment]);
@@ -39,11 +43,6 @@ export const StudentHomePage = () => {
           justifyContent: "flex-end", // 'flex-start'
         }}
       >
-        {/* <Routes>
-          <Route path={`${location}/course/add`}>
-            <AddCoursePage/>
-          </Route>
-        </Routes> */}
         <Tooltip
           title="Enroll to course"
           onClick={() => {
@@ -59,13 +58,9 @@ export const StudentHomePage = () => {
             <AddIcon />
           </Fab>
         </Tooltip>
-        {/* <IconButton size="large">
-            <AddIcon color="primary" fontSize="inherit" />
-          </IconButton> */}
         <br />
         {open && (
           <EnrollDialog
-            key={newEnrollment ? "enroll" : "normal"}
             open={open}
             handleClose={handleClose}
             onNewEnrollment={() => setNewEnrollment(true)}
@@ -73,7 +68,7 @@ export const StudentHomePage = () => {
         )}
       </Container>
 
-      <CourseCards userType={UserType.Student} />
+      <CourseCards key={courseCardsKey} userType={UserType.Student} />
 
       <br />
     </Container>
