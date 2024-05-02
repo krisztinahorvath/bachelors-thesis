@@ -4,7 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../../constants";
 import { Button, IconButton, InputAdornment } from "@mui/material";
 import { User, UserType } from "../../models/User";
-import { setEmail, setToken, setUserType } from "../../utils/auth-utils";
+import {
+  getToken,
+  setEmail,
+  setToken,
+  setUserType,
+} from "../../utils/auth-utils";
 import {
   StyledTextField,
   formStyle,
@@ -22,6 +27,7 @@ import {
 } from "../../components/ToastMessage";
 import React from "react";
 import { HomeAppBar } from "../../components/HomeAppBar";
+import { setStudentUserPreferences } from "../../utils/student-user-preferences";
 
 // const Item = styled(Paper)(({ theme }) => ({
 //   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -56,6 +62,25 @@ export const LoginPage = () => {
     };
   }, []);
 
+  const handleUserPreferencesStudent = async () => {
+    const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
+    await axios
+      .get(`${BACKEND_URL}/students/user-preferences`, headers)
+      .then((response) => {
+        setStudentUserPreferences(response.data);
+      })
+      .catch((error: any) => {
+        if (error.response) {
+          const errorMessage = error.response.data;
+          displayErrorMessage(errorMessage);
+        } else {
+          displayErrorMessage(
+            "An error occurred while fetching the user preferences."
+          );
+        }
+      });
+  };
+
   const handleLogin = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     try {
@@ -67,6 +92,7 @@ export const LoginPage = () => {
       displaySuccessMessage("You logged in successfully!");
 
       if (response.data.userType === UserType.Student) {
+        handleUserPreferencesStudent(); // set user preferences
         navigate("/student-dashboard");
       } else if (response.data.userType === UserType.Teacher) {
         navigate("/teacher-dashboard");

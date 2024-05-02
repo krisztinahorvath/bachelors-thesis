@@ -16,8 +16,11 @@
             return new UserPreference
             {
                 StudentId = this.Id,
-                ShowLeaderboard = true,
-                // assign the default values to the user preference fields
+                ShowPoints = true,
+                ShowLevels = true,
+                ShowBadges = true,
+                ShowProgressBars = true,
+                ShowLeaderboards = true,
             };
         }
     }

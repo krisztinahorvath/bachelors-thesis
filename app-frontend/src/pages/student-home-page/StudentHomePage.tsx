@@ -33,7 +33,6 @@ export const StudentHomePage = () => {
     // }}
     >
       <StudentAppBar />
-      {/* <MyCard/> */}
       <h3 style={{ textAlign: "left", paddingLeft: "2.5%" }}>My courses:</h3>
       <Container
         sx={{

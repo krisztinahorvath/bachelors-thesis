@@ -1,63 +1,70 @@
 import { jwtDecode } from "jwt-decode";
 
 export const getToken = () => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-    if(token && isValidToken(token)){
-        return localStorage.getItem("token");
-    }
-     
-    handleLogoutUtil();
-    return null;
-}
+  if (token && isValidToken(token)) {
+    return localStorage.getItem("token");
+  }
+
+  handleLogoutUtil();
+  return null;
+};
 
 export const getUserType = () => {
-    return localStorage.getItem("userType");
-}
+  return localStorage.getItem("userType");
+};
 
 export const getEmail = () => {
-    return localStorage.getItem("email");
-}
+  return localStorage.getItem("email");
+};
 
-export const setToken = (token:string) => {
-    localStorage.setItem("token", token);
-}
+export const setToken = (token: string) => {
+  localStorage.setItem("token", token);
+};
 
 export const setUserType = (userType: string) => {
-    localStorage.setItem("userType", userType);
-}
+  localStorage.setItem("userType", userType);
+};
 
 export const setEmail = (email: string) => {
-    localStorage.setItem("email", email);
-}
+  localStorage.setItem("email", email);
+};
 
 export const handleLogoutUtil = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userType");
-    localStorage.removeItem("email");
+  localStorage.removeItem("token");
+  localStorage.removeItem("userType");
+  localStorage.removeItem("email");
+
+  // user preferences
+  localStorage.removeItem("showPoints");
+  localStorage.removeItem("showLevels");
+  localStorage.removeItem("showBadges");
+  localStorage.removeItem("showProgressBars");
+  localStorage.removeItem("showLeaderboards");
 };
 
 export const isUserLoggedIn = () => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-    if(token && !isValidToken(token)){
-        handleLogoutUtil();
-        return false;
-    }
+  if (token && !isValidToken(token)) {
+    handleLogoutUtil();
+    return false;
+  }
 
-    return true;
-}
+  return true;
+};
 
 const isValidToken = (token: string) => {
-    const decodedToken =  jwtDecode(token);
+  const decodedToken = jwtDecode(token);
 
-    if(decodedToken && typeof decodedToken.exp === 'number'){
-        const expirationDate = decodedToken.exp * 1000;
+  if (decodedToken && typeof decodedToken.exp === "number") {
+    const expirationDate = decodedToken.exp * 1000;
 
-        if(expirationDate < Date.now()){
-            return false;
-        }
-    } 
+    if (expirationDate < Date.now()) {
+      return false;
+    }
+  }
 
-    return true;
-}
+  return true;
+};

@@ -1,12 +1,7 @@
-﻿namespace app_server.Models
+﻿namespace app_server.Models.DTOs
 {
-    public class UserPreference
+    public class StudentUserPreferenceDTO
     {
-        public long Id { get; set; }
-
-        public long StudentId { get; set; }
-        public virtual Student Student { get; set; } = null!;
-
         public bool ShowPoints { get; set; }
         public bool ShowLevels { get; set; }
         public bool ShowBadges { get; set; }

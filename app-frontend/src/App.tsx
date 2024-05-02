@@ -69,7 +69,7 @@ function App() {
             path="/course/:courseIndex/details/*"
             element={
               <PrivateRoute
-                allowedUsers={[UserType.Teacher]}
+                allowedUsers={[UserType.Teacher, UserType.Student]}
                 element={<CoursePageTeacher />}
               />
             }

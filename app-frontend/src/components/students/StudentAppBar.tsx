@@ -89,7 +89,8 @@ export const StudentAppBar = () => {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="student-dashboard"
+            //href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -142,7 +143,8 @@ export const StudentAppBar = () => {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="student-dashboard"
+            // href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -226,7 +228,7 @@ export const StudentAppBar = () => {
                 <ListItemIcon>
                   <Settings fontSize="small" />
                 </ListItemIcon>
-                Settings
+                Page Settings
               </MenuItem>
               <MenuItem
                 component={Link}

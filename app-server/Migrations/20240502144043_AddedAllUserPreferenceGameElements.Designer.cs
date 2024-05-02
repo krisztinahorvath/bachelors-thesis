@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using app_server.Models;
 
@@ -11,9 +12,11 @@ using app_server.Models;
 namespace app_server.Migrations
 {
     [DbContext(typeof(StudentsRegisterContext))]
-    partial class StudentsRegisterContextModelSnapshot : ModelSnapshot
+    [Migration("20240502144043_AddedAllUserPreferenceGameElements")]
+    partial class AddedAllUserPreferenceGameElements
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,7 +179,7 @@ namespace app_server.Migrations
                     b.Property<bool>("ShowBadges")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("ShowLeaderboards")
+                    b.Property<bool>("ShowLeaderboard")
                         .HasColumnType("bit");
 
                     b.Property<bool>("ShowLevels")
@@ -185,7 +188,7 @@ namespace app_server.Migrations
                     b.Property<bool>("ShowPoints")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("ShowProgressBars")
+                    b.Property<bool>("ShowProgressBar")
                         .HasColumnType("bit");
 
                     b.Property<long>("StudentId")
