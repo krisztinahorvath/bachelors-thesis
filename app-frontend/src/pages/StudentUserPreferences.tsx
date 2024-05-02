@@ -99,13 +99,11 @@ export const StudentUserPreferences = () => {
         headers
       );
 
-      console.log(response);
-
       if (response.status === 204) {
         displaySuccessMessage("Preferences updated successfully!");
 
         // set the user preferences
-        setStudentUserPreferences(response.data);
+        setStudentUserPreferences(studentUserPreferenceDTO);
       } else {
         displayErrorMessage("An error occured in updating the preferences.");
       }
@@ -114,6 +112,7 @@ export const StudentUserPreferences = () => {
         const errorMessage = error.response.data;
         displayErrorMessage(`Updating preferences failed. ${errorMessage}`);
       } else {
+        console.log(error);
         displayErrorMessage(
           "An error occurred while trying to update preferences."
         );
