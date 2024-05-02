@@ -1,5 +1,3 @@
-import React from "react";
-
 const Demo = () => {
   const date = new Date(2023, 2, 19, 15, 57, 25);
 
