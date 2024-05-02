@@ -558,8 +558,13 @@ namespace app_server.Controllers
             Course course = await _context.Courses.FirstOrDefaultAsync(c => c.EnrollmentKey == enrollmentKey);
             if (course == null)
             {
-                return BadRequest("Invalid enrollment key, no course could be found with that key");
+                return BadRequest("Invalid enrollment key, no course could be found with key '" + enrollmentKey + "'.");
             }
+
+            Enrollment existingEnrollment = await _context.Enrollments.FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == course.Id);
+
+            if (existingEnrollment != null)
+                return BadRequest("You are already enrolled to this course.");
 
             Enrollment enrollment = new Enrollment
             {

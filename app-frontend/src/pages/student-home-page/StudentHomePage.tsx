@@ -3,15 +3,22 @@ import { Container, Fab, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { CourseCards } from "../../components/CourseCards";
 import { UserType } from "../../models/User";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EnrollDialog } from "../../components/EnrollDialog";
 
 export const StudentHomePage = () => {
   const [open, setOpen] = useState(false);
+  const [newEnrollment, setNewEnrollment] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (newEnrollment) {
+      setNewEnrollment(false);
+    }
+  }, [newEnrollment]);
 
   return (
     <Container
@@ -56,7 +63,14 @@ export const StudentHomePage = () => {
             <AddIcon color="primary" fontSize="inherit" />
           </IconButton> */}
         <br />
-        {open && <EnrollDialog open={open} handleClose={handleClose} />}
+        {open && (
+          <EnrollDialog
+            key={newEnrollment ? "enroll" : "normal"}
+            open={open}
+            handleClose={handleClose}
+            onNewEnrollment={() => setNewEnrollment(true)}
+          />
+        )}
       </Container>
 
       <CourseCards userType={UserType.Student} />

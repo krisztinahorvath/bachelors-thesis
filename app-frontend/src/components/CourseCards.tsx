@@ -13,11 +13,7 @@ import { displayErrorMessage } from "./ToastMessage";
 import { CircularProgress, Container } from "@mui/material";
 import { UserType } from "../models/User";
 
-interface CourseCardsProps {
-  userType: UserType;
-}
-
-export const CourseCards: React.FC<CourseCardsProps> = ({ userType }) => {
+export const CourseCards: React.FC<{ userType: UserType }> = ({ userType }) => {
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState<Course[]>([]);
 

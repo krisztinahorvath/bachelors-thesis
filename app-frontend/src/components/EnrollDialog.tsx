@@ -14,7 +14,8 @@ import { displayErrorMessage, displaySuccessMessage } from "./ToastMessage";
 export const EnrollDialog: React.FC<{
   open: boolean;
   handleClose: () => void;
-}> = ({ open, handleClose }) => {
+  onNewEnrollment: () => void;
+}> = ({ open, handleClose, onNewEnrollment }) => {
   return (
     <Dialog
       open={open}
@@ -24,42 +25,36 @@ export const EnrollDialog: React.FC<{
         onSubmit: async (event: React.FormEvent<HTMLFormElement>) => {
           event.preventDefault();
 
-          const formData = new FormData(event.currentTarget);
-          const formJson = Object.fromEntries((formData as any).entries());
-          const enrollmentKey = formJson.enrollmentkey;
-
-          // /courses/enroll/${enrollmentKey}
           try {
+            const formData = new FormData(event.currentTarget);
+            const formJson = Object.fromEntries((formData as any).entries());
+            const enrollmentKey = formJson.enrollmentkey;
+
+            const headers = {
+              headers: { Authorization: `Bearer ${getToken()}` },
+            };
+
             const response = await axios.post(
               `${BACKEND_URL}/courses/enroll/${enrollmentKey}`,
-              //   enrollmentKey,
-              {
-                headers: {
-                  Authorization: `Bearer ${getToken()}`,
-                },
-              }
+              {},
+              headers
             );
 
             if (response.status === 200) {
-              displaySuccessMessage("The enrollment was successfully!");
+              displaySuccessMessage("Enrollment was successful!");
+              onNewEnrollment();
             } else {
-              displayErrorMessage("Enrollment failed: "); //" + response.data.errorMessage
-              //);
+              displayErrorMessage("Enrollment failed");
             }
           } catch (error: any) {
-            console.log(error);
-            displayErrorMessage(error);
             if (error.response) {
               const errorMessage = error.response.data;
-              displayErrorMessage(error);
+              displayErrorMessage(`Enrollment failed: ${errorMessage}`);
             } else {
-              displayErrorMessage(
-                "An error occurred while trying to enroll you."
-              );
+              displayErrorMessage("An error occurred while trying to enroll.");
             }
           }
 
-          console.log(enrollmentKey);
           handleClose();
         },
       }}
@@ -76,7 +71,6 @@ export const EnrollDialog: React.FC<{
           id="enrollmentkey"
           name="enrollmentkey"
           label="Enrollment Key"
-          //   type="string"
           fullWidth
           variant="standard"
         />
