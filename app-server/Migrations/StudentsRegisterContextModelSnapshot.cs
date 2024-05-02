@@ -44,6 +44,9 @@ namespace app_server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
@@ -65,6 +68,9 @@ namespace app_server.Migrations
 
                     b.Property<byte[]>("Image")
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("MinimumPassingGrade")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -166,6 +172,9 @@ namespace app_server.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("ShowLeaderboard")
+                        .HasColumnType("bit");
 
                     b.Property<long>("StudentId")
                         .HasColumnType("bigint");

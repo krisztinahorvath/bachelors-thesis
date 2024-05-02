@@ -4,6 +4,7 @@ import { Container, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import Fab from "@mui/material/Fab";
+import { UserType } from "../../models/User";
 
 export const TeacherHomePage = () => {
   // const location = useLocation();
@@ -50,7 +51,7 @@ export const TeacherHomePage = () => {
         <br />
       </Container>
 
-      <CourseCards />
+      <CourseCards userType={UserType.Teacher} />
 
       <br />
     </Container>

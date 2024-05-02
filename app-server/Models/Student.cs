@@ -16,6 +16,7 @@
             return new UserPreference
             {
                 StudentId = this.Id,
+                ShowLeaderboard = true,
                 // assign the default values to the user preference fields
             };
         }

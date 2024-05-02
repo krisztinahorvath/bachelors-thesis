@@ -314,8 +314,7 @@ export const ShowAllGradesAndAssignments: React.FC<
 
   return (
     <Container>
-      <h2>Grades at all assignments:</h2>
-
+      <h2>Grades:</h2>
       {loading && <CircularProgress />}
 
       {!loading && (

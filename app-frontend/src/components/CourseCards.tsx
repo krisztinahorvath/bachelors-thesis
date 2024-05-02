@@ -6,21 +6,30 @@ import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 import { BACKEND_URL } from "../constants";
 import { Course } from "../models/Course";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getToken } from "../utils/auth-utils";
 import axios from "axios";
 import { displayErrorMessage } from "./ToastMessage";
 import { CircularProgress, Container } from "@mui/material";
+import { UserType } from "../models/User";
 
-export const CourseCards = () => {
+interface CourseCardsProps {
+  userType: UserType;
+}
+
+export const CourseCards: React.FC<CourseCardsProps> = ({ userType }) => {
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState<Course[]>([]);
 
   useEffect(() => {
     setLoading(true);
+    let url;
+    if (userType == UserType.Teacher) url = "courses-of-teacher";
+    else if (userType == UserType.Student) url = "courses-of-student";
+
     const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
     axios
-      .get(`${BACKEND_URL}/courses/courses-of-teacher`, headers)
+      .get(`${BACKEND_URL}/courses/${url}`, headers)
       .then((response) => {
         setCourses(response.data);
         setLoading(false);

@@ -6,5 +6,7 @@
 
         public long StudentId { get; set; }
         public virtual Student Student { get; set; } = null!;
+
+        public bool ShowLeaderboard { get; set; }
     }
 }

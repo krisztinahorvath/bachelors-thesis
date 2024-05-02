@@ -86,8 +86,8 @@ namespace app_server.Controllers
         }
 
         // GET: api/courses/courses-of-student/5
-        [HttpGet("courses-of-student/{studentId}")] // get all courses of a student
-        public async Task<ActionResult<IEnumerable<CourseDTO>>> GetCoursesOfStudent(long studentId)
+        [HttpGet("courses-of-student")] // get all courses of a student
+        public async Task<ActionResult<IEnumerable<CourseDTO>>> GetCoursesOfStudent()
         {
             if (_context.Courses == null)
             {
@@ -96,11 +96,11 @@ namespace app_server.Controllers
 
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 != studentId || tokenData?.Item2 != UserType.Student))
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student))
                 return Unauthorized("Invalid token or user is not a student.");
 
             var courses = await _context.Enrollments
-                .Where(t => t.StudentId == studentId)
+                .Where(t => t.StudentId == tokenData.Item1)
                 .Select(x => CourseToDTO(x.Course))
                 .ToListAsync();
 
@@ -529,9 +529,9 @@ namespace app_server.Controllers
             return CreatedAtAction(nameof(GetCourse), new { id = course.Id }, course);
         }
 
-        // POST: api/courses/enroll/5/abcdefgh
-        [HttpPost("enroll/{studentId}/{enrollmentKey}")]
-        public async Task<ActionResult<CourseDTO>> EnrollToCourse(long studentId, string enrollmentKey)
+        // POST: api/courses/enroll/abcdefgh
+        [HttpPost("enroll/{enrollmentKey}")]
+        public async Task<ActionResult<CourseDTO>> EnrollToCourse(string enrollmentKey)
         {
             if (_context.Courses == null)
             {
@@ -543,6 +543,13 @@ namespace app_server.Controllers
                 return Problem("Entity set 'StudentsRegisterContext.Students'  is null.");
             }
 
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student))
+                return Unauthorized("Invalid token or user is not a student.");
+
+            var studentId = tokenData.Item1;
+
             if (!_context.Students.Any(s => s.Id == studentId))
             {
                 return BadRequest("Student doesn't exist!");
@@ -553,11 +560,6 @@ namespace app_server.Controllers
             {
                 return BadRequest("Invalid enrollment key, no course could be found with that key");
             }
-
-            // validate token data
-            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 != studentId || tokenData?.Item2 != UserType.Student))
-                return Unauthorized("Invalid token or user is not a teacher.");
 
             Enrollment enrollment = new Enrollment
             {
