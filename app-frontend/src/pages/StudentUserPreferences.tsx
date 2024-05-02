@@ -19,7 +19,15 @@ import {
   getShowLevels,
   getShowPoints,
   getShowProgressBars,
+  setStudentUserPreferences,
 } from "../utils/student-user-preferences";
+import { getToken } from "../utils/auth-utils";
+import axios from "axios";
+import { BACKEND_URL } from "../constants";
+import {
+  displayErrorMessage,
+  displaySuccessMessage,
+} from "../components/ToastMessage";
 
 const submitButtonStyle = {
   backgroundColor: "#84B1F2",
@@ -57,6 +65,60 @@ export const StudentUserPreferences = () => {
     }
 
     setChecked(newChecked);
+  };
+
+  const handleSave = async () => {
+    try {
+      let showPoints: boolean = false;
+      let showLevels: boolean = false;
+      let showBadges: boolean = false;
+      let showProgressBars: boolean = false;
+      let showLeaderboards: boolean = false;
+
+      if (checked.indexOf("points") !== -1) showPoints = true;
+      if (checked.indexOf("levels") !== -1) showLevels = true;
+      if (checked.indexOf("badges") !== -1) showBadges = true;
+      if (checked.indexOf("progressbars") !== -1) showProgressBars = true;
+      if (checked.indexOf("leaderboards") !== -1) showLeaderboards = true;
+
+      const studentUserPreferenceDTO = {
+        showPoints,
+        showLevels,
+        showBadges,
+        showProgressBars,
+        showLeaderboards,
+      };
+
+      const headers = {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      };
+
+      const response = await axios.put(
+        `${BACKEND_URL}/students/user-preferences`,
+        studentUserPreferenceDTO,
+        headers
+      );
+
+      console.log(response);
+
+      if (response.status === 204) {
+        displaySuccessMessage("Preferences updated successfully!");
+
+        // set the user preferences
+        setStudentUserPreferences(response.data);
+      } else {
+        displayErrorMessage("An error occured in updating the preferences.");
+      }
+    } catch (error: any) {
+      if (error.response) {
+        const errorMessage = error.response.data;
+        displayErrorMessage(`Updating preferences failed. ${errorMessage}`);
+      } else {
+        displayErrorMessage(
+          "An error occurred while trying to update preferences."
+        );
+      }
+    }
   };
 
   // ***************************************
@@ -161,14 +223,14 @@ export const StudentUserPreferences = () => {
             }}
           />
         </ListItem>
-        <Button type="submit" style={submitButtonStyle}>
+        <Button onClick={handleSave} style={submitButtonStyle}>
           Save page preferences
         </Button>
       </List>
       <p>
         <b>Note:</b> You can change the settings of the page as many times as
         you like without any restrictions. <br /> We encourage you to try out
-        each gamification element and find out what suits you most! 😊
+        each gamification element and find out which suit you most! 😊
       </p>
     </Container>
   );
