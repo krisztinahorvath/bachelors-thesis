@@ -8,7 +8,6 @@ import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
 import { StepIconProps } from "@mui/material/StepIcon";
-import { Container } from "@mui/material";
 import Airplane from "../../assets/airplane.svg";
 import Origami from "../../assets/origami.svg";
 import Astronaut from "../../assets/astronaut.svg";
@@ -37,6 +36,8 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
     backgroundColor:
       theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
     borderRadius: 1,
+    marginLeft: 8,
+    marginRight: 8,
   },
 }));
 
@@ -44,7 +45,6 @@ const ColorlibStepIconRoot = styled("div")<{
   ownerState: { completed?: boolean; active?: boolean };
 }>(({ ownerState }) => ({
   backgroundColor: "none",
-  // theme.palette.mode === "dark" ? theme.palette.grey[700] : "#ccc",
   zIndex: 1,
   color: "#fff",
   width: 50,
@@ -116,23 +116,19 @@ export const CustomizedSteppers: React.FC<{ activeSteps: number }> = ({
   activeSteps,
 }) => {
   return (
-    <Container>
-      <Stack sx={{ width: "100%" }} spacing={4}>
-        <br />
-        <Stepper
-          alternativeLabel
-          activeStep={activeSteps}
-          connector={<ColorlibConnector />}
-        >
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel StepIconComponent={ColorlibStepIcon}>
-                {label}
-              </StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-      </Stack>
-    </Container>
+    <Stack sx={{ width: "100%" }} spacing={4}>
+      <br />
+      <Stepper
+        alternativeLabel
+        activeStep={activeSteps}
+        connector={<ColorlibConnector />}
+      >
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+    </Stack>
   );
 };
