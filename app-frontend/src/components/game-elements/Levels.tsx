@@ -8,7 +8,6 @@ import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
 import { StepIconProps } from "@mui/material/StepIcon";
-import { useState } from "react";
 import { Container } from "@mui/material";
 import Airplane from "../../assets/airplane.svg";
 import Origami from "../../assets/origami.svg";
@@ -23,17 +22,17 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.active}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       backgroundImage:
-        "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
+        "linear-gradient( 95deg,rgb(78,135,192) 0%,rgb(102,204,255) 50%,rgb(55,138,138) 100%)",
     },
   },
   [`&.${stepConnectorClasses.completed}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       backgroundImage:
-        "linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)",
+        "linear-gradient( 95deg,rgb(78,135,192) 0%,rgb(102,204,255) 50%,rgb(55,138,138) 100%)",
     },
   },
   [`& .${stepConnectorClasses.line}`]: {
-    height: 3,
+    height: 3, // line thickness
     border: 0,
     backgroundColor:
       theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
@@ -43,9 +42,9 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
 
 const ColorlibStepIconRoot = styled("div")<{
   ownerState: { completed?: boolean; active?: boolean };
-}>(({ theme, ownerState }) => ({
-  //   backgroundColor:
-  //     theme.palette.mode === "dark" ? theme.palette.grey[700] : "#ccc",
+}>(({ ownerState }) => ({
+  backgroundColor: "none",
+  // theme.palette.mode === "dark" ? theme.palette.grey[700] : "#ccc",
   zIndex: 1,
   color: "#fff",
   width: 50,
@@ -71,23 +70,23 @@ const ColorlibStepIconRoot = styled("div")<{
 }));
 
 const AirplaneBadge = () => {
-  return <img src={Airplane} alt="airplane" style={{ width: "100%" }} />;
+  return <img src={Airplane} alt="airplane" style={{ width: "120%" }} />;
 };
 
 const OrigamiBadge = () => {
-  return <img src={Origami} alt="origami" style={{ width: "110%" }} />;
+  return <img src={Origami} alt="origami" style={{ width: "120%" }} />;
 };
 
 const AstronautBadge = () => {
-  return <img src={Astronaut} alt="origami" style={{ width: "110%" }} />;
+  return <img src={Astronaut} alt="origami" style={{ width: "120%" }} />;
 };
 
 const LightbulbBadge = () => {
-  return <img src={Lightbulb} alt="lightbulb" style={{ width: "110%" }} />;
+  return <img src={Lightbulb} alt="lightbulb" style={{ width: "120%" }} />;
 };
 
 const MarioMushroomBadge = () => {
-  return <img src={MarioMushroom} alt="mushroom" style={{ width: "110%" }} />;
+  return <img src={MarioMushroom} alt="mushroom" style={{ width: "120%" }} />;
 };
 
 function ColorlibStepIcon(props: StepIconProps) {
@@ -113,8 +112,9 @@ function ColorlibStepIcon(props: StepIconProps) {
 
 const steps = ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5🎉"];
 
-export const CustomizedSteppers = () => {
-  const [activeSteps, setActiveSteps] = useState(1); // -1 for nothing
+export const CustomizedSteppers: React.FC<{ activeSteps: number }> = ({
+  activeSteps,
+}) => {
   return (
     <Container>
       <Stack sx={{ width: "100%" }} spacing={4}>
