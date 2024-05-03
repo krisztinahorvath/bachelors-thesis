@@ -10,9 +10,11 @@ import { Theme } from "@mui/material/styles";
 
 const BorderLinearProgress = styled(LinearProgress)(
   ({ theme }: { theme: Theme }) => {
+    const linearGradient = `linear-gradient(95deg, rgb(78,135,192) 0%, rgb(102,204,255) 50%, rgb(166,230,230) 100%)`;
+
     const backgroundColor =
       theme.palette.mode === "light"
-        ? theme.palette.grey[450 as keyof Color]
+        ? "#B7CDCD"
         : theme.palette.grey[800 as keyof Color];
 
     return {
@@ -23,7 +25,7 @@ const BorderLinearProgress = styled(LinearProgress)(
       },
       [`& .${linearProgressClasses.bar}`]: {
         borderRadius: 15,
-        backgroundColor: theme.palette.mode === "light" ? "#2D76D2" : "#308fe8",
+        backgroundImage: linearGradient,
       },
     };
   }
