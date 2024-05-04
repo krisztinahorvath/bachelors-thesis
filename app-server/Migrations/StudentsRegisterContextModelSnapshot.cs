@@ -69,8 +69,8 @@ namespace app_server.Migrations
                     b.Property<byte[]>("Image")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("MinimumPassingGrade")
-                        .HasColumnType("int");
+                    b.Property<float>("MinimumPassingGrade")
+                        .HasColumnType("real");
 
                     b.Property<string>("Name")
                         .IsRequired()

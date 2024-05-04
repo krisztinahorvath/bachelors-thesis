@@ -12,6 +12,6 @@
         public virtual Course Course { get; set; } = null!;
 
         // 1:n with grade
-        public virtual ICollection<Grade> Grades { get; set; }
+        public virtual ICollection<Grade>? Grades { get; set; }
     }
 }

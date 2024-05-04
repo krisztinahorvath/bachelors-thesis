@@ -258,6 +258,7 @@ namespace app_server.Controllers
                 Name = assignment.Name,
                 Description = assignment.Description,
                 DueDate = assignment.DueDate,
+                Weight = assignment.Weight,
                 CourseId = assignment.CourseId
             };
         }

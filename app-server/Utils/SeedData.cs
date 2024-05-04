@@ -12,7 +12,7 @@ namespace app_server.Utils
         private const int NO_COURSES = 5;
 
         // a random number is chose between 0 and 5 to add that number of assignments to each course
-        private const int NO_ASSIGNMENTS = 5; 
+        private const int NO_ASSIGNMENTS = 10; 
 
         private const int NO_GRADES = 100; 
 
@@ -104,6 +104,7 @@ namespace app_server.Utils
         private static async Task SeedStudentsAndUserPreferences(StudentsRegisterContext context, int noStudents)
         {
             var faker = new Faker("en");
+            Random random = new Random();
 
             var existingNicknames = new List<string>();
             var existingUniqueIdentificationCodes = new List<string>();
@@ -121,7 +122,6 @@ namespace app_server.Utils
                     // student data
                     Nickname = GenerateUniqueNickname(existingNicknames, faker),
                     UniqueIdentificationCode = GenerateUniqueAlphaNumeric(existingUniqueIdentificationCodes, faker),
-                    //UserPreferencesId = userPreference.Id,
 
                 }; // end student creation
                 existingNicknames.Add(student.Nickname);
@@ -133,7 +133,12 @@ namespace app_server.Utils
                 var userPreference = new UserPreference
                 {
                     StudentId = student.Id,
-                    // TO BE ADDED
+
+                    ShowPoints = (random.Next(0, 2) == 0),
+                    ShowLevels = (random.Next(0, 2) == 0),
+                    ShowBadges = (random.Next(0, 2) == 0),
+                    ShowProgressBars = (random.Next(0, 2) == 0),
+                    ShowLeaderboards = (random.Next(0, 2) == 0),
                 };
 
                 context.UserPreferences.Add(userPreference);
@@ -155,6 +160,7 @@ namespace app_server.Utils
                 {
                     Name = COURSE_NAMES[random.Next(COURSE_NAMES.Count)],
                     EnrollmentKey = GenerateUniqueAlphaNumeric(existingEnrollmentKeys, faker),
+                    MinimumPassingGrade = 5
                 };
 
                 existingEnrollmentKeys.Add(course.EnrollmentKey);
@@ -237,20 +243,28 @@ namespace app_server.Utils
             for (int i = 0; i < courseIds.Count; i++)
             {
                 int randomNoAssignemnts = random.Next(0, noAssignments);
-                for(int j = 0; j < randomNoAssignemnts; j++)
+                int totalWeights = 0;
+
+                for (int j = 0; j < randomNoAssignemnts; j++)
                 {
                     var description = new Bogus.DataSets.Lorem(locale: "en");
+
+                    int assignmentWeight = random.Next(1, 101 - totalWeights);
+                    totalWeights += assignmentWeight;
+
                     var assignment = new Assignment
                     {
                         Name = "A" + j,
                         Description = description.Sentence(5),
                         DueDate = faker.Date.Between(DateTime.Now.AddMonths(-3), DateTime.Now),
-                        CourseId = courseIds[random.Next(courseIds.Count)],
+                        CourseId = courseIds[i], // random.Next(courseIds.Count)]
+                        Weight = assignmentWeight,
                     };
 
                     assignments.Add(assignment);
 
-                    Console.WriteLine("Assignment name - " + assignment.Name);
+                    if (totalWeights == 100)
+                        break;
                 }
             }
 

@@ -6,7 +6,7 @@
         public string Name { get; set; }
         public string EnrollmentKey { get; set; }
         public byte[]? Image {get; set;}
-        public int MinimumPassingGrade { get; set; }
+        public float MinimumPassingGrade { get; set; }
 
 
         // maybe have a teacher enrollment key for teachers to enroll as teachers to it
