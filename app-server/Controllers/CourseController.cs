@@ -454,7 +454,7 @@ namespace app_server.Controllers
                         select new LeaderboardDTO
                         {
                             Nickname = student.Nickname,
-                            FinalGrade = finalGrade,
+                            FinalGrade = (float)Math.Round(finalGrade, 2),
                             ExperiencePoints = (int)(finalGrade * 300)
                         };
             var result = await query.Take(10).ToListAsync();
