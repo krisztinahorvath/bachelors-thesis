@@ -427,7 +427,40 @@ namespace app_server.Controllers
             return Ok(studentsData);
         }
 
+        [HttpGet("leaderboard/{courseId}")]
+        public async Task<ActionResult<LeaderboardDTO>> GetLeaderboardAtCourse(long courseId)
+        {
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 == null))
+                return Unauthorized("Invalid token.");
 
+            var userId = tokenData!.Item1;
+
+            // check if user is a course teacher or it is a student enrolled to that course
+            if (!_context.Enrollments.Any(e => e.CourseId == courseId && e.StudentId == userId) &&
+                !_context.CourseTeachers.Any(c => c.CourseId == courseId && c.TeacherId == userId))
+                return Unauthorized("You aren't authorized to see information about this course.");
+
+
+            int noAssignments = await _context.Assignments.CountAsync(a => a.CourseId == courseId);
+
+            var query = from enrollment in _context.Enrollments
+                        where enrollment.CourseId == courseId
+                        join student in _context.Students on enrollment.StudentId equals student.Id
+                        join grade in _context.Grades on enrollment.StudentId equals grade.StudentId into studentGrades
+                        let finalGrade = studentGrades.Sum(g => g.Score * (g.Assignment.Weight / 100f)) / noAssignments
+                        orderby finalGrade descending
+                        select new LeaderboardDTO
+                        {
+                            Nickname = student.Nickname,
+                            FinalGrade = finalGrade,
+                            ExperiencePoints = (int)(finalGrade * 300)
+                        };
+            var result = await query.Take(10).ToListAsync();
+
+            return Ok(result);
+        }
 
         [HttpPost("create")]
         //[AllowAnonymous]
