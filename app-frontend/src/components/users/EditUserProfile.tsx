@@ -8,12 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { TextField, outlinedInputClasses, styled } from "@mui/material";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
 import { BACKEND_URL } from "../../constants";
-import {
-  getToken,
-  getUserType,
-  setEmail,
-  setImage,
-} from "../../utils/auth-utils";
+import { getToken, getUserType, setEmail } from "../../utils/auth-utils";
 import { TeacherAppBar } from "../teachers/TeacherAppBar";
 import { UploadImage } from "../teachers/UploadImage";
 import { UserType } from "../../models/User";

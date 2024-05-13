@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Container } from "@mui/material";
+import { Avatar, Box, Button, Container, Grid } from "@mui/material";
 import { StudentAppBar } from "../students/StudentAppBar";
 import { TeacherAppBar } from "../teachers/TeacherAppBar";
 import {
@@ -35,7 +35,10 @@ export const UserProfile = () => {
       .then((response) => {
         setUser(response.data);
 
-        if (user.image !== getImage()) setImage(user.image);
+        if (response.data.image !== getImage()) {
+          // localStorage.removeItem("image");
+          setImage(response.data.image);
+        }
       })
       .catch((error: any) => {
         if (error.response) {
@@ -61,12 +64,23 @@ export const UserProfile = () => {
           p: 2, // Adjust padding if necessary
         }}
       >
-        <Avatar
-          sx={{ width: "10vw", height: "10vw", backgroundColor: "#8689C4" }}
-          alt="Avatar"
-          src={`data:image/jpg;base64,${user.image}`}
-          // src="public/homePage.jpg"
-        />
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            {" "}
+            {/* Takes 50% width on extra small screens and above */}
+            {/* Content for the left side */}
+            <Avatar
+              sx={{ width: "10vw", height: "10vw", backgroundColor: "#8689C4" }}
+              //alt="Avatar"
+              src={`data:image/jpg;base64,${user.image}`}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            Name: {user.name} <br />
+            Nickname: {user.nickname} <br />
+            Email: {user.email}
+          </Grid>
+        </Grid>
 
         <Button component={Link} to="/edit-profile" variant="contained">
           Edit Profile
