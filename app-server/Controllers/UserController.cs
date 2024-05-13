@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -45,8 +46,43 @@ namespace app_server.Controllers
             return await _context.Users
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize)
-                
+
                 .ToListAsync();
+        }
+
+        // GET: api/users/user-profile
+        [HttpGet("user-profile")]
+        public async Task<ActionResult<UserDTO>> GetUserProfile()
+        {
+            if (_context.Users == null)
+                return NotFound();
+
+            // validate token data
+            var tokenData = ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || tokenData?.Item1 == null || tokenData.Item2 == null)
+                return Unauthorized("Invalid token.");
+
+            var userId = tokenData.Item1;
+            var userType = tokenData.Item2;
+
+            UserDTO user = new();
+            if(userType == UserType.Teacher)
+            {
+                var teacher = await _context.Teachers.FindAsync(userId);
+                user.Name = teacher.Name;
+                user.Email = teacher.Email;
+                user.Image = teacher.Image;
+            }
+            else if(userType == UserType.Student)
+            {
+                var student = await _context.Students.FindAsync(userId);
+                user.Name = student.Name;
+                user.Email = student.Email;
+                user.Image = student.Image;
+                user.Nickname = student.Nickname;
+            }
+
+            return user;
         }
 
         // POST: api/users/register
@@ -101,8 +137,99 @@ namespace app_server.Controllers
             // Generate JWT token
             string token = GenerateJwtToken(user);
 
-            return Ok(new { token, user.UserType, user.Email });
+            return Ok(new { token, user.UserType, user.Email, user.Image});
         }
+
+        // PUT: api/users/profile
+        [HttpPut("profile")]
+        public async Task<IActionResult> CreateCourse([FromForm] string userDTO, [FromForm] IFormFile image)
+        {
+            // Deserialize userDTO JSON string to UserDTO object
+            var userInput = JsonConvert.DeserializeObject<UserDTO>(userDTO);
+
+            // Convert IFormFile to byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await image.CopyToAsync(memoryStream);
+                userInput.Image = memoryStream.ToArray();
+            }
+
+            // validate token data
+            var tokenData = ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 == null))
+                return Unauthorized("Invalid token.");
+
+            var userId = tokenData!.Item1;
+            var userType = tokenData!.Item2;
+
+            if(userType == UserType.Teacher)
+            {
+                var teacher = await _context.Teachers.FindAsync(userId);
+                if (teacher == null)
+                    return NotFound();
+
+                teacher.Name = userInput.Name;
+                teacher.Email = userInput.Email;
+                teacher.Image = userInput.Image;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TeacherExists(userId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            else if(userType == UserType.Student)
+            {
+                var student = await _context.Students.FindAsync(userId);
+                if (student == null)
+                    return NotFound();
+
+                student.Name = userInput.Name;
+                student.Email = userInput.Email;
+                student.Image = userInput.Image;
+                student.Nickname = userInput.Nickname;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StudentExists(userId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+
+            return NoContent();
+        }
+
+        private bool TeacherExists(long id)
+        {
+            return (_context.Teachers?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private bool StudentExists(long id)
+        {
+            return (_context.Students?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
 
         public static Tuple<long, UserType>? ExtractUserIdAndJWTToken(ClaimsPrincipal claims)
         { 

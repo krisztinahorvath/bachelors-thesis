@@ -17,7 +17,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { Settings } from "@mui/icons-material";
 import Divider from "@mui/material/Divider";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { handleLogoutUtil } from "../../utils/auth-utils";
+import { getImage, handleLogoutUtil } from "../../utils/auth-utils";
 import { Link } from "react-router-dom";
 
 const appBarStyles = {
@@ -179,9 +179,8 @@ export const StudentAppBar = () => {
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
                   sx={{ width: 32, height: 32, backgroundColor: "#8689C4" }}
-                >
-                  M
-                </Avatar>
+                  src={`data:image/jpg;base64,${getImage()}`}
+                />
               </IconButton>
             </Tooltip>
             <Menu
@@ -205,11 +204,15 @@ export const StudentAppBar = () => {
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))} */}
-              <MenuItem onClick={handleCloseUserMenu}>
+              <MenuItem
+                component={Link}
+                to={`/my-profile`}
+                onClick={handleCloseUserMenu}
+              >
                 <ListItemIcon>
                   <AccountCircleIcon fontSize="small" />
                 </ListItemIcon>
-                Profile
+                My Profile
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
                 <ListItemIcon>

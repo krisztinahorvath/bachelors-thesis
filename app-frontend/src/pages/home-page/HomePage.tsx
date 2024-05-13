@@ -69,17 +69,17 @@ export const HomePage = () => {
         </Container>
 
         <div style={divStyle}>
-          <a
+          {/* <a
             href="https://www.vecteezy.com/free-vector/online-learning"
             target="_blank"
             rel="noopener noreferrer"
-          >
-            <img
-              src="/homePage.jpg"
-              alt="Online Learning Vectors by Vecteezy"
-              style={imageStyle}
-            />
-          </a>
+          > */}
+          <img
+            src="/homePage.jpg"
+            alt="Online Learning Vectors by Vecteezy"
+            style={imageStyle}
+          />
+          {/* </a> */}
         </div>
       </Container>
     </React.Fragment>

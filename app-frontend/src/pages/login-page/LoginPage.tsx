@@ -7,6 +7,7 @@ import { User, UserType } from "../../models/User";
 import {
   getToken,
   setEmail,
+  setImage,
   setToken,
   setUserType,
 } from "../../utils/auth-utils";
@@ -88,6 +89,7 @@ export const LoginPage = () => {
       setToken(response.data.token);
       setUserType(response.data.userType);
       setEmail(response.data.email);
+      setImage(response.data.image);
 
       displaySuccessMessage("You logged in successfully!");
 

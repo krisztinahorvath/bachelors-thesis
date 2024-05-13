@@ -19,6 +19,10 @@ export const getEmail = () => {
   return localStorage.getItem("email");
 };
 
+export const getImage = () => {
+  return localStorage.getItem("image");
+};
+
 export const setToken = (token: string) => {
   localStorage.setItem("token", token);
 };
@@ -31,10 +35,15 @@ export const setEmail = (email: string) => {
   localStorage.setItem("email", email);
 };
 
+export const setImage = (image: string) => {
+  localStorage.setItem("image", image);
+};
+
 export const handleLogoutUtil = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("userType");
   localStorage.removeItem("email");
+  localStorage.removeItem("image");
 
   // user preferences
   localStorage.removeItem("showPoints");

@@ -13,6 +13,8 @@ import { RegisterPage } from "./pages/register-page/RegisterPage";
 import { CoursePageTeacher } from "./pages/CoursePageTeacher";
 import { AddCoursePage } from "./pages/AddCoursePage";
 import { StudentUserPreferences } from "./pages/StudentUserPreferences";
+import { UserProfile } from "./components/users/UserProfile";
+import { EditUserProfile } from "./components/users/EditUserProfile";
 
 function App() {
   return (
@@ -34,6 +36,26 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           {/* <Route path = "/grades" element={<StudentGradesPage/>} /> */}
+
+          <Route
+            path="/my-profile"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Student, UserType.Teacher]}
+                element={<UserProfile />}
+              />
+            }
+          />
+
+          <Route
+            path="/edit-profile"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Student, UserType.Teacher]}
+                element={<EditUserProfile />}
+              />
+            }
+          />
 
           <Route
             path="/student-dashboard"

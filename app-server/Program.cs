@@ -77,7 +77,7 @@ namespace app_server
                 var context = scope.ServiceProvider.GetService<StudentsRegisterContext>();
 
                //if (!context!.Users.Any()) // if the database is empty (no users, if there are no users, no other fields can be accessed)
-                    SeedData.Start(scope.ServiceProvider).Wait();
+               //     SeedData.Start(scope.ServiceProvider).Wait();
             }
 
             app.UseSwagger();
