@@ -70,7 +70,7 @@ export const UserProfile = () => {
             {/* Takes 50% width on extra small screens and above */}
             {/* Content for the left side */}
             <Avatar
-              sx={{ width: "10vw", height: "10vw", backgroundColor: "#8689C4" }}
+              sx={{ width: "10vw", height: "10vw" }}
               //alt="Avatar"
               src={`data:image/jpg;base64,${user.image}`}
             />
