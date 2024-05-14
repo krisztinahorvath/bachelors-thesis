@@ -427,6 +427,7 @@ namespace app_server.Controllers
             return Ok(studentsData);
         }
 
+        // GET: api/courses/leaderboard/5
         [HttpGet("leaderboard/{courseId}")]
         public async Task<ActionResult<LeaderboardDTO>> GetLeaderboardAtCourse(long courseId)
         {
@@ -444,6 +445,9 @@ namespace app_server.Controllers
 
 
             int noAssignments = await _context.Assignments.CountAsync(a => a.CourseId == courseId);
+
+            if (noAssignments == 0)
+                return NoContent();
 
             var query = from enrollment in _context.Enrollments
                         where enrollment.CourseId == courseId

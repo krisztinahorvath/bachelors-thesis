@@ -15,6 +15,7 @@ import { AddCoursePage } from "./pages/AddCoursePage";
 import { StudentUserPreferences } from "./pages/StudentUserPreferences";
 import { UserProfile } from "./components/users/UserProfile";
 import { EditUserProfile } from "./components/users/EditUserProfile";
+import { Leaderboard } from "./components/game-elements/Leaderboard";
 
 function App() {
   return (
@@ -67,12 +68,23 @@ function App() {
             }
           />
 
+          {/* gamification */}
           <Route
             path="/student-preferences"
             element={
               <PrivateRoute
                 allowedUsers={[UserType.Student]}
                 element={<StudentUserPreferences />}
+              />
+            }
+          />
+
+          <Route
+            path="/course/:courseIndex/leaderboard"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Student, UserType.Teacher]}
+                element={<Leaderboard />}
               />
             }
           />

@@ -89,7 +89,7 @@ export const StudentAppBar = () => {
             variant="h6"
             noWrap
             component="a"
-            href="student-dashboard"
+            href="/student-dashboard"
             //href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
@@ -143,7 +143,7 @@ export const StudentAppBar = () => {
             variant="h5"
             noWrap
             component="a"
-            href="student-dashboard"
+            href="/student-dashboard"
             // href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,

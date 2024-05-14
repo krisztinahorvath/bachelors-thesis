@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Course } from "../models/Course";
 import { BACKEND_URL } from "../constants";
 import { Card, CardMedia, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import { displayErrorMessage } from "../components/ToastMessage";
-import { getToken } from "../utils/auth-utils";
+import { getToken, getUserType } from "../utils/auth-utils";
 import { CourseSideBar } from "../components/teachers/CourseSideBar";
 import { ShowStudentsAtCourse } from "../components/teachers/ShowStudentsAtCourse";
 import { ShowAssignmentsAtCourse } from "../components/teachers/ShowCourseAssignments";
 import { ShowAllGradesAndAssignments } from "../components/teachers/ShowAllGradesAndAssignments";
 import { TeacherAppBar } from "../components/teachers/TeacherAppBar";
+import { UserType } from "../models/User";
+import { CourseSideBarStudent } from "../components/students/CourseSideBarStudent";
+import { StudentAppBar } from "../components/students/StudentAppBar";
 
 export const CoursePageTeacher = () => {
+  const { courseIndex } = useParams<{ courseIndex: string }>();
+  const [userType, setUserType] = useState<UserType>();
+  const navigate = useNavigate();
+
   const location = useLocation();
   const courseId = location.state;
   const [selectedTab, setSelectedTab] = useState("");
@@ -28,6 +35,11 @@ export const CoursePageTeacher = () => {
   };
 
   useEffect(() => {
+    const userTypeLocalStorage = getUserType();
+
+    if (userTypeLocalStorage === "0") setUserType(UserType.Teacher);
+    else if (userTypeLocalStorage === "1") setUserType(UserType.Student);
+
     const fetchCourse = async () => {
       const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
       axios
@@ -52,12 +64,35 @@ export const CoursePageTeacher = () => {
     }
   }, [courseId]);
 
+  useEffect(() => {
+    if (selectedTab === "leaderboard") {
+      // Ensure courseId is set before navigating
+      if (course.id && courseIndex) {
+        navigate(`/course/${courseIndex + 1}/leaderboard`, {
+          state: { courseId: course.id, courseName: course.name },
+        });
+        setSelectedTab("");
+      } else {
+        // Handle the case where course data is not available yet
+        console.log("Course data is not available yet.");
+      }
+    }
+  }, [selectedTab, course, courseIndex, navigate]);
+
   return (
     <React.Fragment>
-      <TeacherAppBar />
+      {userType === UserType.Teacher && <TeacherAppBar />}
+      {userType === UserType.Student && <StudentAppBar />}
+
       <Grid sx={{ flexGrow: 1, height: "100vh" }} container spacing={0}>
         <Grid item xs={2}>
-          <CourseSideBar onSelectTab={handleTabSelect} />
+          {userType === UserType.Teacher && (
+            <CourseSideBar onSelectTab={handleTabSelect} />
+          )}
+          {userType === UserType.Student && (
+            <CourseSideBarStudent onSelectTab={handleTabSelect} />
+          )}
+
           {/* <p>Some stuff here</p> */}
         </Grid>
         <Grid
@@ -98,7 +133,6 @@ export const CoursePageTeacher = () => {
             </Typography>
           </Card>
 
-          {/* <h1> Course with id {courseId} </h1> */}
           {selectedTab === "students" && (
             <ShowStudentsAtCourse courseId={courseId} />
           )}
@@ -109,20 +143,7 @@ export const CoursePageTeacher = () => {
             <ShowAllGradesAndAssignments courseId={courseId} />
             //<ShowAssignmentsAtCourse courseId={courseId} />
           )}
-          {/* <Routes>
-            {/* <Route
-              path="*"
-              element={<ShowStudentsAtCourse courseId={courseId} />}
-            /> */}
-          {/* <Route
-            path="students"
-            element={<ShowStudentsAtCourse courseId={courseId} />}
-          />
-          <Route
-            path="assignments"
-            element={<ShowAssignmentsAtCourse courseId={courseId} />}
-          /> */}
-          {/* </Routes> */}
+          {/* {selectedTab === "leaderboard" } */}
         </Grid>
       </Grid>
     </React.Fragment>
