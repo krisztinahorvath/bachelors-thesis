@@ -6,8 +6,8 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 import {
   appBarStyles,
   boxStyle,
@@ -20,12 +20,20 @@ import {
   typographyStyle2,
   typographyStyle3,
 } from "./HomePageStyle";
+import { getUserType } from "../../utils/auth-utils";
 
 const pages = ["About us", "Log In", "Register"];
 export const HomePage = () => {
-  // const theme = useTheme();
-  // const location = useLocation();
-  // const path = location.pathname;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userTypeLocalStorage = getUserType();
+
+    if (userTypeLocalStorage === "0") navigate("teacher-dashboard");
+    else if (userTypeLocalStorage === "1") {
+      navigate("student-dashboard");
+    }
+  }, []);
 
   return (
     <React.Fragment>
