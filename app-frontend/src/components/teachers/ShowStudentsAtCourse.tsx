@@ -214,7 +214,7 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
             </DialogActions>
           </Dialog>
 
-          <Container
+          {/* <Container
             style={{
               backgroundColor: "white",
               borderRadius: 10,
@@ -233,7 +233,7 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
                 color="secondary"
               />
             </Stack>
-          </Container>
+          </Container> */}
         </Container>
       )}
     </Container>

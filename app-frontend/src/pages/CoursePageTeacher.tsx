@@ -10,19 +10,7 @@ import { CourseSideBar } from "../components/teachers/CourseSideBar";
 import { ShowStudentsAtCourse } from "../components/teachers/ShowStudentsAtCourse";
 import { ShowAssignmentsAtCourse } from "../components/teachers/ShowCourseAssignments";
 import { ShowAllGradesAndAssignments } from "../components/teachers/ShowAllGradesAndAssignments";
-// const leftGridItemStyle = {
-//   display: "flex",
-//   alignItems: "center",
-//   justifyContent: "center",
-// };
-
-// const rightGridItemStyle: React.CSSProperties = {
-//   backgroundColor: "white",
-//   display: "flex",
-//   flexDirection: "column",
-//   alignItems: "center",
-//   justifyContent: "center",
-// };
+import { TeacherAppBar } from "../components/teachers/TeacherAppBar";
 
 export const CoursePageTeacher = () => {
   const location = useLocation();
@@ -66,7 +54,7 @@ export const CoursePageTeacher = () => {
 
   return (
     <React.Fragment>
-      {/* <TeacherAppBar /> */}
+      <TeacherAppBar />
       <Grid sx={{ flexGrow: 1, height: "100vh" }} container spacing={0}>
         <Grid item xs={2}>
           <CourseSideBar onSelectTab={handleTabSelect} />

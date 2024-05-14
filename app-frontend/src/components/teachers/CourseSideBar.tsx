@@ -33,13 +33,14 @@ export const CourseSideBar = ({
     <List
       sx={{
         maxWidth: "16%",
-        position: "fixed",
+        position: "absolute",
         backgroundColor: "#d0e3fb",
         height: "45%",
         overflowY: "auto",
         borderRadius: "8px",
         padding: "5px",
-        margin: "5px",
+        marginLeft: "5px",
+        marginRight: "5px",
       }}
       component="nav"
       aria-labelledby="nested-list-subheader"
