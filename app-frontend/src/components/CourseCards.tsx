@@ -54,8 +54,6 @@ export const CourseCards: React.FC<{ userType: UserType }> = ({ userType }) => {
                 state={course.id}
                 title="View course details"
               >
-                {" "}
-                {/* send the course id to the page but dont show its id */}
                 <Card>
                   <CardMedia
                     sx={{ height: 100 }}

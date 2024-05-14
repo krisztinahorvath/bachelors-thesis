@@ -184,7 +184,7 @@ export const AddCoursePage = () => {
           <p>
             {" "}
             <b>Note:</b> When the course is created an enrollment key will be
-            automatically generated for it, to see it or change it in the
+            automatically generated for it, to see it or change it got to the
             course's page.
           </p>
           <Button type="submit" style={submitButtonStyle}>

@@ -451,15 +451,44 @@ namespace app_server.Controllers
                         join grade in _context.Grades on enrollment.StudentId equals grade.StudentId into studentGrades
                         let finalGrade = studentGrades.Sum(g => g.Score * (g.Assignment.Weight / 100f)) / noAssignments
                         orderby finalGrade descending
-                        select new LeaderboardDTO
+                        select new 
                         {
-                            Nickname = student.Nickname,
+                            student.Id,
+                            student.Nickname,
                             FinalGrade = (float)Math.Round(finalGrade, 2),
-                            ExperiencePoints = (int)(finalGrade * 300)
+                            ExperiencePoints = (int)(finalGrade * 300),
+                            student.Image
                         };
-            var result = await query.Take(10).ToListAsync();
 
-            return Ok(result);
+            var leaderboard = await query.ToListAsync();
+
+            // current user's ranking
+            var userRank = leaderboard.FindIndex(x => x.Id == userId) + 1;
+            var userEntry = leaderboard.FirstOrDefault(x => x.Id == userId);
+
+            var top10 = leaderboard.Take(10).Select((entry, index) => new LeaderboardDTO
+            {
+                Nickname = entry.Nickname,
+                FinalGrade = entry.FinalGrade,
+                ExperiencePoints = entry.ExperiencePoints,
+                Image = entry.Image,
+                Rank = index + 1
+            }).ToList();
+
+            // if current user is not in the top 10, add them too so they can see on which place they are
+            if (userEntry != null && userRank > 10)
+            {
+                top10.Add(new LeaderboardDTO
+                {
+                    Nickname = userEntry.Nickname,
+                    FinalGrade = userEntry.FinalGrade,
+                    ExperiencePoints = userEntry.ExperiencePoints,
+                    Image = userEntry.Image,
+                    Rank = userRank
+                });
+            }
+
+            return Ok(top10);
         }
 
         [HttpPost("create")]

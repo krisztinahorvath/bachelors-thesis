@@ -178,7 +178,7 @@ export const StudentAppBar = () => {
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
-                  sx={{ width: 32, height: 32, backgroundColor: "#8689C4" }}
+                  sx={{ width: 32, height: 32 }}
                   src={`data:image/jpg;base64,${getImage()}`}
                 />
               </IconButton>
