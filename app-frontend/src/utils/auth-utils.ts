@@ -23,6 +23,10 @@ export const getImage = () => {
   return localStorage.getItem("image");
 };
 
+export const getNickname = () => {
+  return localStorage.getItem("nickname");
+};
+
 export const setToken = (token: string) => {
   localStorage.setItem("token", token);
 };
@@ -39,11 +43,16 @@ export const setImage = (image: string) => {
   localStorage.setItem("image", image);
 };
 
+export const setNickname = (nickname: string) => {
+  localStorage.setItem("nickname", nickname);
+};
+
 export const handleLogoutUtil = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("userType");
   localStorage.removeItem("email");
   localStorage.removeItem("image");
+  localStorage.removeItem("nickname");
 
   // user preferences
   localStorage.removeItem("showPoints");

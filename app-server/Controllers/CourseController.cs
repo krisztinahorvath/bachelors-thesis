@@ -445,24 +445,22 @@ namespace app_server.Controllers
 
 
             int noAssignments = await _context.Assignments.CountAsync(a => a.CourseId == courseId);
-
             if (noAssignments == 0)
                 return NoContent();
 
             var query = from enrollment in _context.Enrollments
                         where enrollment.CourseId == courseId
                         join student in _context.Students on enrollment.StudentId equals student.Id
-                        join grade in _context.Grades on enrollment.StudentId equals grade.StudentId into studentGrades
-                        let finalGrade = studentGrades.Sum(g => g.Score * (g.Assignment.Weight / 100f)) / noAssignments
-                        orderby finalGrade descending
-                        select new 
+                        join grade in _context.Grades.Where(g => g.Assignment.CourseId == courseId) on enrollment.StudentId equals grade.StudentId into studentGrades
+                        select new
                         {
                             student.Id,
                             student.Nickname,
-                            FinalGrade = (float)Math.Round(finalGrade, 2),
-                            ExperiencePoints = (int)(finalGrade * 300),
+                            FinalGrade = studentGrades.Sum(g => g.Score * g.Assignment.Weight) / 100,
                             student.Image
                         };
+
+            query = query.OrderByDescending(x => x.FinalGrade);
 
             var leaderboard = await query.ToListAsync();
 
@@ -474,21 +472,21 @@ namespace app_server.Controllers
             {
                 Nickname = entry.Nickname,
                 FinalGrade = entry.FinalGrade,
-                ExperiencePoints = entry.ExperiencePoints,
+                ExperiencePoints = (int)(entry.FinalGrade*300),
                 Image = entry.Image,
                 Rank = index + 1
             }).ToList();
 
-            // if current user is not in the top 10, add them too so they can see on which place they are
+            // if current user is not in top 10, still display their rank
             if (userEntry != null && userRank > 10)
             {
                 top10.Add(new LeaderboardDTO
                 {
                     Nickname = userEntry.Nickname,
                     FinalGrade = userEntry.FinalGrade,
-                    ExperiencePoints = userEntry.ExperiencePoints,
-                    Image = userEntry.Image,
-                    Rank = userRank
+                    ExperiencePoints = (int)(userEntry.FinalGrade * 300),
+                    Rank = userRank,
+                    Image = userEntry.Image
                 });
             }
 

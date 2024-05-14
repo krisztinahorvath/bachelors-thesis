@@ -80,6 +80,7 @@ namespace app_server.Controllers
                 user.Email = student.Email;
                 user.Image = student.Image;
                 user.Nickname = student.Nickname;
+                user.UniqueIdentificationCode = student.UniqueIdentificationCode;
             }
 
             return user;
@@ -136,6 +137,12 @@ namespace app_server.Controllers
 
             // Generate JWT token
             string token = GenerateJwtToken(user);
+
+            if (user.UserType == UserType.Student) {
+                var student = await _context.Students.FindAsync(user.Id);
+                return Ok(new { token, user.UserType, user.Email, user.Image, student!.Nickname });
+            }
+               
 
             return Ok(new { token, user.UserType, user.Email, user.Image});
         }

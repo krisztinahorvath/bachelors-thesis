@@ -68,7 +68,7 @@ export const CoursePageTeacher = () => {
     if (selectedTab === "leaderboard") {
       // Ensure courseId is set before navigating
       if (course.id && courseIndex) {
-        navigate(`/course/${courseIndex + 1}/leaderboard`, {
+        navigate(`/course/${courseIndex}/leaderboard`, {
           state: { courseId: course.id, courseName: course.name },
         });
         setSelectedTab("");

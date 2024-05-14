@@ -21,6 +21,7 @@ export const UserProfile = () => {
     email: "",
     nickname: "",
     image: "",
+    uniqueIdentificationCode: "",
   });
 
   useEffect(() => {
@@ -78,7 +79,8 @@ export const UserProfile = () => {
           <Grid item xs={6}>
             Name: {user.name} <br />
             Nickname: {user.nickname} <br />
-            Email: {user.email}
+            Email: {user.email} <br />
+            Unique Identification Code: {user.uniqueIdentificationCode}
           </Grid>
         </Grid>
 

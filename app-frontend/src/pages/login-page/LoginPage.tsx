@@ -8,6 +8,7 @@ import {
   getToken,
   setEmail,
   setImage,
+  setNickname,
   setToken,
   setUserType,
 } from "../../utils/auth-utils";
@@ -90,6 +91,8 @@ export const LoginPage = () => {
       setUserType(response.data.userType);
       setEmail(response.data.email);
       setImage(response.data.image);
+
+      if (response.data.userType == 1) setNickname(response.data.nickname);
 
       displaySuccessMessage("You logged in successfully!");
 
