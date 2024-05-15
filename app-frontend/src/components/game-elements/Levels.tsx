@@ -116,7 +116,7 @@ export const CustomizedSteppers: React.FC<{ activeSteps: number }> = ({
   activeSteps,
 }) => {
   return (
-    <Stack sx={{ width: "100%" }} spacing={4}>
+    <Stack sx={{ width: "100%" }} spacing={3}>
       <br />
       <Stepper
         alternativeLabel

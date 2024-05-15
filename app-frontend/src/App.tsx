@@ -16,6 +16,7 @@ import { StudentUserPreferences } from "./pages/StudentUserPreferences";
 import { UserProfile } from "./components/users/UserProfile";
 import { EditUserProfile } from "./components/users/EditUserProfile";
 import { Leaderboard } from "./components/game-elements/Leaderboard";
+import { GradePageStudent } from "./components/students/GradePageStudent";
 
 function App() {
   return (
@@ -64,6 +65,16 @@ function App() {
               <PrivateRoute
                 allowedUsers={[UserType.Student]}
                 element={<StudentHomePage />}
+              />
+            }
+          />
+
+          <Route
+            path="/course/:courseIndex/my-grades"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Student]}
+                element={<GradePageStudent />}
               />
             }
           />

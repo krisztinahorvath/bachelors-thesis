@@ -2,7 +2,7 @@ import {
   Avatar,
   Box,
   Card,
-  CardActionArea,
+  // CardActionArea,
   CardContent,
   CircularProgress,
   Container,

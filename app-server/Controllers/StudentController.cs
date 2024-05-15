@@ -41,6 +41,41 @@ namespace app_server.Controllers
             return StudentUserPreferenceToDTO(userPreference);
         }
 
+        // GET: api/students/student-grades-at-course/5
+        [HttpGet("student-grades-at-course/{courseId}")]
+        public async Task<ActionResult<StudentGradesDTO>> GetStudentSituationAtCourse(long courseId)
+        {
+            if (_context.Students == null)
+                return NotFound();
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
+                return Unauthorized("Invalid token or user is not a student.");
+
+            var studentId = tokenData.Item1;
+
+            var query = from enrollment in _context.Enrollments
+                        where enrollment.CourseId == courseId && enrollment.StudentId == studentId
+                        join grade in _context.Grades.Where(g => g.Assignment.CourseId == courseId) on studentId equals grade.StudentId into studentGrades
+                        select new 
+                        {
+                            FinalGrade = studentGrades.Sum(g => g.Score * g.Assignment.Weight) / 100,
+                        };
+
+            var result = await query.FirstOrDefaultAsync();
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(new StudentGradesDTO
+            {
+                FinalGrade = result.FinalGrade,
+                ExperiencePoints = (int)(result.FinalGrade * 300)
+
+            });
+        }
+
         // PUT: api/students/user-preferences
         [HttpPut("user-preferences")]
         public async Task<IActionResult> PutAssignments(StudentUserPreferenceDTO studentUserPreferenceDTO)

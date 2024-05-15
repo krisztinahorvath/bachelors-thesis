@@ -76,6 +76,16 @@ export const CoursePageTeacher = () => {
         // Handle the case where course data is not available yet
         console.log("Course data is not available yet.");
       }
+    } else if (selectedTab === "grades" && userType === UserType.Student) {
+      if (course.id && courseIndex) {
+        navigate(`/course/${courseIndex}/my-grades`, {
+          state: { courseId: course.id, courseName: course.name },
+        });
+        setSelectedTab("");
+      } else {
+        // Handle the case where course data is not available yet
+        console.log("Course data is not available yet.");
+      }
     }
   }, [selectedTab, course, courseIndex, navigate]);
 
@@ -92,8 +102,6 @@ export const CoursePageTeacher = () => {
           {userType === UserType.Student && (
             <CourseSideBarStudent onSelectTab={handleTabSelect} />
           )}
-
-          {/* <p>Some stuff here</p> */}
         </Grid>
         <Grid
           item
@@ -141,9 +149,7 @@ export const CoursePageTeacher = () => {
           )}
           {selectedTab === "grades" && (
             <ShowAllGradesAndAssignments courseId={courseId} />
-            //<ShowAssignmentsAtCourse courseId={courseId} />
           )}
-          {/* {selectedTab === "leaderboard" } */}
         </Grid>
       </Grid>
     </React.Fragment>
