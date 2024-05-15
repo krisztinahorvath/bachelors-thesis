@@ -10,7 +10,5 @@
        
         public float Score { get; set; }
         public DateTime DateReceived { get; set; }
-
-        // TODO: add weight for grade
     }
 }

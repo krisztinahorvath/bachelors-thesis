@@ -43,7 +43,7 @@ namespace app_server.Controllers
 
         // GET: api/students/student-grades-at-course/5
         [HttpGet("student-grades-at-course/{courseId}")]
-        public async Task<ActionResult<StudentGradesDTO>> GetStudentSituationAtCourse(long courseId)
+        public async Task<ActionResult<StudentFinalGradeDTO>> GetStudentSituationAtCourse(long courseId)
         {
             if (_context.Students == null)
                 return NotFound();
@@ -68,12 +68,42 @@ namespace app_server.Controllers
             if (result == null)
                 return NotFound();
 
-            return Ok(new StudentGradesDTO
+            return Ok(new StudentFinalGradeDTO
             {
                 FinalGrade = result.FinalGrade,
                 ExperiencePoints = (int)(result.FinalGrade * 300)
 
             });
+        }
+
+        // GET: api/students/assignments-and-grades/5
+        [HttpGet("assignments-and-grades/{courseId}")]
+        public async Task<ActionResult<IEnumerable<AssignmentAndGradeDTO>>> GetStudentAssignmentAndGrades(long courseId)
+        {
+            if (_context.Students == null)
+                return NotFound();
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
+                return Unauthorized("Invalid token or user is not a student.");
+
+            var studentId = tokenData.Item1;
+
+            return await _context.Assignments
+               .Where(a => a.CourseId == courseId)
+               .OrderBy(a => a.DueDate)
+               .Select(x => new AssignmentAndGradeDTO
+               {
+                   AssignmentId = x.Id,
+                   Name = x.Name,
+                   Description = x.Description,
+                   DueDate = x.DueDate,
+                   Weight = x.Weight,
+                   Score = x.Grades!.Where(g => g.StudentId == studentId).Select(g => g.Score).FirstOrDefault(),
+                   DateReceived = x.Grades!.Where(g => g.StudentId == studentId).Select(g => g.DateReceived).FirstOrDefault(),
+
+               }).ToListAsync();
         }
 
         // PUT: api/students/user-preferences
