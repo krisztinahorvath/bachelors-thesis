@@ -300,7 +300,7 @@ namespace app_server.Controllers
             var top10 = leaderboard.Take(10).Select((entry, index) => new LeaderboardDTO
             {
                 Nickname = entry.Nickname,
-                FinalGrade = entry.FinalGrade,
+                FinalGrade = (float)Math.Round(entry.FinalGrade, 2),
                 ExperiencePoints = (int)(entry.FinalGrade*300),
                 Image = entry.Image,
                 Rank = index + 1
@@ -312,7 +312,7 @@ namespace app_server.Controllers
                 top10.Add(new LeaderboardDTO
                 {
                     Nickname = userEntry.Nickname,
-                    FinalGrade = userEntry.FinalGrade,
+                    FinalGrade = (float)Math.Round( userEntry.FinalGrade, 2),
                     ExperiencePoints = (int)(userEntry.FinalGrade * 300),
                     Rank = userRank,
                     Image = userEntry.Image

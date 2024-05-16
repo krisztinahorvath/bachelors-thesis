@@ -9,7 +9,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { StudentAppBar } from "../students/StudentAppBar";
 import { useEffect, useState } from "react";
 import { getNickname, getToken } from "../../utils/auth-utils";
@@ -19,6 +19,10 @@ import { displayErrorMessage } from "../ToastMessage";
 import Number1 from "../../assets/nr1.svg";
 import Number2 from "../../assets/nr2.svg";
 import Number3 from "../../assets/nr3.svg";
+import {
+  getShowLeaderboards,
+  getShowPoints,
+} from "../../utils/student-user-preferences";
 
 interface LeaderboardDTO {
   image?: string;
@@ -41,15 +45,22 @@ const Number3Badge = () => {
 };
 
 export const Leaderboard = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const courseData = location.state;
   const currStudNickname = getNickname();
+  const [pointsVisibility, setPointsVisibility] = useState(false);
+  const [, setLeaderboardVisibility] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState<LeaderboardDTO[]>([]);
 
   useEffect(() => {
     setLoading(true);
+    if (getShowPoints() === "true") setPointsVisibility(true);
+    if (getShowLeaderboards() === "true") setLeaderboardVisibility(true);
+    else navigate("/");
+
     const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
 
     axios
@@ -148,9 +159,15 @@ export const Leaderboard = () => {
                           : student.nickname}
                         {/* {student.nickname} */}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Points: {student.experiencePoints} XP
-                      </Typography>
+                      {pointsVisibility ? (
+                        <Typography variant="body2" color="text.secondary">
+                          Points: {student.experiencePoints} XP
+                        </Typography>
+                      ) : (
+                        <Typography variant="body2" color="text.secondary">
+                          Final grade: {student.finalGrade}{" "}
+                        </Typography>
+                      )}
                     </Box>
                   </Stack>
                 </Stack>
