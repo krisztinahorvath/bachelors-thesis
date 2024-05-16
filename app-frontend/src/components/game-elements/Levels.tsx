@@ -110,13 +110,13 @@ function ColorlibStepIcon(props: StepIconProps) {
   );
 }
 
-const steps = ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5🎉"];
+const steps = ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5"];
 
 export const CustomizedSteppers: React.FC<{ activeSteps: number }> = ({
   activeSteps,
 }) => {
   return (
-    <Stack sx={{ width: "100%" }} spacing={3}>
+    <Stack sx={{ width: "100%" }} spacing={0}>
       <br />
       <Stepper
         alternativeLabel

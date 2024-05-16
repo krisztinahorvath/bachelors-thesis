@@ -4,6 +4,7 @@ import {
   CardContent,
   CircularProgress,
   Container,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { StudentAppBar } from "./StudentAppBar";
@@ -17,6 +18,7 @@ import axios from "axios";
 import { displayErrorMessage } from "../ToastMessage";
 import {
   getShowLevels,
+  getShowPoints,
   getShowProgressBars,
 } from "../../utils/student-user-preferences";
 
@@ -35,8 +37,10 @@ export const GradePageStudent = () => {
   const courseData = location.state;
   const [levelsVisibility, setLevelsVisibility] = useState(false);
   const [progressBarsVisibility, setProgressBarsVisibility] = useState(false);
+  const [pointsVisibility, setPointsVisibility] = useState(false);
+
   const [level, setLevel] = useState(-1);
-  const [pointsLeftUntilNextLevel, setPointsLeftUntilNextLevel] = useState(0);
+  const [pointsLeftUntilNextLevel, setPointsLeftUntilNextLevel] = useState(0.0);
   const [assignments, setAssignments] = useState<AssignmentAndGradeDTO[]>([]);
   const xpValue = 300;
 
@@ -50,16 +54,20 @@ export const GradePageStudent = () => {
   const computeLevel = (grade: number) => {
     if (grade < 2) {
       setLevel(1);
-      setPointsLeftUntilNextLevel((2 - grade) * xpValue);
+      const res = 2 - grade;
+      setPointsLeftUntilNextLevel(parseFloat(res.toFixed(2)));
     } else if (grade >= 2 && grade < 4) {
       setLevel(2);
-      setPointsLeftUntilNextLevel((4 - grade) * xpValue);
+      const res = 4 - grade;
+      setPointsLeftUntilNextLevel(parseFloat(res.toFixed(2)));
     } else if (grade >= 4 && grade < 6.5) {
       setLevel(3);
-      setPointsLeftUntilNextLevel((6.5 - grade) * xpValue);
+      const res = 6.5 - grade;
+      setPointsLeftUntilNextLevel(parseFloat(res.toFixed(2)));
     } else if (grade >= 6.5 && grade < 9.5) {
       setLevel(4);
-      setPointsLeftUntilNextLevel((9.5 - grade) * xpValue);
+      const res = 9.5 - grade;
+      setPointsLeftUntilNextLevel(parseFloat(res.toFixed(2)));
     } else setLevel(5);
   };
 
@@ -73,6 +81,7 @@ export const GradePageStudent = () => {
 
   useEffect(() => {
     if (getShowLevels() === "true") setLevelsVisibility(true);
+    if (getShowPoints() === "true") setPointsVisibility(true);
     if (getShowProgressBars() === "true") setProgressBarsVisibility(true);
 
     setLoading(true);
@@ -90,6 +99,7 @@ export const GradePageStudent = () => {
       .then(([finalGradeResponse, assignmentsResponse]) => {
         setFinalGradeData(finalGradeResponse.data);
         computeLevel(finalGradeResponse.data.finalGrade);
+        console.log(pointsLeftUntilNextLevel);
 
         setAssignments(assignmentsResponse.data);
         setLoading(false);
@@ -105,16 +115,33 @@ export const GradePageStudent = () => {
     <Container>
       <StudentAppBar />
       <h2>Grades at {courseData.courseName}:</h2>
-      <Container sx={{ width: "70%" }}>
+      <Container sx={{ width: "70%", marginBottom: "20px" }}>
         {progressBarsVisibility && (
           <>
             {/* <p>Course progress:</p> */}
-            <CustomProgressBar value={finalGradeData.finalGrade * 10} />
+            <Tooltip
+              title={`You have completed ${Math.round(
+                finalGradeData.finalGrade * 10
+              )}% of the course work.`}
+              arrow
+            >
+              <div>
+                <CustomProgressBar value={finalGradeData.finalGrade * 10} />
+              </div>
+            </Tooltip>
+
+            <p>
+              {/* Course work progress. */}
+              You have completed{" "}
+              <strong>{Math.round(finalGradeData.finalGrade * 10)}%</strong> of
+              the course work.
+            </p>
           </>
         )}{" "}
       </Container>
       <Container
         sx={{
+          marginBottom: "30px",
           //width: "100%", // set width to 100% by default
           "@media (min-width: 768px)": {
             minWidth: "70%", // set minWidth to 70% for screens wider than 768px
@@ -124,21 +151,38 @@ export const GradePageStudent = () => {
       >
         {levelsVisibility && (
           <>
-            {" "}
             <CustomizedSteppers activeSteps={level - 1} />
-            <p>
-              You have <strong>{finalGradeData.experiencePoints} XP</strong>.
-              {pointsLeftUntilNextLevel > 0 ? (
-                <>
-                  {" "}
-                  You need an additonal{" "}
-                  <strong>{Math.round(pointsLeftUntilNextLevel)} XP</strong> to
-                  reach <strong>Level {level + 1}</strong>.
-                </>
-              ) : (
-                <> Congratulations, you've reached the final level!</>
-              )}
-            </p>
+            {pointsVisibility ? (
+              <p>
+                You have <strong>{finalGradeData.experiencePoints} XP</strong>.
+                {pointsLeftUntilNextLevel > 0 ? (
+                  <>
+                    {" "}
+                    You need an additonal{" "}
+                    <strong>
+                      {Math.round(pointsLeftUntilNextLevel * xpValue)} XP
+                    </strong>{" "}
+                    to reach <strong>Level {level + 1}</strong>.
+                  </>
+                ) : (
+                  <> Congratulations!. You've reached the final level!</>
+                )}
+              </p>
+            ) : (
+              <p>
+                You have <strong>{finalGradeData.finalGrade} points </strong>.
+                {pointsLeftUntilNextLevel > 0 ? (
+                  <>
+                    {" "}
+                    You need an additonal{" "}
+                    <strong>{pointsLeftUntilNextLevel} point(s)</strong> to
+                    reach <strong>Level {level + 1}</strong>.
+                  </>
+                ) : (
+                  <> Congratulations!. You've reached the final level!</>
+                )}
+              </p>
+            )}
           </>
         )}
       </Container>
@@ -181,17 +225,27 @@ export const GradePageStudent = () => {
                       </Typography>
                     </Box>
                     <Box sx={{ textAlign: "right" }}>
-                      {card.dateReceived.toString() !==
-                      "0001-01-01T00:00:00" ? (
+                      {pointsVisibility ? (
+                        card.dateReceived.toString() !==
+                        "0001-01-01T00:00:00" ? (
+                          <Typography variant="body2" color="text.secondary">
+                            {((card.score * card.weight) / 100) * xpValue} /{" "}
+                            {(card.weight / 10) * xpValue} XP
+                          </Typography>
+                        ) : (
+                          <Typography variant="body2" color="text.secondary">
+                            / {(card.weight / 10) * xpValue} XP
+                          </Typography>
+                        )
+                      ) : card.dateReceived.toString() !==
+                        "0001-01-01T00:00:00" ? (
                         <Typography variant="body2" color="text.secondary">
-                          {/* <strong>Score: </strong> */}
-                          {((card.score * card.weight) / 100) * 300} /{" "}
-                          {(card.weight / 10) * 300} XP
+                          {(card.score * card.weight) / 100} /{" "}
+                          {card.weight / 10} points
                         </Typography>
                       ) : (
                         <Typography variant="body2" color="text.secondary">
-                          {/* <strong>Score: </strong> */} /{" "}
-                          {(card.weight / 10) * 300} XP
+                          / {card.weight / 10} points
                         </Typography>
                       )}
                     </Box>

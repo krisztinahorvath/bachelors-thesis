@@ -150,7 +150,10 @@ export const StudentUserPreferences = () => {
           <ListItemIcon>
             <GrainIcon />
           </ListItemIcon>
-          <ListItemText id="switch-list-label-points" primary="Points" />
+          <ListItemText
+            id="switch-list-label-points"
+            primary="Experience Points"
+          />
           <Switch
             edge="end"
             onChange={handleToggle("points")}
