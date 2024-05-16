@@ -80,7 +80,14 @@ export const Leaderboard = () => {
       )}
 
       {!loading && students.length > 0 && (
-        <Container sx={{ width: "80%" }}>
+        <Container
+          sx={{
+            width: "80%",
+            "@media (max-width: 768px)": {
+              width: "100%",
+            },
+          }}
+        >
           <h2> Leaderboard for {courseData.courseName}:</h2>
           {students.map((student, index) => (
             <Card
@@ -89,6 +96,10 @@ export const Leaderboard = () => {
                 marginBottom: 2,
                 backgroundColor:
                   student.nickname === currStudNickname ? "#e8f4f8" : "white", // Conditionally set the background color
+                // "@media (min-width: 768px)": {
+                //   minWidth: "110%", // set minWidth to 70% for screens wider than 768px
+                //   width: "unset", // unset width to allow minWidth to take effect
+                // },
               }}
             >
               {/* <CardActionArea> */}
@@ -124,7 +135,13 @@ export const Leaderboard = () => {
                       <Typography
                         gutterBottom
                         component="div"
-                        sx={{ fontSize: "0.875rem", fontWeight: "bold" }}
+                        sx={{
+                          fontSize: "0.875rem",
+                          fontWeight: "bold",
+                          "@media (max-width: 768px)": {
+                            wordBreak: "break-word",
+                          },
+                        }}
                       >
                         {student.nickname === currStudNickname
                           ? `${student.nickname} (You)`
