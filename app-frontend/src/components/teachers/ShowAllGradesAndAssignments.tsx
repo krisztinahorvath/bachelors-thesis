@@ -5,6 +5,7 @@ import {
   GridCellModesModel,
   GridCellParams,
   GridColDef,
+  GridToolbar,
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -337,12 +338,13 @@ export const ShowAllGradesAndAssignments: React.FC<
             onCellModesModelChange={handleCellModesModelChange}
             onCellClick={handleCellClick}
             processRowUpdate={processRowUpdate}
+            slots={{ toolbar: GridToolbar }}
             sx={{
               "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: "gray", // Change to your desired color
+                backgroundColor: "red", // Change to your desired color
               },
               "& .MuiDataGrid-columnHeaderTitle": {
-                color: "#7676ff", // Change to your desired text color
+                color: "#3177d6", // Change to your desired text color
               },
             }}
           />
