@@ -6,5 +6,6 @@
         public long AssignmentId { get; set; }
         public float Score { get; set; }
         public DateTime DateReceived { get; set; }
+        public float? FinalGrade { get; set; }
     }
 }

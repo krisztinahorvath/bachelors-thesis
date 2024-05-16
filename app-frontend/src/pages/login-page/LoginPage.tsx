@@ -121,13 +121,13 @@ export const LoginPage = () => {
       <Grid sx={{ flexGrow: 1, height: "100vh" }} container spacing={0}>
         <Grid item xs={7} style={leftGridItemStyle}>
           <Grid item>
-            <a href="https://www.vecteezy.com/free-vector/flat-design">
-              <img
-                src="/signInPage.jpg"
-                alt="Flat Design Vectors by Vecteezy"
-                style={imageStyle}
-              />
-            </a>
+            {/* <a href="https://www.vecteezy.com/free-vector/flat-design"> */}
+            <img
+              src="/signInPage.jpg"
+              alt="Flat Design Vectors by Vecteezy"
+              style={imageStyle}
+            />
+            {/* </a> */}
           </Grid>
         </Grid>
 

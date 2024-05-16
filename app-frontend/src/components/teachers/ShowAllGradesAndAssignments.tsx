@@ -16,6 +16,7 @@ import { CircularProgress, Container } from "@mui/material";
 interface AssignmentNameDTO {
   id: number;
   name: string;
+  weight: number;
 }
 
 interface ShowAllGradesAndAssignmentsProps {
@@ -54,6 +55,7 @@ export const ShowAllGradesAndAssignments: React.FC<
               id: Number(studentId),
               StudentName: student.StudentName,
               UniqueIdentificationCode: student.UniqueIdentificationCode,
+              FinalGrade: student.FinalGrade,
             };
 
             assignmentsData.forEach((assignment) => {
@@ -119,6 +121,14 @@ export const ShowAllGradesAndAssignments: React.FC<
       sortable: false,
     },
     ...assignmentColumns,
+    {
+      field: "FinalGrade",
+      headerName: "Final Grade",
+      width: 180,
+      editable: false,
+      hideable: false,
+      sortable: true,
+    },
   ];
 
   const [cellModesModel, setCellModesModel] =
@@ -231,6 +241,7 @@ export const ShowAllGradesAndAssignments: React.FC<
             // Update the updated row with the new data returned by the server
             updatedRow[dateReceivedKey] = new Date(response.data.dateReceived);
             updatedRow[updatedField] = response.data.score;
+            updatedRow["FinalGrade"] = response.data.finalGrade;
 
             // Return the updated row to update the Data Grid internal state
             return updatedRow;
@@ -326,6 +337,14 @@ export const ShowAllGradesAndAssignments: React.FC<
             onCellModesModelChange={handleCellModesModelChange}
             onCellClick={handleCellClick}
             processRowUpdate={processRowUpdate}
+            sx={{
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "gray", // Change to your desired color
+              },
+              "& .MuiDataGrid-columnHeaderTitle": {
+                color: "#7676ff", // Change to your desired text color
+              },
+            }}
           />
         </Container>
       )}

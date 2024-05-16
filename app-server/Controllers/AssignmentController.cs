@@ -269,6 +269,7 @@ namespace app_server.Controllers
             {
                 Id = assignment.Id,
                 Name = assignment.Name,
+                Weight = assignment.Weight,
             };
         }
     }

@@ -109,7 +109,7 @@ namespace app_server.Controllers
                     StudentId = gradeDTO.StudentId,
                     AssignmentId = gradeDTO.AssignmentId,
                     Score = gradeDTO.Score,
-                    DateReceived = gradeDTO.DateReceived
+                    DateReceived = gradeDTO.DateReceived,
                 };
 
                 _context.Grades.Add(grade);
@@ -123,6 +123,23 @@ namespace app_server.Controllers
 
             await _context.SaveChangesAsync();
 
+            // compute the new final grade at the course
+            var courseId = _context.Assignments
+                .Where(a => a.Id == gradeDTO.AssignmentId)
+                .Select(a => a.CourseId)
+                .FirstOrDefault();
+
+            var query = from enrollment in _context.Enrollments
+                        where enrollment.CourseId == courseId && enrollment.StudentId == gradeDTO.StudentId
+                        join grade in _context.Grades.Where(g => g.Assignment.CourseId == courseId) on gradeDTO.StudentId equals grade.StudentId into studentGrades
+                        select new
+                        {
+                          FinalGrade = studentGrades.Sum(g => g.Score * g.Assignment.Weight) / 100,
+                        };
+            var result = await query.FirstOrDefaultAsync();
+
+            gradeDTO.FinalGrade = result!.FinalGrade;
+            
             return Ok(gradeDTO);
         }
 
