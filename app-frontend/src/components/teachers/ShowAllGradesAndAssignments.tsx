@@ -13,6 +13,7 @@ import { BACKEND_URL } from "../../constants";
 import { getToken } from "../../utils/auth-utils";
 import { displayErrorMessage } from "../ToastMessage";
 import { CircularProgress, Container } from "@mui/material";
+import { ImportFromExcel } from "./ImportFromExcel.tsx";
 
 interface AssignmentNameDTO {
   id: number;
@@ -37,6 +38,11 @@ export const ShowAllGradesAndAssignments: React.FC<
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState<RowData[]>([]);
   const [assignments, setAssignments] = useState<AssignmentNameDTO[]>([]);
+  const [refreshGrid, setRefreshGrid] = useState(0);
+
+  const handleRefreshGrid = () => {
+    setRefreshGrid((prevRefreshGrid) => prevRefreshGrid + 1);
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -88,7 +94,7 @@ export const ShowAllGradesAndAssignments: React.FC<
         setLoading(false);
         displayErrorMessage("An error occurred while fetching the grades.");
       });
-  }, [courseId]);
+  }, [courseId, refreshGrid]);
 
   const assignmentColumns: GridColDef[] = assignments.flatMap((assignment) => [
     {
@@ -331,6 +337,10 @@ export const ShowAllGradesAndAssignments: React.FC<
 
       {!loading && (
         <Container sx={{ height: 600, width: "100%" }}>
+          <ImportFromExcel
+            courseId={courseId}
+            onGradesSubmitted={handleRefreshGrid}
+          />
           <DataGrid
             rows={rows}
             columns={columns}

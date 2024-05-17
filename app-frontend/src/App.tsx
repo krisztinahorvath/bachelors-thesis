@@ -17,6 +17,7 @@ import { UserProfile } from "./components/users/UserProfile";
 import { EditUserProfile } from "./components/users/EditUserProfile";
 import { Leaderboard } from "./components/game-elements/Leaderboard";
 import { GradePageStudent } from "./components/students/GradePageStudent";
+import { UploadFileComponent } from "./components/teachers/UploadFile";
 
 function App() {
   return (
@@ -34,10 +35,10 @@ function App() {
 
       <Router>
         <Routes>
+          {/* <Route path="/upload" element={<UploadFileComponent />} /> */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          {/* <Route path = "/grades" element={<StudentGradesPage/>} /> */}
 
           <Route
             path="/my-profile"

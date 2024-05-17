@@ -143,6 +143,81 @@ namespace app_server.Controllers
             return Ok(gradeDTO);
         }
 
+        // POST: api/grades/create-from-import
+        [HttpPost("create-from-import/{courseId}")]
+        public async Task<IActionResult> CreateGrades([FromBody] List<ImportGradeDTO> gradeDTOs, long courseId)
+        {
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || tokenData?.Item1 == null || tokenData.Item2 != UserType.Teacher)
+            {
+                return Unauthorized("Invalid token or user is not a teacher.");
+            }
+
+            var teacherId = tokenData.Item1;
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    foreach (var gradeDto in gradeDTOs)
+                    {
+                        // check if the student is enrolled in the course
+                        var enrollment = await _context.Enrollments
+                            .Include(e => e.Student)
+                            .FirstOrDefaultAsync(e => e.Student.UniqueIdentificationCode == gradeDto.UniqueIdCode && e.CourseId == courseId);
+
+                        if (enrollment == null)
+                        {
+                            await transaction.RollbackAsync();
+                            return BadRequest($"Student with unique id code {gradeDto.UniqueIdCode} is not enrolled to this course."); 
+                        }
+
+                        var studentId = enrollment.StudentId;
+
+                        foreach (var assignmentGrade in gradeDto.Assignments)
+                        {
+                            if (assignmentGrade.Score.HasValue && assignmentGrade.DateReceived.HasValue)
+                            {
+                                var existingGrade = await _context.Grades
+                                    .FirstOrDefaultAsync(g => g.StudentId == studentId && g.AssignmentId == assignmentGrade.AssignmentId);
+
+                                if (existingGrade != null)
+                                {
+                                    // update existing grade
+                                    existingGrade.Score = assignmentGrade.Score.Value;
+                                    existingGrade.DateReceived = assignmentGrade.DateReceived.Value;
+
+                                    _context.Grades.Update(existingGrade);
+                                }
+                                else
+                                {
+                                    var grade = new Grade
+                                    {
+                                        StudentId = studentId,
+                                        AssignmentId = assignmentGrade.AssignmentId,
+                                        Score = assignmentGrade.Score.Value,
+                                        DateReceived = assignmentGrade.DateReceived.Value
+                                    };
+
+                                    _context.Grades.Add(grade);
+                                }
+                            }
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(500, $"Internal server error: {ex.Message}");
+                }
+            }
+
+            return Ok("Grades have been successfully created.");
+        }
+
 
         // PUT: api/grades/5/5
         [HttpPut("{studentId}/assignmentId")]
