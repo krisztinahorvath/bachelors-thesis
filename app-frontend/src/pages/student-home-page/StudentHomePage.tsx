@@ -25,51 +25,53 @@ export const StudentHomePage = () => {
   }, [newEnrollment]);
 
   return (
-    <Container
-    // sx={{
-    //   paddingLeft: "2.5%",
-    //   paddingRight: "2.5%",
-    //   justifyContent: "flex-start",
-    // }}
-    >
+    <>
       <StudentAppBar />
-      <h3 style={{ textAlign: "left", paddingLeft: "2.5%" }}>My courses:</h3>
       <Container
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "flex-end", // 'flex-start'
-        }}
+      // sx={{
+      //   paddingLeft: "2.5%",
+      //   paddingRight: "2.5%",
+      //   justifyContent: "flex-start",
+      // }}
       >
-        <Tooltip
-          title="Enroll to course"
-          onClick={() => {
-            setOpen(true);
+        <h3 style={{ textAlign: "left", paddingLeft: "2.5%" }}>My courses:</h3>
+        <Container
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "flex-end", // 'flex-start'
           }}
         >
-          <Fab
-            size="small"
-            color="primary"
-            aria-label="add"
-            sx={{ marginBottom: "10px" }}
+          <Tooltip
+            title="Enroll to course"
+            onClick={() => {
+              setOpen(true);
+            }}
           >
-            <AddIcon />
-          </Fab>
-        </Tooltip>
+            <Fab
+              size="small"
+              color="primary"
+              aria-label="add"
+              sx={{ marginBottom: "10px" }}
+            >
+              <AddIcon />
+            </Fab>
+          </Tooltip>
+          <br />
+          {open && (
+            <EnrollDialog
+              open={open}
+              handleClose={handleClose}
+              onNewEnrollment={() => setNewEnrollment(true)}
+            />
+          )}
+        </Container>
+
+        <CourseCards key={courseCardsKey} userType={UserType.Student} />
+
         <br />
-        {open && (
-          <EnrollDialog
-            open={open}
-            handleClose={handleClose}
-            onNewEnrollment={() => setNewEnrollment(true)}
-          />
-        )}
       </Container>
-
-      <CourseCards key={courseCardsKey} userType={UserType.Student} />
-
-      <br />
-    </Container>
+    </>
   );
 };

@@ -54,40 +54,41 @@ export const UserProfile = () => {
   }, []);
 
   return (
-    <Container>
+    <>
       {userType === UserType.Student && <StudentAppBar />}
       {userType === UserType.Teacher && <TeacherAppBar />}
-
-      <Box
-        sx={{
-          borderRadius: "8px",
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-          p: 2, // Adjust padding if necessary
-        }}
-      >
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            {" "}
-            {/* Takes 50% width on extra small screens and above */}
-            {/* Content for the left side */}
-            <Avatar
-              sx={{ width: "10vw", height: "10vw" }}
-              //alt="Avatar"
-              src={`data:image/jpg;base64,${user.image}`}
-            />
+      <Container>
+        <Box
+          sx={{
+            borderRadius: "8px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+            p: 2, // Adjust padding if necessary
+          }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              {" "}
+              {/* Takes 50% width on extra small screens and above */}
+              {/* Content for the left side */}
+              <Avatar
+                sx={{ width: "10vw", height: "10vw" }}
+                //alt="Avatar"
+                src={`data:image/jpg;base64,${user.image}`}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              Name: {user.name} <br />
+              Nickname: {user.nickname} <br />
+              Email: {user.email} <br />
+              Unique Identification Code: {user.uniqueIdentificationCode}
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            Name: {user.name} <br />
-            Nickname: {user.nickname} <br />
-            Email: {user.email} <br />
-            Unique Identification Code: {user.uniqueIdentificationCode}
-          </Grid>
-        </Grid>
 
-        <Button component={Link} to="/edit-profile" variant="contained">
-          Edit Profile
-        </Button>
-      </Box>
-    </Container>
+          <Button component={Link} to="/edit-profile" variant="contained">
+            Edit Profile
+          </Button>
+        </Box>
+      </Container>
+    </>
   );
 };

@@ -11,13 +11,13 @@ import { UserType } from "./models/User";
 import { PrivateRoute } from "./utils/private-route-utils";
 import { RegisterPage } from "./pages/register-page/RegisterPage";
 import { CoursePageTeacher } from "./pages/CoursePageTeacher";
-import { AddCoursePage } from "./pages/AddCoursePage";
-import { StudentUserPreferences } from "./pages/StudentUserPreferences";
+import { AddCoursePage } from "./components/courses/AddCoursePage";
+import { StudentUserPreferences } from "./components/students/StudentUserPreferences";
 import { UserProfile } from "./components/users/UserProfile";
 import { EditUserProfile } from "./components/users/EditUserProfile";
 import { Leaderboard } from "./components/game-elements/Leaderboard";
 import { GradePageStudent } from "./components/students/GradePageStudent";
-import { UploadFileComponent } from "./components/teachers/UploadFile";
+import { AddAssignment } from "./components/assignments/AddAssignment";
 
 function App() {
   return (
@@ -108,6 +108,15 @@ function App() {
               <PrivateRoute
                 allowedUsers={[UserType.Teacher]}
                 element={<TeacherHomePage />}
+              />
+            }
+          />
+          <Route
+            path="/course/:courseIndex/assignment/add"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Teacher]}
+                element={<AddAssignment />}
               />
             }
           />

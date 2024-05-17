@@ -8,7 +8,7 @@ import { displayErrorMessage } from "../components/ToastMessage";
 import { getToken, getUserType } from "../utils/auth-utils";
 import { CourseSideBar } from "../components/teachers/CourseSideBar";
 import { ShowStudentsAtCourse } from "../components/teachers/ShowStudentsAtCourse";
-import { ShowAssignmentsAtCourse } from "../components/teachers/ShowCourseAssignments";
+import { ShowAssignmentsAtCourse } from "../components/assignments/ShowCourseAssignments";
 import { ShowAllGradesAndAssignments } from "../components/teachers/ShowAllGradesAndAssignments";
 import { TeacherAppBar } from "../components/teachers/TeacherAppBar";
 import { UserType } from "../models/User";

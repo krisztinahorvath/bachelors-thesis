@@ -158,14 +158,14 @@ export const EditUserProfile = () => {
 
   return (
     <React.Fragment>
+      {userType === UserType.Student && <StudentAppBar />}
+      {userType === UserType.Teacher && <TeacherAppBar />}
       <Grid
         container
         direction="column"
         justifyContent="center"
         alignItems="center"
       >
-        {userType === UserType.Student && <StudentAppBar />}
-        {userType === UserType.Teacher && <TeacherAppBar />}
         <h2>Edit profile</h2>
         <form onSubmit={handleSubmit} style={formStyle}>
           <StyledTextField
