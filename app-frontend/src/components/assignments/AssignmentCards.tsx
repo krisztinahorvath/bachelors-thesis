@@ -2,21 +2,29 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import {
-  CardActionArea,
+  Box,
   CircularProgress,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Fab,
+  IconButton,
   Tooltip,
+  Button,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Assignment } from "../../models/Assignment";
 import { getToken, getUserType } from "../../utils/auth-utils";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants";
-import { displayErrorMessage } from "../ToastMessage";
+import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
 import { UserType } from "../../models/User";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate, useParams } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface ShowAssignmentsAtCourseProps {
   courseId: any;
@@ -30,6 +38,8 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
   const [userType, setUserType] = useState<UserType>();
   const navigate = useNavigate();
   const { courseIndex } = useParams();
+  const [open, setOpen] = useState(false);
+  const [currentAssignment, setCurrentAssignmnet] = useState<Assignment>();
 
   useEffect(() => {
     setLoading(true);
@@ -60,8 +70,41 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
       });
   }, []);
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const navigateAddAssignment = () => {
     navigate(`/course/${courseIndex}/assignment/add`, { state: courseId });
+  };
+
+  const handleDelete = async () => {
+    setOpen(false);
+    try {
+      const authToken = getToken();
+      await axios.delete(
+        `${BACKEND_URL}/assignments/${currentAssignment?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      // update assignment state to reflect changes
+      setAssignments((prevAssignments) =>
+        prevAssignments.filter(
+          (assignment) => assignment.id !== currentAssignment?.id
+        )
+      );
+
+      displaySuccessMessage("Assignment removed successfully!");
+    } catch (error: any) {
+      console.log(error);
+      if (error.response.status === 401) {
+        displayErrorMessage(error.response.data);
+      }
+    }
   };
 
   return (
@@ -100,8 +143,15 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
         <Container>
           {assignments.map((card, index) => (
             <Card key={index} sx={{ marginBottom: 2 }}>
-              <CardActionArea>
-                <CardContent sx={{ textAlign: "left" }}>
+              {/* <CardActionArea> */}
+              <CardContent
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ textAlign: "left" }}>
                   <Typography gutterBottom variant="h6" component="div">
                     {card.name}
                   </Typography>
@@ -109,22 +159,11 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
                     {card.description}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Weight: {card.weight}%
+                    <strong>Weight: </strong>
+                    {card.weight}%
                   </Typography>
-                  {/* <Typography variant="body2" color="text.secondary">
-                  Due date:{" "}
-                  {card.dueDate
-                    ? new Date(card.dueDate).toLocaleString("en", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })
-                    : "No due date"}
-                </Typography> */}
                   <Typography variant="body2" color="text.secondary">
-                    Due date:{" "}
+                    <strong>Due date: </strong>
                     {card.dueDate
                       ? `${new Date(card.dueDate)
                           .getDate()
@@ -144,12 +183,47 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
                           .padStart(2, "0")}`
                       : "No due date"}
                   </Typography>
-                </CardContent>
-              </CardActionArea>
+                </div>
+
+                {userType === UserType.Teacher && (
+                  <Box sx={{ paddingRight: 1 }}>
+                    <IconButton
+                      color="error"
+                      onClick={() => {
+                        setCurrentAssignmnet(card);
+                        setOpen(true);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                )}
+              </CardContent>
+              {/* </CardActionArea> */}
             </Card>
           ))}
         </Container>
       )}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Remove assignment</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to remove {currentAssignment?.name} from this
+            course? All its grades will be also removed.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} autoFocus>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

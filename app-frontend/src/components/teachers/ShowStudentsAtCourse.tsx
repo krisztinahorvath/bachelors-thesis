@@ -17,8 +17,6 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Pagination,
-  Stack,
   Tooltip,
 } from "@mui/material";
 import "../../components/responsive-table/ResponsiveTable.css";
@@ -40,8 +38,6 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
   const handleClose = () => {
     setOpen(false);
   };
-
-  const [noOfPages] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -94,33 +90,6 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
     setStudentId(studentId);
     setStudentName(studentName);
     setOpen(true);
-  };
-
-  const reloadData = () => {
-    console.log(page);
-    setLoading(true);
-    // Promise.all([
-    //   fetch(
-    //     `${BACKEND_URL}/books/?pageNumber=${page - 1}&pageSize=${pageSize}`
-    //   ).then((response) => response.json()),
-    //   fetch(
-    //     `${BACKEND_URL}/books/count-authors?pageNumber=${
-    //       page - 1
-    //     }&pageSize=${pageSize}`
-    //   ).then((response) => response.json()),
-    // ]).then(([data, count]) => {
-    //   setBooks(data);
-    //   setNrAuthors(count);
-    //   setLoading(false);
-    // });
-  };
-
-  const handlePageChange = (
-    _event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    page = value;
-    reloadData();
   };
 
   return (
@@ -213,27 +182,6 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
               <Button onClick={handleDelete}>Delete</Button>
             </DialogActions>
           </Dialog>
-
-          {/* <Container
-            style={{
-              backgroundColor: "white",
-              borderRadius: 10,
-              width: "100%",
-              maxWidth: 500,
-              margin: "0 auto",
-            }}
-          >
-            <Stack spacing={2}>
-              <Pagination
-                count={noOfPages}
-                page={page}
-                onChange={handlePageChange}
-                size="large"
-                variant="outlined"
-                color="secondary"
-              />
-            </Stack>
-          </Container> */}
         </Container>
       )}
     </Container>
