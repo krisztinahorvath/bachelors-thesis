@@ -235,7 +235,7 @@ namespace app_server.Controllers
                         var grade = group.FirstOrDefault(g => g.AssignmentId == assignmentId)?.Grades.FirstOrDefault();
 
                         studentData[$"assignment{assignmentId}"] = grade?.Score;
-                        studentData[$"dateReceived{assignmentId}"] = grade?.DateReceived;
+                        studentData[$"dateReceived{assignmentId}"] = grade?.DateReceived.ToLocalTime();
 
                         if (grade?.Score != null)
                         {

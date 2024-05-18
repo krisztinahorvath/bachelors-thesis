@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { TeacherAppBar } from "../teachers/TeacherAppBar";
 import {
+  Box,
   Button,
   Container,
   Grid,
@@ -31,11 +32,11 @@ const StyledTextField = styled(TextField)({
   },
 });
 
-const formStyle: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  width: "40%",
-};
+// const formStyle: React.CSSProperties = {
+//   display: "flex",
+//   flexDirection: "column",
+//   width: "40%",
+// };
 
 const textFieldStyle = {
   marginTop: "5%",
@@ -87,14 +88,14 @@ export const AddAssignment = () => {
     event.preventDefault();
 
     try {
-      // const headers = {headers: {Authorization: `Bearer ${getToken()}`}, 'Content-Type': 'multipart/form-data'};
-      await axios.post(`${BACKEND_URL}/courses/create`, assignment, {
+      assignment.dueDate = dateValue;
+      await axios.post(`${BACKEND_URL}/assignments`, assignment, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
       });
 
-      displaySuccessMessage("The course was created successfuly!");
+      displaySuccessMessage("The assignment was created successfuly!");
       navigate(-1);
     } catch (error: any) {
       console.log(error);
@@ -102,7 +103,9 @@ export const AddAssignment = () => {
         const errorMessage = error.response.data;
         displayErrorMessage(errorMessage);
       } else {
-        displayErrorMessage("An error occurred while trying to create course.");
+        displayErrorMessage(
+          "An error occurred while trying to create the assignment."
+        );
       }
     }
   };
@@ -117,7 +120,15 @@ export const AddAssignment = () => {
         alignItems="center"
       >
         <h2>Create a new assignment</h2>
-        <form onSubmit={handleSubmit} style={formStyle}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: { xs: "80%", sm: "40%" },
+          }}
+        >
           <StyledTextField
             required
             id="name"
@@ -163,7 +174,7 @@ export const AddAssignment = () => {
           <Button type="submit" style={submitButtonStyle}>
             Create assignment
           </Button>
-        </form>
+        </Box>
       </Grid>
     </>
   );

@@ -143,7 +143,8 @@ namespace app_server.Controllers
                 Name = assignmentDTO.Name,
                 Description = assignmentDTO.Description,
                 DueDate = assignmentDTO.DueDate,
-                CourseId = assignmentDTO.CourseId
+                CourseId = assignmentDTO.CourseId,
+                Weight = assignmentDTO.Weight
             };
 
             _context.Assignments.Add(assignment);
@@ -257,7 +258,7 @@ namespace app_server.Controllers
                 Id = assignment.Id,
                 Name = assignment.Name,
                 Description = assignment.Description,
-                DueDate = assignment.DueDate,
+                DueDate = assignment.DueDate.ToLocalTime(),
                 Weight = assignment.Weight,
                 CourseId = assignment.CourseId
             };
