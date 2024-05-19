@@ -185,6 +185,7 @@ namespace app_server.Controllers
             assignment.Name = assignmentDTO.Name;
             assignment.Description = assignmentDTO.Description;
             assignment.DueDate = assignmentDTO.DueDate;
+            assignment.Weight = assignmentDTO.Weight;
 
             try
             {

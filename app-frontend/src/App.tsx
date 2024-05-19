@@ -18,6 +18,7 @@ import { EditUserProfile } from "./components/users/EditUserProfile";
 import { Leaderboard } from "./components/game-elements/Leaderboard";
 import { GradePageStudent } from "./components/students/GradePageStudent";
 import { AddAssignment } from "./components/assignments/AddAssignment";
+import { UpdateAssignment } from "./components/assignments/UpdateAssignment";
 
 function App() {
   return (
@@ -117,6 +118,15 @@ function App() {
               <PrivateRoute
                 allowedUsers={[UserType.Teacher]}
                 element={<AddAssignment />}
+              />
+            }
+          />
+          <Route
+            path="/course/:courseIndex/assignment/:assignmentIndex/update"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Teacher]}
+                element={<UpdateAssignment />}
               />
             }
           />

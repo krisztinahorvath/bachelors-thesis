@@ -25,6 +25,7 @@ import { UserType } from "../../models/User";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface ShowAssignmentsAtCourseProps {
   courseId: any;
@@ -186,16 +187,43 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
                 </div>
 
                 {userType === UserType.Teacher && (
-                  <Box sx={{ paddingRight: 1 }}>
-                    <IconButton
-                      color="error"
-                      onClick={() => {
-                        setCurrentAssignmnet(card);
-                        setOpen(true);
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      paddingRight: 1,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Tooltip title="Update">
+                      <IconButton
+                        color="primary"
+                        onClick={() => {
+                          navigate(
+                            `/course/${courseIndex}/assignment/${
+                              index + 1
+                            }/update`,
+                            {
+                              state: card.id,
+                            }
+                          );
+                        }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Delete">
+                      <IconButton
+                        color="error"
+                        onClick={() => {
+                          setCurrentAssignmnet(card);
+                          setOpen(true);
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
                   </Box>
                 )}
               </CardContent>

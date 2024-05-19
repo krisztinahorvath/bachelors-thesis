@@ -1,21 +1,22 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { TeacherAppBar } from "../teachers/TeacherAppBar";
+import { Assignment } from "../../models/Assignment";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { getToken } from "../../utils/auth-utils";
+import { BACKEND_URL } from "../../constants";
+import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
 import {
   Box,
-  Button,
-  Container,
   Grid,
-  TextField,
+  Container,
+  Button,
   outlinedInputClasses,
   styled,
+  TextField,
 } from "@mui/material";
-import axios from "axios";
-import { BACKEND_URL } from "../../constants";
-import { getToken } from "../../utils/auth-utils";
-import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
-import { useState } from "react";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
@@ -57,21 +58,13 @@ const submitButtonStyle = {
   marginBottom: "10%",
 };
 
-export const AddAssignment = () => {
+export const UpdateAssignment = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const courseId = location.state;
-  const [dateValue, setDateValue] = useState(new Date());
+  const assignmentId = location.state;
+  const [assignment, setAssignment] = useState<Assignment>();
+  const [dateValue, setDateValue] = useState();
   const [weightError, setWeightError] = useState(false);
-
-  const [assignment, setAssignment] = useState({
-    id: 0,
-    name: "",
-    description: "",
-    dueDate: new Date(),
-    weight: 0,
-    courseId: courseId,
-  });
 
   const handleWeightChange = (event: any) => {
     const value = parseInt(event.target.value);
@@ -84,18 +77,42 @@ export const AddAssignment = () => {
     }
   };
 
+  useEffect(() => {
+    const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
+    axios
+      .get(`${BACKEND_URL}/assignments/${assignmentId}`, headers)
+      .then((response) => {
+        setAssignment(response.data);
+        setDateValue(response.data.dueDate);
+      })
+      .catch((error: any) => {
+        if (error.response) {
+          const errorMessage = error.response.data;
+          displayErrorMessage(errorMessage);
+        } else {
+          displayErrorMessage(
+            "An error occurred while fetching the assignments."
+          );
+        }
+      });
+  }, []);
+
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     try {
-      assignment.dueDate = dateValue;
-      await axios.post(`${BACKEND_URL}/assignments`, assignment, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
+      //assignment!.dueDate = dateValue;
+      await axios.put(
+        `${BACKEND_URL}/assignments/${assignmentId}`,
+        assignment,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
 
-      displaySuccessMessage("The assignment was created successfuly!");
+      displaySuccessMessage("The assignment was updated successfuly!");
       navigate(-1);
     } catch (error: any) {
       console.log(error);
@@ -104,7 +121,7 @@ export const AddAssignment = () => {
         displayErrorMessage(errorMessage);
       } else {
         displayErrorMessage(
-          "An error occurred while trying to create the assignment."
+          "An error occurred while trying to update the assignment."
         );
       }
     }
@@ -119,7 +136,7 @@ export const AddAssignment = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <h2>Create a new assignment</h2>
+        <h2>Update assignment</h2>
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -133,8 +150,10 @@ export const AddAssignment = () => {
             required
             id="name"
             label="Name"
+            value={assignment?.name}
             variant="outlined"
             style={textFieldStyle}
+            InputLabelProps={{ shrink: true }}
             onChange={(event) =>
               setAssignment({ ...assignment, name: event.target.value })
             }
@@ -143,8 +162,10 @@ export const AddAssignment = () => {
             required
             id="description"
             label="Description"
+            value={assignment?.description}
             variant="outlined"
             style={textFieldStyle}
+            InputLabelProps={{ shrink: true }}
             onChange={(event) =>
               setAssignment({ ...assignment, description: event.target.value })
             }
@@ -153,27 +174,31 @@ export const AddAssignment = () => {
             <DateTimePicker
               sx={{ marginTop: "5%" }}
               label="Due Date"
-              defaultValue={dayjs(dateValue)}
+              value={dayjs(assignment?.dueDate)}
               onChange={(newValue) => {
-                setDateValue(newValue!.toDate());
+                if (newValue) {
+                  setAssignment({ ...assignment, dueDate: newValue.toDate() });
+                }
               }}
             />
           </LocalizationProvider>
-          <StyledTextField
+          <TextField
             required
             id="weight"
             label="Weight"
+            value={assignment?.weight}
             variant="outlined"
             style={textFieldStyle}
             type="number"
             error={weightError}
             helperText={weightError ? "Value must be between 0 and 100" : ""}
             inputProps={{ min: 0, max: 100 }}
+            InputLabelProps={{ shrink: true }}
             onChange={handleWeightChange}
           />
           <Container />
           <Button type="submit" style={submitButtonStyle}>
-            Create assignment
+            Update assignment
           </Button>
         </Box>
       </Grid>
