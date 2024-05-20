@@ -14,6 +14,7 @@ import { TeacherAppBar } from "../components/app-bars/TeacherAppBar";
 import { UserType } from "../models/User";
 import { CourseSideBarStudent } from "../components/students/CourseSideBarStudent";
 import { StudentAppBar } from "../components/app-bars/StudentAppBar";
+import { StudentAchievements } from "../components/game-elements/Badges";
 
 export const CoursePage = () => {
   const { courseIndex } = useParams<{ courseIndex: string }>();
@@ -141,7 +142,7 @@ export const CoursePage = () => {
                   sx={{
                     color: "white",
                     textAlign: "center",
-                    backgroundColor: "rgba(0, 0, 0, 0.75)",
+                    backgroundColor: "rgba(0, 0, 0, 0.6)",
                     padding: {
                       xs: "5px",
                       sm: "7px",
@@ -177,6 +178,9 @@ export const CoursePage = () => {
           )}
           {userType === UserType.Teacher && selectedTab === "grades" && (
             <ShowAllGradesAndAssignments courseId={courseId} />
+          )}
+          {userType === UserType.Student && selectedTab === "achievements" && (
+            <StudentAchievements courseData={course} />
           )}
         </Grid>
       </Grid>

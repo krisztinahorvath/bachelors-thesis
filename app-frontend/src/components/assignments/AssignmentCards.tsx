@@ -241,8 +241,9 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
         <DialogTitle id="alert-dialog-title">Remove assignment</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to remove {currentAssignment?.name} from this
-            course? All its grades will be also removed.
+            Are you sure you want to remove assignment{" "}
+            <strong>{currentAssignment?.name} </strong> from this course? All
+            its grades will be also removed.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

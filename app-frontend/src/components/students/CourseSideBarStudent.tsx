@@ -5,7 +5,11 @@ import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import { Typography } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import GradingIcon from "@mui/icons-material/Grading";
-import { getShowLeaderboards } from "../../utils/student-user-preferences";
+import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
+import {
+  getShowBadges,
+  getShowLeaderboards,
+} from "../../utils/student-user-preferences";
 import { Paper } from "@mui/material";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
@@ -17,6 +21,7 @@ export const CourseSideBarStudent = ({
 }) => {
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
   const showLeaderboard = getShowLeaderboards();
+  const showBadges = getShowBadges();
 
   const handleNavigateTo = (tabName: string) => {
     onSelectTab(tabName);
@@ -94,6 +99,19 @@ export const CourseSideBarStudent = ({
             </ListItemIcon>
             <Typography variant="inherit" noWrap>
               Leaderboard
+            </Typography>
+          </MenuItem>
+        )}
+        {showBadges === "true" && (
+          <MenuItem
+            selected={selectedTab === "badges"}
+            onClick={() => handleNavigateTo("achievements")}
+          >
+            <ListItemIcon>
+              <LocalPoliceIcon fontSize="small" />
+            </ListItemIcon>
+            <Typography variant="inherit" noWrap>
+              Achievements
             </Typography>
           </MenuItem>
         )}

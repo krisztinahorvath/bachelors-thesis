@@ -64,8 +64,8 @@ const ColorlibStepIconRoot = styled("div")<{
   }),
   ...(!ownerState.completed &&
     !ownerState.active && {
-      filter: "grayscale(100%)", // Apply filter effect if not active or completed
-      opacity: 0.5, // Reduce opacity if not active or completed
+      filter: "grayscale(100%) blur(1px)", // Apply filter effect if not active or completed
+      opacity: 1, // Reduce opacity if not active or completed
     }),
 }));
 

@@ -9,8 +9,8 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
-import studentSVG from "../../assets/student1.svg";
-import teacherSVG from "../../assets/teacher1.svg";
+import studentSVG from "../../assets/studentRegister.svg";
+import teacherSVG from "../../assets/teacherRegister.svg";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserType } from "../../models/User";

@@ -19,6 +19,7 @@ import { Leaderboard } from "./components/game-elements/Leaderboard";
 import { GradePageStudent } from "./components/students/GradePageStudent";
 import { AddAssignment } from "./components/assignments/AddAssignment";
 import { UpdateAssignment } from "./components/assignments/UpdateAssignment";
+// import { StudentAchievements } from "./components/game-elements/Badges";
 
 function App() {
   return (
@@ -80,6 +81,16 @@ function App() {
               />
             }
           />
+
+          {/* <Route
+            path="/course/:courseIndex/my-achievements"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Student]}
+                element={<StudentAchievements />}
+              />
+            }
+          /> */}
 
           {/* gamification */}
           <Route
