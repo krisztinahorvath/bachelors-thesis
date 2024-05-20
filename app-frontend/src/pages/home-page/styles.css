@@ -1,0 +1,22 @@
+@media (max-width: 820px) {
+  .responsive-image {
+    width: 70% !important;
+    height: 70% !important;
+    /* margin-bottom: 15% !important;
+    margin-right: 20% !important; */
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-image {
+    width: 85% !important;
+    height: 80% !important;
+    margin-bottom: 10% !important;
+    margin-right: 20% !important;
+  }
+}
+
+.responsive-image {
+  bottom: -10%;
+  right: -30%;
+}

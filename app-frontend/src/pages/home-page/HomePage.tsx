@@ -1,28 +1,17 @@
-import {
-  AppBar,
-  Box,
-  Button,
-  Container,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Container, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import {
-  appBarStyles,
-  boxStyle,
-  buttonStyle,
   divStyle,
   imageStyle,
   textContainerStyle,
-  toolBarStyle,
-  typographyStyle1,
   typographyStyle2,
   typographyStyle3,
 } from "./HomePageStyle";
 import { getUserType } from "../../utils/auth-utils";
+import { HomeAppBar } from "../../components/HomeAppBar";
+import "./styles.css";
 
-const pages = ["About us", "Log In", "Register"];
 export const HomePage = () => {
   const navigate = useNavigate();
 
@@ -37,34 +26,7 @@ export const HomePage = () => {
 
   return (
     <React.Fragment>
-      <AppBar sx={appBarStyles}>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters sx={toolBarStyle}>
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="/"
-              sx={typographyStyle1}
-            >
-              Online grades register
-            </Typography>
-
-            <Box sx={boxStyle}>
-              {pages.map((page) => (
-                <Button
-                  key={page}
-                  component={Link}
-                  to={`/${page.replace(/\s/g, "").toLowerCase()}`}
-                  sx={buttonStyle}
-                >
-                  {page}
-                </Button>
-              ))}
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      <HomeAppBar />
 
       <Container>
         <Container maxWidth="md" sx={textContainerStyle}>
@@ -77,17 +39,12 @@ export const HomePage = () => {
         </Container>
 
         <div style={divStyle}>
-          {/* <a
-            href="https://www.vecteezy.com/free-vector/online-learning"
-            target="_blank"
-            rel="noopener noreferrer"
-          > */}
           <img
             src="/homePage.jpg"
             alt="Online Learning Vectors by Vecteezy"
             style={imageStyle}
+            className="responsive-image" // Apply the CSS class for responsiveness
           />
-          {/* </a> */}
         </div>
       </Container>
     </React.Fragment>

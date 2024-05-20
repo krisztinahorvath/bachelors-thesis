@@ -39,7 +39,7 @@ export const CourseSideBar = ({
         overflowY: "auto",
         borderRadius: "8px",
         padding: "5px",
-        marginLeft: "5px",
+        marginLeft: "2.5%",
         marginRight: "5px",
       }}
       component="nav"
