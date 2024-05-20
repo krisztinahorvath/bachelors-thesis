@@ -1,27 +1,20 @@
 import { useState } from "react";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import HomeIcon from "@mui/icons-material/Home";
-import { useNavigate } from "react-router-dom";
 import SchoolIcon from "@mui/icons-material/School";
 import InfoIcon from "@mui/icons-material/Info";
 import GradingIcon from "@mui/icons-material/Grading";
+import { Paper } from "@mui/material";
+import MenuList from "@mui/material/MenuList";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 
 export const CourseSideBar = ({
   onSelectTab,
 }: {
   onSelectTab: (tabName: string) => void;
 }) => {
-  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState("");
-
-  const handleNavigateToTeacherDashboard = () => {
-    navigate("/teacher-dashboard");
-    setSelectedTab("");
-  };
 
   const handleNavigateTo = (tabName: string) => {
     onSelectTab(tabName);
@@ -29,71 +22,67 @@ export const CourseSideBar = ({
   };
 
   return (
-    // use collapse for making it small
-    <List
+    <Paper
       sx={{
-        maxWidth: "16%",
-        position: "absolute",
+        width: "100%",
+        maxWidth: "100%",
         backgroundColor: "#d0e3fb",
-        height: "45%",
-        overflowY: "auto",
-        borderRadius: "8px",
-        padding: "5px",
-        marginLeft: "2.5%",
-        marginRight: "5px",
+        margin: "auto",
+        marginLeft: "25%",
+        // paddingTop: "2.5%",
+        // paddingBottom: "2.5%",
+        // height: "16.3%",
+        "@media (max-width: 768px)": {
+          width: "100%",
+        },
       }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
     >
-      <ListItemButton
-        selected={selectedTab === ""}
-        onClick={handleNavigateToTeacherDashboard}
-      >
-        <ListItemIcon>
-          <HomeIcon />
-        </ListItemIcon>
-        <ListItemText primary="Home Page" />
-      </ListItemButton>
-
-      <ListItemButton
-        selected={selectedTab === "details"}
-        onClick={() => handleNavigateTo("details")}
-      >
-        <ListItemIcon>
-          <InfoIcon />
-        </ListItemIcon>
-        <ListItemText primary="Course Details" />
-      </ListItemButton>
-
-      <ListItemButton
-        selected={selectedTab === "students"}
-        onClick={() => handleNavigateTo("students")}
-      >
-        <ListItemIcon>
-          <SchoolIcon />
-        </ListItemIcon>
-        <ListItemText primary="Enrolled Students" />
-      </ListItemButton>
-
-      <ListItemButton
-        selected={selectedTab === "assignments"}
-        onClick={() => handleNavigateTo("assignments")}
-      >
-        <ListItemIcon>
-          <AssignmentIcon />
-        </ListItemIcon>
-        <ListItemText primary="Assignments" />
-      </ListItemButton>
-
-      <ListItemButton
-        selected={selectedTab === "grades"}
-        onClick={() => handleNavigateTo("grades")}
-      >
-        <ListItemIcon>
-          <GradingIcon />
-        </ListItemIcon>
-        <ListItemText primary="Grades" />
-      </ListItemButton>
-    </List>
+      <MenuList>
+        <MenuItem
+          selected={selectedTab === "details"}
+          onClick={() => handleNavigateTo("details")}
+        >
+          <ListItemIcon>
+            <InfoIcon fontSize="small" />
+          </ListItemIcon>
+          <Typography variant="inherit" noWrap>
+            Course Details
+          </Typography>
+        </MenuItem>
+        <MenuItem
+          selected={selectedTab === "students"}
+          onClick={() => handleNavigateTo("students")}
+        >
+          <ListItemIcon>
+            <SchoolIcon fontSize="small" />
+          </ListItemIcon>
+          <Typography variant="inherit" noWrap>
+            Enrolled Students
+          </Typography>
+        </MenuItem>
+        <MenuItem
+          selected={selectedTab === "assignments"}
+          onClick={() => handleNavigateTo("assignments")}
+        >
+          <ListItemIcon>
+            <AssignmentIcon fontSize="small" />
+          </ListItemIcon>
+          <Typography variant="inherit" noWrap>
+            Assignments
+          </Typography>
+        </MenuItem>
+        <MenuItem
+          selected={selectedTab === "grades"}
+          onClick={() => handleNavigateTo("grades")}
+        >
+          <ListItemIcon>
+            <GradingIcon fontSize="small" />
+          </ListItemIcon>
+          <Typography variant="inherit" noWrap>
+            Grades
+          </Typography>
+        </MenuItem>
+      </MenuList>
+    </Paper>
   );
 };

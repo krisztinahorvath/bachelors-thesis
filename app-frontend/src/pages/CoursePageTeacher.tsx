@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Course } from "../models/Course";
 import { BACKEND_URL } from "../constants";
-import { Card, CardMedia, Grid, Typography } from "@mui/material";
+import { Box, Card, CardMedia, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import { displayErrorMessage } from "../components/ToastMessage";
 import { getToken, getUserType } from "../utils/auth-utils";
@@ -22,7 +22,7 @@ export const CoursePageTeacher = () => {
 
   const location = useLocation();
   const courseId = location.state;
-  const [selectedTab, setSelectedTab] = useState("");
+  const [selectedTab, setSelectedTab] = useState("details");
   const [course, setCourse] = useState<Course>({
     id: -1,
     name: "",
@@ -112,34 +112,62 @@ export const CoursePageTeacher = () => {
           //     justifyContent: "flex-start",
           //   }}
         >
-          <Card>
-            <CardMedia
-              sx={{
-                position: "relative",
-                height: 175,
-                width: "100%",
-                objectFit: "cover",
-              }}
-              image={`data:image/jpg;base64,${course.image}`}
-            />
-            <Typography
-              sx={{
-                position: "absolute",
-                top: "27%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                color: "white",
-                textAlign: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-                padding: "10px",
-                borderRadius: "10px",
-              }}
-              variant="h4"
-              component="h2"
-            >
-              {course.name}
-            </Typography>
-          </Card>
+          {selectedTab === "details" && (
+            <Card sx={{ width: "90%", marginLeft: "7%", position: "relative" }}>
+              <CardMedia
+                sx={{
+                  height: 161,
+                  width: "100%",
+                  objectFit: "cover",
+                  "@media (max-width: 600px)": {
+                    height: 209,
+                  },
+                }}
+                image={`data:image/jpg;base64,${course.image}`}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "white",
+                    textAlign: "center",
+                    backgroundColor: "rgba(0, 0, 0, 0.75)",
+                    padding: {
+                      xs: "5px",
+                      sm: "7px",
+                      md: "10px",
+                      lg: "10px",
+                      xl: "10px",
+                    },
+                    borderRadius: "10px",
+                    fontSize: {
+                      xs: "1.2rem",
+                      sm: "1.5rem",
+                      md: "1.8rem",
+                      lg: "2rem",
+                      xl: "3rem",
+                    },
+                    maxWidth: "90%",
+                    overflowWrap: "break-word",
+                  }}
+                  variant="h4"
+                  component="h2"
+                >
+                  {course.name}
+                </Typography>
+              </Box>
+            </Card>
+          )}
 
           {selectedTab === "students" && (
             <ShowStudentsAtCourse courseId={courseId} />

@@ -19,7 +19,6 @@ export const TeacherHomePage = () => {
           justifyContent: "flex-start",
         }}
       >
-        {/* <MyCard/> */}
         <h3 style={{ textAlign: "left", paddingLeft: "2.5%" }}>My courses:</h3>
         <Container
           sx={{
@@ -29,25 +28,17 @@ export const TeacherHomePage = () => {
             justifyContent: "flex-end", // 'flex-start'
           }}
         >
-          {/* <Routes>
-          <Route path={`${location}/course/add`}>
-            <AddCoursePage/>
-          </Route>
-        </Routes> */}
           <Link to={`/course/add`}>
             <Tooltip title="Create a course">
               <Fab
                 size="small"
                 color="primary"
                 aria-label="add"
-                sx={{ marginBottom: "10px" }}
+                sx={{ marginBottom: "15px" }}
               >
                 <AddIcon />
               </Fab>
             </Tooltip>
-            {/* <IconButton size="large">
-            <AddIcon color="primary" fontSize="inherit" />
-          </IconButton> */}
           </Link>
           <br />
         </Container>

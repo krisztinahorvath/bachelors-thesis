@@ -1,4 +1,4 @@
-import { Button, Tooltip } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 import { getToken } from "../../utils/auth-utils";
@@ -179,16 +179,29 @@ export const ImportFromExcel: React.FC<{
 
   return (
     <>
-      <Tooltip title="Import from Excel" arrow>
-        <Button
-          style={submitButtonStyle}
-          onClick={() => {
-            setIsOpen(true);
-          }}
-        >
-          Import
-        </Button>
-      </Tooltip>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          // padding: "1rem", // Add padding as needed
+
+          marginTop: "3%",
+          marginRight: "2%",
+          marginBottom: "1.5%",
+          width: "100%", // Ensures the container spans full width
+        }}
+      >
+        <Tooltip title="Import grades from a spreadsheet" arrow>
+          <Button
+            style={submitButtonStyle}
+            onClick={() => {
+              setIsOpen(true);
+            }}
+          >
+            Import
+          </Button>
+        </Tooltip>
+      </Box>
       <ReactSpreadsheetImport
         isOpen={isOpen}
         onClose={handleClose}

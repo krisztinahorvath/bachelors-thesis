@@ -346,33 +346,36 @@ export const ShowAllGradesAndAssignments: React.FC<
 
   return (
     <Container>
-      <h2>Grades:</h2>
       {loading && <CircularProgress />}
 
       {!loading && (
-        <Container sx={{ height: 600, width: "100%" }}>
-          <ImportFromExcel
-            courseId={courseId}
-            onGradesSubmitted={handleRefreshGrid}
-          />
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            cellModesModel={cellModesModel}
-            onCellModesModelChange={handleCellModesModelChange}
-            onCellClick={handleCellClick}
-            processRowUpdate={processRowUpdate}
-            slots={{ toolbar: GridToolbar }}
-            sx={{
-              "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: "red", // Change to your desired color
-              },
-              "& .MuiDataGrid-columnHeaderTitle": {
-                color: "#3177d6", // Change to your desired text color
-              },
-            }}
-          />
-        </Container>
+        <>
+          {/* <h2>Grades</h2> */}
+          <Container sx={{ height: 600, width: "100%" }}>
+            <ImportFromExcel
+              courseId={courseId}
+              onGradesSubmitted={handleRefreshGrid}
+            />
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              cellModesModel={cellModesModel}
+              onCellModesModelChange={handleCellModesModelChange}
+              onCellClick={handleCellClick}
+              processRowUpdate={processRowUpdate}
+              slots={{ toolbar: GridToolbar }}
+              sx={{
+                marginLeft: "2.5%",
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: "red", // Change to your desired color
+                },
+                "& .MuiDataGrid-columnHeaderTitle": {
+                  color: "#3177d6", // Change to your desired text color
+                },
+              }}
+            />
+          </Container>
+        </>
       )}
     </Container>
   );

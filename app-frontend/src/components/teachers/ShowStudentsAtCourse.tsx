@@ -110,7 +110,7 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
       )}
 
       {!loading && students.length > 0 && (
-        <Container>
+        <Container sx={{ marginLeft: "2.5%" }}>
           <table>
             <thead>
               <tr>
