@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { TeacherAppBar } from "../teachers/TeacherAppBar";
+import { TeacherAppBar } from "../app-bars/TeacherAppBar";
 import { Assignment } from "../../models/Assignment";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -63,7 +63,7 @@ export const UpdateAssignment = () => {
   const location = useLocation();
   const assignmentId = location.state;
   const [assignment, setAssignment] = useState<Assignment>();
-  const [dateValue, setDateValue] = useState();
+  const [, setDateValue] = useState();
   const [weightError, setWeightError] = useState(false);
 
   const handleWeightChange = (event: any) => {

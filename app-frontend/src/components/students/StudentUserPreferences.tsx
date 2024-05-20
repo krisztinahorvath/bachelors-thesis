@@ -11,7 +11,7 @@ import StairsIcon from "@mui/icons-material/Stairs";
 import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
 import GrainIcon from "@mui/icons-material/Grain";
 import { Button, Container } from "@mui/material";
-import { StudentAppBar } from "./StudentAppBar";
+import { StudentAppBar } from "../app-bars/StudentAppBar";
 import { useEffect } from "react";
 import {
   getShowBadges,

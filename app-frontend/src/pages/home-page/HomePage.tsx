@@ -9,7 +9,7 @@ import {
   typographyStyle3,
 } from "./HomePageStyle";
 import { getUserType } from "../../utils/auth-utils";
-import { HomeAppBar } from "../../components/HomeAppBar";
+import { HomeAppBar } from "../../components/app-bars/HomeAppBar";
 import "./styles.css";
 
 export const HomePage = () => {

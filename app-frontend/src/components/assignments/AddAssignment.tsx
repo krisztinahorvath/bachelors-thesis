@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { TeacherAppBar } from "../teachers/TeacherAppBar";
+import { TeacherAppBar } from "../app-bars/TeacherAppBar";
 import {
   Box,
   Button,

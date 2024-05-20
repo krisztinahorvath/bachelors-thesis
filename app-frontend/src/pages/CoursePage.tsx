@@ -10,10 +10,10 @@ import { CourseSideBar } from "../components/teachers/CourseSideBar";
 import { ShowStudentsAtCourse } from "../components/teachers/ShowStudentsAtCourse";
 import { ShowAssignmentsAtCourse } from "../components/assignments/ShowCourseAssignments";
 import { ShowAllGradesAndAssignments } from "../components/teachers/ShowAllGradesAndAssignments";
-import { TeacherAppBar } from "../components/teachers/TeacherAppBar";
+import { TeacherAppBar } from "../components/app-bars/TeacherAppBar";
 import { UserType } from "../models/User";
 import { CourseSideBarStudent } from "../components/students/CourseSideBarStudent";
-import { StudentAppBar } from "../components/students/StudentAppBar";
+import { StudentAppBar } from "../components/app-bars/StudentAppBar";
 
 export const CoursePage = () => {
   const { courseIndex } = useParams<{ courseIndex: string }>();

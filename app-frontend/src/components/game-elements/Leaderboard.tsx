@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { StudentAppBar } from "../students/StudentAppBar";
+import { StudentAppBar } from "../app-bars/StudentAppBar";
 import { useEffect, useState } from "react";
 import { getNickname, getToken } from "../../utils/auth-utils";
 import axios from "axios";

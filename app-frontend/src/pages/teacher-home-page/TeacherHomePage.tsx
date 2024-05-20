@@ -1,4 +1,4 @@
-import { TeacherAppBar } from "../../components/teachers/TeacherAppBar";
+import { TeacherAppBar } from "../../components/app-bars/TeacherAppBar";
 import { CourseCards } from "../../components/CourseCards";
 import { Container, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";

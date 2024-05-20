@@ -27,7 +27,7 @@ import {
   submitButtonStyle,
   textFieldStyle,
 } from "./RegisterPageStyle";
-import { HomeAppBar } from "../../components/HomeAppBar";
+import { HomeAppBar } from "../../components/app-bars/HomeAppBar";
 import { UserRegisterDTO } from "../../models/UserRegisterDTO";
 
 export const RegisterPage = () => {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Container, Grid } from "@mui/material";
-import { TeacherAppBar } from "../teachers/TeacherAppBar";
+import { TeacherAppBar } from "../app-bars/TeacherAppBar";
 import { UploadImage } from "../teachers/UploadImage";
 import React from "react";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";

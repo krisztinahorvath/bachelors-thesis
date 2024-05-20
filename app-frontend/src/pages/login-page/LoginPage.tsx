@@ -28,7 +28,7 @@ import {
   displaySuccessMessage,
 } from "../../components/ToastMessage";
 import React from "react";
-import { HomeAppBar } from "../../components/HomeAppBar";
+import { HomeAppBar } from "../../components/app-bars/HomeAppBar";
 import { setStudentUserPreferences } from "../../utils/student-user-preferences";
 
 // const Item = styled(Paper)(({ theme }) => ({

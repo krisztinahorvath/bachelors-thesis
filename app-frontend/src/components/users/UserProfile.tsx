@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Container, Grid } from "@mui/material";
-import { StudentAppBar } from "../students/StudentAppBar";
-import { TeacherAppBar } from "../teachers/TeacherAppBar";
+import { StudentAppBar } from "../app-bars/StudentAppBar";
+import { TeacherAppBar } from "../app-bars/TeacherAppBar";
 import {
   getImage,
   getToken,

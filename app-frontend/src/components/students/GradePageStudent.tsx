@@ -7,7 +7,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { StudentAppBar } from "./StudentAppBar";
+import { StudentAppBar } from "../app-bars/StudentAppBar";
 import { useLocation } from "react-router-dom";
 import { CustomProgressBar } from "../game-elements/CustomProgressBar";
 import { CustomizedSteppers } from "../game-elements/Levels";

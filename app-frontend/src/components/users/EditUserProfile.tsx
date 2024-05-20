@@ -9,10 +9,10 @@ import { TextField, outlinedInputClasses, styled } from "@mui/material";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
 import { BACKEND_URL } from "../../constants";
 import { getToken, getUserType, setEmail } from "../../utils/auth-utils";
-import { TeacherAppBar } from "../teachers/TeacherAppBar";
+import { TeacherAppBar } from "../app-bars/TeacherAppBar";
 import { UploadImage } from "../teachers/UploadImage";
 import { UserType } from "../../models/User";
-import { StudentAppBar } from "../students/StudentAppBar";
+import { StudentAppBar } from "../app-bars/StudentAppBar";
 
 const StyledTextField = styled(TextField)({
   [`& .${outlinedInputClasses.root} .${outlinedInputClasses.notchedOutline}`]: {

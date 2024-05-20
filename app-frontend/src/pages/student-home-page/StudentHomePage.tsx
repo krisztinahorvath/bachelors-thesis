@@ -1,4 +1,4 @@
-import { StudentAppBar } from "../../components/students/StudentAppBar";
+import { StudentAppBar } from "../../components/app-bars/StudentAppBar";
 import { Container, Fab, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { CourseCards } from "../../components/CourseCards";
