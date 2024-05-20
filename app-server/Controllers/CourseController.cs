@@ -166,6 +166,41 @@ namespace app_server.Controllers
             return students;
         }
 
+        // GET: api/courses/new-enrollment-key/5
+        [HttpGet("new-enrollment-key/{courseId}")]
+        public async Task<ActionResult<string>> GetNewEnrollmentKey(long courseId)
+        {
+            if (_context.Courses == null)
+            {
+                return Problem("Entity set 'StudentsRegisterContext.Courses'  is null.");
+            }
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+                return Unauthorized("Invalid token or user is not a teacher.");
+
+            var teacherId = tokenData!.Item1;
+
+            // make sure the person deleting the course is a teacher at that course
+            if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == courseId))
+            {
+                return Unauthorized("You can't delete courses that you aren't a teacher for.");
+            }
+
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            course.EnrollmentKey = await GenerateUniqueEnrollmentKey(8);
+            await _context.SaveChangesAsync();
+
+
+            return Ok(course.EnrollmentKey);
+        }
+
         [HttpGet("all/{courseId}")]
         public async Task<ActionResult<Dictionary<string, object>>> GetAllCourseStudentsAssignmentGrades(long courseId)
         {
@@ -467,41 +502,6 @@ namespace app_server.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(enrollment);
-        }
-
-        // PATCH: api/courses/new-enrollment-key/5
-        [HttpPatch("new-enrollment-key/{courseId}")]
-        public async Task<ActionResult<string>> PatchNewEnrollmentKey(long courseId)
-        {
-            if (_context.Courses == null)
-            {
-                return Problem("Entity set 'StudentsRegisterContext.Courses'  is null.");
-            }
-
-            // validate token data
-            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
-                return Unauthorized("Invalid token or user is not a teacher.");
-
-            var teacherId = tokenData!.Item1;
-
-            // make sure the person deleting the course is a teacher at that course
-            if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == courseId))
-            {
-                return Unauthorized("You can't delete courses that you aren't a teacher for.");
-            }
-
-            var course = await _context.Courses.FindAsync(courseId);
-            if (course == null)
-            {
-                return NotFound(); 
-            }
-            
-            course.EnrollmentKey = await GenerateUniqueEnrollmentKey(8);
-            await _context.SaveChangesAsync();
-           
-            
-            return Ok(course.EnrollmentKey);
         }
         
         // PUT: api/courses/5

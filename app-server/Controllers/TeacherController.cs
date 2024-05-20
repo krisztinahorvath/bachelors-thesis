@@ -18,6 +18,24 @@ namespace app_server.Controllers
             _context = context;
         }
 
+        // GET: api/teachers/autocomplete/10?query=string&pageNumber=1&pageSize=100
+        [HttpGet("autocomplete")]
+        public async Task<ActionResult<IEnumerable<Teacher>>> AutocompleteName(long courseId, string query, int pageNumber = 1, int pageSize = 100)
+        {
+            var enrolledTeacherIds = await _context.CourseTeachers
+                .Where(ct => ct.CourseId == courseId)
+                .Select(ct => ct.TeacherId)
+                .ToListAsync();
+
+            var names = await _context.Teachers
+                .Where(t => t.Name.ToLower().Contains(query.ToLower()) && !enrolledTeacherIds.Contains(t.Id))
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(names);
+        }
+
         // ************************************
         // TODO: create assignmnet for a given course
         // ************************************

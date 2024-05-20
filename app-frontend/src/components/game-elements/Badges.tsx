@@ -84,7 +84,7 @@ const icons: {
     icon: <GeniusBadge />,
     description: "Genius",
     achievementCriteria:
-      "Unlocked at reaching 100% of the available grade idk change this.",
+      "Unlocked at reaching 100% of the\n available grade idk change this.",
     achieved: false,
   },
   7: {
@@ -119,7 +119,9 @@ const IconWithDescription: React.FC<{
     <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
       <div style={{ filter: filterStyle }}>{iconData.icon}</div>
       <Typography variant="body1">{iconData.description}</Typography>
-      <Typography variant="body2">{iconData.achievementCriteria}</Typography>
+      <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
+        {iconData.achievementCriteria}
+      </Typography>
     </Grid>
   );
 };

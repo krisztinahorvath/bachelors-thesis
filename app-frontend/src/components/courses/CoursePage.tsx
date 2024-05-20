@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Course } from "../models/Course";
-import { BACKEND_URL } from "../constants";
+import { Course } from "../../models/Course";
+import { BACKEND_URL } from "../../constants";
 import { Box, Card, CardMedia, Grid, Typography } from "@mui/material";
 import axios from "axios";
-import { displayErrorMessage } from "../components/ToastMessage";
-import { getToken, getUserType } from "../utils/auth-utils";
-import { CourseSideBar } from "../components/teachers/CourseSideBar";
-import { ShowStudentsAtCourse } from "../components/teachers/ShowStudentsAtCourse";
-import { ShowAssignmentsAtCourse } from "../components/assignments/ShowCourseAssignments";
-import { ShowAllGradesAndAssignments } from "../components/teachers/ShowAllGradesAndAssignments";
-import { TeacherAppBar } from "../components/app-bars/TeacherAppBar";
-import { UserType } from "../models/User";
-import { CourseSideBarStudent } from "../components/students/CourseSideBarStudent";
-import { StudentAppBar } from "../components/app-bars/StudentAppBar";
-import { StudentAchievements } from "../components/game-elements/Badges";
+import { displayErrorMessage } from "../ToastMessage";
+import { getToken, getUserType } from "../../utils/auth-utils";
+import { CourseSideBar } from "../teachers/CourseSideBar";
+import { ShowStudentsAtCourse } from "../teachers/ShowStudentsAtCourse";
+import { ShowAssignmentsAtCourse } from "../assignments/ShowCourseAssignments";
+import { ShowAllGradesAndAssignments } from "../teachers/ShowAllGradesAndAssignments";
+import { TeacherAppBar } from "../app-bars/TeacherAppBar";
+import { UserType } from "../../models/User";
+import { CourseSideBarStudent } from "../students/CourseSideBarStudent";
+import { StudentAppBar } from "../app-bars/StudentAppBar";
+import { StudentAchievements } from "../game-elements/Badges";
+import { CourseDetailsComponent } from "./CourseDetailsComponent";
 
 export const CoursePage = () => {
   const { courseIndex } = useParams<{ courseIndex: string }>();
@@ -23,7 +24,7 @@ export const CoursePage = () => {
 
   const location = useLocation();
   const courseId = location.state;
-  const [selectedTab, setSelectedTab] = useState("details");
+  const [selectedTab, setSelectedTab] = useState("");
   const [course, setCourse] = useState<Course>({
     id: -1,
     name: "",
@@ -47,6 +48,7 @@ export const CoursePage = () => {
         .get(`${BACKEND_URL}/courses/${courseId}`, headers)
         .then((response) => {
           setCourse(response.data);
+          setSelectedTab("details");
         })
         .catch((error: any) => {
           if (error.response) {
@@ -114,60 +116,65 @@ export const CoursePage = () => {
           //   }}
         >
           {selectedTab === "details" && (
-            <Card sx={{ width: "90%", marginLeft: "7%", position: "relative" }}>
-              <CardMedia
-                sx={{
-                  height: 161,
-                  width: "100%",
-                  objectFit: "cover",
-                  "@media (max-width: 600px)": {
-                    height: 209,
-                  },
-                }}
-                image={`data:image/jpg;base64,${course.image}`}
-              />
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+            <>
+              <Card
+                sx={{ width: "90%", marginLeft: "7%", position: "relative" }}
               >
-                <Typography
+                <CardMedia
                   sx={{
-                    color: "white",
-                    textAlign: "center",
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
-                    padding: {
-                      xs: "5px",
-                      sm: "7px",
-                      md: "10px",
-                      lg: "10px",
-                      xl: "10px",
+                    height: 161,
+                    width: "100%",
+                    objectFit: "cover",
+                    "@media (max-width: 600px)": {
+                      height: 209,
                     },
-                    borderRadius: "10px",
-                    fontSize: {
-                      xs: "1.2rem",
-                      sm: "1.5rem",
-                      md: "1.8rem",
-                      lg: "2rem",
-                      xl: "3rem",
-                    },
-                    maxWidth: "90%",
-                    overflowWrap: "break-word",
                   }}
-                  variant="h4"
-                  component="h2"
+                  image={`data:image/jpg;base64,${course.image}`}
+                />
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
-                  {course.name}
-                </Typography>
-              </Box>
-            </Card>
+                  <Typography
+                    sx={{
+                      color: "white",
+                      textAlign: "center",
+                      backgroundColor: "rgba(0, 0, 0, 0.6)",
+                      padding: {
+                        xs: "5px",
+                        sm: "7px",
+                        md: "10px",
+                        lg: "10px",
+                        xl: "10px",
+                      },
+                      borderRadius: "10px",
+                      fontSize: {
+                        xs: "1.2rem",
+                        sm: "1.5rem",
+                        md: "1.8rem",
+                        lg: "2rem",
+                        xl: "3rem",
+                      },
+                      maxWidth: "90%",
+                      overflowWrap: "break-word",
+                    }}
+                    variant="h4"
+                    component="h2"
+                  >
+                    {course.name}
+                  </Typography>
+                </Box>
+              </Card>
+              <CourseDetailsComponent courseData={course} />
+            </>
           )}
 
           {selectedTab === "students" && (

@@ -104,7 +104,7 @@ export const CourseSideBarStudent = ({
         )}
         {showBadges === "true" && (
           <MenuItem
-            selected={selectedTab === "badges"}
+            selected={selectedTab === "achievements"}
             onClick={() => handleNavigateTo("achievements")}
           >
             <ListItemIcon>
