@@ -15,7 +15,7 @@ import { UserType } from "../models/User";
 import { CourseSideBarStudent } from "../components/students/CourseSideBarStudent";
 import { StudentAppBar } from "../components/students/StudentAppBar";
 
-export const CoursePageTeacher = () => {
+export const CoursePage = () => {
   const { courseIndex } = useParams<{ courseIndex: string }>();
   const [userType, setUserType] = useState<UserType>();
   const navigate = useNavigate();
@@ -175,7 +175,7 @@ export const CoursePageTeacher = () => {
           {selectedTab === "assignments" && (
             <ShowAssignmentsAtCourse courseId={courseId} />
           )}
-          {selectedTab === "grades" && (
+          {userType === UserType.Teacher && selectedTab === "grades" && (
             <ShowAllGradesAndAssignments courseId={courseId} />
           )}
         </Grid>

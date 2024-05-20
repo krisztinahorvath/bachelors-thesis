@@ -1,20 +1,14 @@
-import React, { useState } from "react";
-import ListSubheader from "@mui/material/ListSubheader";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
+import { useState } from "react";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import HomeIcon from "@mui/icons-material/Home";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import { Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import SchoolIcon from "@mui/icons-material/School";
 import InfoIcon from "@mui/icons-material/Info";
 import GradingIcon from "@mui/icons-material/Grading";
 import { getShowLeaderboards } from "../../utils/student-user-preferences";
-import Hidden from "@mui/material/Hidden";
-import Tooltip from "@mui/material/Tooltip";
+import { Paper } from "@mui/material";
+import MenuList from "@mui/material/MenuList";
+import MenuItem from "@mui/material/MenuItem";
 
 export const CourseSideBarStudent = ({
   onSelectTab,
@@ -23,113 +17,87 @@ export const CourseSideBarStudent = ({
 }) => {
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
   const showLeaderboard = getShowLeaderboards();
-  const navigate = useNavigate();
 
-  const handleTabClick = (tabName: string, navigateTo: string) => {
-    setSelectedTab(tabName);
+  const handleNavigateTo = (tabName: string) => {
     onSelectTab(tabName);
-    if (navigateTo) navigate(navigateTo);
+    setSelectedTab(tabName);
   };
 
   return (
-    <List
+    <Paper
       sx={{
-        // width: "100%",
-        maxWidth: 360,
+        width: "100%",
+        maxWidth: "100%",
         backgroundColor: "#d0e3fb",
-        position: "fixed",
-        width: "5%",
-        height: "100vh",
-        overflow: "auto",
-        paddingLeft: "2.5%",
+        margin: "auto",
+        marginLeft: "25%",
+        // paddingTop: "2.5%",
+        // paddingBottom: "2.5%",
+        // height: "16.3%",
+        "@media (max-width: 768px)": {
+          width: "100%",
+        },
       }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-      subheader={
-        <ListSubheader component="div" id="nested-list-subheader">
-          <Typography variant="h6">Course name</Typography>
-        </ListSubheader>
-      }
     >
-      <Tooltip title="Home Page" placement="right">
-        <ListItemButton
-          selected={selectedTab === "home"}
-          onClick={() => handleTabClick("home", "/student-dashboard")}
-        >
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <Hidden mdDown>{/* <ListItemText primary="Home Page" /> */}</Hidden>
-        </ListItemButton>
-      </Tooltip>
-
-      <Tooltip title="Course Details" placement="right">
-        <ListItemButton
+      <MenuList>
+        <MenuItem
           selected={selectedTab === "details"}
-          onClick={() => handleTabClick("details", "")}
+          onClick={() => handleNavigateTo("details")}
         >
           <ListItemIcon>
-            <InfoIcon />
+            <InfoIcon fontSize="small" />
           </ListItemIcon>
-          <Hidden mdDown>
-            {/* <ListItemText primary="Course Details" /> */}
-          </Hidden>
-        </ListItemButton>
-      </Tooltip>
-
-      <Tooltip title="Enrolled Students" placement="right">
-        <ListItemButton
+          <Typography variant="inherit" noWrap>
+            Course Details
+          </Typography>
+        </MenuItem>
+        {/* <MenuItem
           selected={selectedTab === "students"}
-          onClick={() => handleTabClick("students", "")}
+          onClick={() => handleNavigateTo("students")}
         >
           <ListItemIcon>
-            <SchoolIcon />
+            <SchoolIcon fontSize="small" />
           </ListItemIcon>
-          <Hidden mdDown>
-            {/* <ListItemText primary="Enrolled Students" /> */}
-          </Hidden>
-        </ListItemButton>
-      </Tooltip>
-
-      <Tooltip title="Assignments" placement="right">
-        <ListItemButton
+          <Typography variant="inherit" noWrap>
+            Enrolled Students
+          </Typography>
+        </MenuItem> */}
+        <MenuItem
           selected={selectedTab === "assignments"}
-          onClick={() => handleTabClick("assignments", "")}
+          onClick={() => handleNavigateTo("assignments")}
         >
           <ListItemIcon>
-            <AssignmentIcon />
+            <AssignmentIcon fontSize="small" />
           </ListItemIcon>
-          <Hidden mdDown>{/* <ListItemText primary="Assignments" /> */}</Hidden>
-        </ListItemButton>
-      </Tooltip>
-
-      <Tooltip title="Grades" placement="right">
-        <ListItemButton
+          <Typography variant="inherit" noWrap>
+            Assignments
+          </Typography>
+        </MenuItem>
+        <MenuItem
           selected={selectedTab === "grades"}
-          onClick={() => handleTabClick("grades", "")}
+          onClick={() => handleNavigateTo("grades")}
         >
           <ListItemIcon>
-            <GradingIcon />
+            <GradingIcon fontSize="small" />
           </ListItemIcon>
-          <Hidden mdDown>{/* <ListItemText primary="Grades" /> */}</Hidden>
-        </ListItemButton>
-      </Tooltip>
-
-      {showLeaderboard === "true" && (
-        <Tooltip title="Leaderboard" placement="right">
-          <ListItemButton
+          <Typography variant="inherit" noWrap>
+            Grades
+          </Typography>
+        </MenuItem>
+        {showLeaderboard === "true" && (
+          <MenuItem
             selected={selectedTab === "leaderboard"}
-            onClick={() => handleTabClick("leaderboard", "")}
+            onClick={() => handleNavigateTo("leaderboard")}
           >
             <ListItemIcon>
-              <LeaderboardIcon />
+              <LeaderboardIcon fontSize="small" />
             </ListItemIcon>
-            <Hidden mdDown>
-              {/* <ListItemText primary="Leaderboard" /> */}
-            </Hidden>
-          </ListItemButton>
-        </Tooltip>
-      )}
-    </List>
+            <Typography variant="inherit" noWrap>
+              Leaderboard
+            </Typography>
+          </MenuItem>
+        )}
+      </MenuList>
+    </Paper>
   );
 };

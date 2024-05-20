@@ -10,7 +10,7 @@ import { TeacherHomePage } from "./pages/teacher-home-page/TeacherHomePage";
 import { UserType } from "./models/User";
 import { PrivateRoute } from "./utils/private-route-utils";
 import { RegisterPage } from "./pages/register-page/RegisterPage";
-import { CoursePageTeacher } from "./pages/CoursePageTeacher";
+import { CoursePage } from "./pages/CoursePage";
 import { AddCoursePage } from "./components/courses/AddCoursePage";
 import { StudentUserPreferences } from "./components/students/StudentUserPreferences";
 import { UserProfile } from "./components/users/UserProfile";
@@ -135,7 +135,7 @@ function App() {
             element={
               <PrivateRoute
                 allowedUsers={[UserType.Teacher, UserType.Student]}
-                element={<CoursePageTeacher />}
+                element={<CoursePage />}
               />
             }
           />
