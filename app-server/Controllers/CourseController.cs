@@ -107,9 +107,9 @@ namespace app_server.Controllers
             return courses;
         }
 
-        // GET: api/courses/teachers/{courseId}
-        [HttpGet("teachers/{courseId}")] // get all teachers that teach at a certain course
-        public async Task<ActionResult<IEnumerable<Teacher>>> GetTeachersOfACourse(long courseId)
+        // GET: api/courses/{courseId}/teachers
+        [HttpGet("{courseId}/teachers")] // get all teachers that teach at a certain course
+        public async Task<ActionResult<IEnumerable<TeacherDTO>>> GetTeachersOfACourse(long courseId)
         {
             if (_context.Courses == null)
             {
@@ -130,7 +130,9 @@ namespace app_server.Controllers
 
             var teachers = await _context.CourseTeachers
                 .Where(c => c.CourseId == courseId)
-                .Select(t => t.Teacher).ToListAsync();
+                .OrderBy(c => c.Teacher.Name)
+                .Select(t => TeacherToTeacherDTO(t.Teacher))
+                .ToListAsync();
 
             return teachers;
         }
@@ -429,8 +431,6 @@ namespace app_server.Controllers
                 return Unauthorized("User is not a registered teacher.");
             }
 
-            Console.WriteLine("IMAGEDTO: " + courseDTO.Image.ToString());
-
             Course course = new Course
             {
                 Name = courseDTO.Name,
@@ -673,6 +673,16 @@ namespace app_server.Controllers
                 Name = student.Name,
                 Email = student.Email,
                 UniqueIdentificationCode = student.UniqueIdentificationCode,
+            };
+        }
+
+        private static TeacherDTO TeacherToTeacherDTO(Teacher teacher)
+        {
+            return new TeacherDTO
+            {
+                Id = teacher.Id,
+                Name = teacher.Name,
+                Email = teacher.Email,
             };
         }
     }

@@ -3,35 +3,80 @@ import {
   Box,
   Button,
   Container,
-  Fab,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
   TextField,
   Tooltip,
-  Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { Course } from "../../models/Course";
-import { getToken } from "../../utils/auth-utils";
+import { getEmail, getToken, getUserType } from "../../utils/auth-utils";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
-import AddIcon from "@mui/icons-material/Add";
-import { User } from "../../models/User";
 import { debounce } from "lodash";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-interface AddCourseTeachers {
+interface CourseTeacherListDTO {
   teacherIds: number[];
+}
+
+interface TeacherDTO {
+  id: number;
+  name: string;
+  email: string;
 }
 
 export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
   courseData,
 }) => {
+  const [open, setOpen] = useState(false);
   const [course, setCourse] = useState<Course>(courseData);
-  const [teachers, setTeachers] = useState<User[]>([]);
-  const [addCourseTeachers, setAddCourseTeachers] = useState<AddCourseTeachers>(
-    {
+  const [suggestedTeachers, setSuggestedTeachers] = useState<TeacherDTO[]>([]);
+  const [courseTeachers, setCourseTeachers] = useState<TeacherDTO[]>([]);
+  const [selectedTeacherData, setSelectedTeacherData] = useState<TeacherDTO>();
+  const [addCourseTeachers, setAddCourseTeachers] =
+    useState<CourseTeacherListDTO>({
       teacherIds: [],
+    });
+  const currentTeacherEmail = getEmail();
+  const currentUserType = getUserType();
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = async () => {
+    setOpen(false);
+    try {
+      const authToken = getToken();
+      await axios.delete(
+        `${BACKEND_URL}/assignments/${selectedTeacherData?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      // update courseTeachers state to reflect changes
+      setCourseTeachers((prevTeachers) =>
+        prevTeachers.filter((teacher) => teacher.id !== selectedTeacherData?.id)
+      );
+
+      displaySuccessMessage("Teacher removed successfully from this course!");
+    } catch (error: any) {
+      console.log(error);
+      if (error.response.status === 401) {
+        displayErrorMessage(error.response.data);
+      } else displayErrorMessage("Error: " + error);
     }
-  );
+  };
+
   const generateEnrollmentKey = () => {
     const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
     axios
@@ -49,17 +94,35 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
       });
   };
 
-  // teachers
+  // fetch teachers at course
+  const fetchCourseTeachers = async () => {
+    try {
+      const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
+      const response = await axios.get<TeacherDTO[]>(
+        `${BACKEND_URL}/courses/${course.id}/teachers`,
+        headers
+      );
+      setCourseTeachers(response.data);
+    } catch (error) {
+      displayErrorMessage(`Error fetching course teachers: ${error}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchCourseTeachers();
+  }, [course.id]);
+
+  // fetch suggestions for autocomplete
   const fetchSuggestionsTeachers = async (query: string) => {
     if (query !== "") {
       try {
         const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
-        const response = await axios.get<User[]>(
+        const response = await axios.get<TeacherDTO[]>(
           `${BACKEND_URL}/teachers/autocomplete?courseId=${course.id}&query=${query}&pageNumber=1&pageSize=100`,
           headers
         );
         const data = await response.data;
-        setTeachers(data);
+        setSuggestedTeachers(data);
       } catch (error) {
         displayErrorMessage(`Error fetching teacher suggestions: ${error}`);
       }
@@ -78,25 +141,53 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
   }, [debouncedFetchSuggestionsTeachers]);
 
   const handleInputChangeAuthors = (event: any, value: any, reason: any) => {
-    console.log("input", value, reason);
+    console.log("input", event, value, reason);
 
     if (reason === "input") {
       debouncedFetchSuggestionsTeachers(value);
     }
   };
 
-  const addTeachersToCourse = async (event: { preventDefault: () => void }) => {
+  const addTeachersToCourseInPage = (teacherIds: number[]) => {
+    const newCourseTeachers = suggestedTeachers
+      .filter((teacher) => teacherIds.includes(teacher.id))
+      .map((teacher) => ({
+        id: teacher.id,
+        name: teacher.name,
+        email: teacher.email,
+      }));
+
+    setCourseTeachers((prevTeachers) => [
+      ...prevTeachers,
+      ...newCourseTeachers,
+    ]);
+  };
+
+  const postTeachersToCourse = async (event: {
+    preventDefault: () => void;
+  }) => {
     event.preventDefault();
     try {
       await axios.post(
-        `${BACKEND_URL}/books/${course.id}/teacherList/`,
-        addCourseTeachers
+        `${BACKEND_URL}/teachers/${course.id}/teacher-list/`,
+        addCourseTeachers,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
       );
       displaySuccessMessage("Teachers added successfully to course!");
+
+      // make the new teachers visibile on the page
+      addTeachersToCourseInPage(addCourseTeachers.teacherIds);
+      setAddCourseTeachers({ teacherIds: [] }); // reset the state
     } catch (error: any) {
       console.log(error);
       if (error.response.status === 401) {
-        displayErrorMessage("You don't have permission to do this action it!");
+        displayErrorMessage(
+          "You don't have permission to perform this action!"
+        );
       } else {
         displayErrorMessage(error.response.data);
       }
@@ -132,55 +223,159 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
           flexGrow: 1,
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "flex-end", // 'flex-start'
+          justifyContent: "flex-start",
+          marginLeft: "5%",
+          marginBottom: "2.5%",
         }}
       >
-        <Tooltip title="Add teacher to course">
-          <Fab
-            size="small"
-            color="primary"
-            aria-label="add"
-            sx={{ marginBottom: "15px" }}
-          >
-            <AddIcon />
-          </Fab>
-        </Tooltip>
-        <br />
+        <Box>
+          <h3>Teachers:</h3>
+          <Autocomplete
+            multiple
+            id="teachers"
+            sx={{ width: "100%" }}
+            options={suggestedTeachers}
+            getOptionLabel={(option) => `${option.name} - ${option.email}`}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Add Teachers"
+                variant="outlined"
+                placeholder="Teacher name"
+              />
+            )}
+            filterSelectedOptions
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            onInputChange={handleInputChangeAuthors}
+            onChange={(_, value) => {
+              // event instead of _
+              if (value) {
+                console.log(value);
+                const teacherIds = value.map(
+                  (teacher) => teacher?.id
+                ) as number[];
+                setAddCourseTeachers({
+                  ...addCourseTeachers,
+                  teacherIds: teacherIds,
+                });
+              }
+            }}
+          />
+          <Button onClick={postTeachersToCourse}>Add teachers to course</Button>
+          {/* {courseTeachers.map((teacher) => (
+            <Box
+              key={teacher.id}
+              sx={{ display: "flex", alignItems: "center", mb: 1 }}
+            >
+              {teacher.email === currentTeacherEmail && (
+                <Typography
+                  sx={{ mr: 2 }}
+                >{`${teacher.name}, Email: ${teacher.email} (You)`}</Typography>
+              )}
+              {teacher.email !== currentTeacherEmail && (
+                <>
+                  <Typography
+                    sx={{ mr: 2 }}
+                  >{`${teacher.name}, Email: ${teacher.email}`}</Typography>
+                  <IconButton
+                    edge="end"
+                    color="error"
+                    onClick={() => {
+                      setSelectedTeacherData(teacher);
+                      setOpen(true);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </>
+              )}
+            </Box>
+          ))} */}
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                {currentUserType == "0" && <th>Action</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {courseTeachers.map((teacher, index) => (
+                <tr key={index + 1}>
+                  <td>
+                    <span className="cell-header">#</span> {index + 1}
+                  </td>
+                  <td>
+                    <span className="cell-header">Name:</span> {teacher.name}
+                  </td>
+                  <td>
+                    <span className="cell-header">Email:</span> {teacher.email}
+                  </td>
+                  <td>
+                    {currentUserType === "0" &&
+                      teacher.email === currentTeacherEmail && (
+                        <IconButton
+                          disabled
+                          color="error"
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => {
+                            setSelectedTeacherData(teacher);
+                            setOpen(true);
+                          }}
+                        >
+                          <Tooltip title="Remove student from course" arrow>
+                            <DeleteIcon />
+                          </Tooltip>
+                        </IconButton>
+                      )}{" "}
+                    {currentUserType === "0" &&
+                      teacher.email !== currentTeacherEmail && (
+                        <IconButton
+                          color="error"
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => {
+                            setSelectedTeacherData(teacher);
+                            setOpen(true);
+                          }}
+                        >
+                          <Tooltip title="Remove teacher from course" arrow>
+                            <DeleteIcon />
+                          </Tooltip>
+                        </IconButton>
+                      )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Box>
       </Container>
-      <Box>
-        <h3>Teachers:</h3>
-        <Autocomplete
-          multiple
-          id="teachers"
-          sx={{ width: "45%" }}
-          options={teachers}
-          getOptionLabel={(option) => `${option.name} - ${option.email}`}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Add Teachers"
-              variant="outlined"
-              placeholder="Teachers"
-            />
-          )}
-          filterSelectedOptions
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          onInputChange={handleInputChangeAuthors}
-          onChange={(_, value) => {
-            // event instead of _
-            if (value) {
-              console.log(value);
-              const teacherIds = value.map(
-                (teacher) => teacher?.id
-              ) as number[];
-              setAddCourseTeachers({
-                ...addCourseTeachers,
-                teacherIds: teacherIds,
-              });
-            }
-          }}
-        />
-      </Box>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Remove teacher</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to remove teacher{" "}
+            <strong>{selectedTeacherData?.name} </strong> from this course? They
+            will not have access to the course's data anymore. If you wish to
+            give access to them later, you can still do it from this page.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} autoFocus>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
