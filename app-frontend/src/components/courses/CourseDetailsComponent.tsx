@@ -39,6 +39,7 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
   const [suggestedTeachers, setSuggestedTeachers] = useState<TeacherDTO[]>([]);
   const [courseTeachers, setCourseTeachers] = useState<TeacherDTO[]>([]);
   const [selectedTeacherData, setSelectedTeacherData] = useState<TeacherDTO>();
+  const [automcompleteKey, setAutocompleteKey] = useState(0);
   const [addCourseTeachers, setAddCourseTeachers] =
     useState<CourseTeacherListDTO>({
       teacherIds: [],
@@ -182,6 +183,7 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
       // make the new teachers visibile on the page
       addTeachersToCourseInPage(addCourseTeachers.teacherIds);
       setAddCourseTeachers({ teacherIds: [] }); // reset the state
+      setAutocompleteKey((previousKey) => previousKey + 1);
     } catch (error: any) {
       console.log(error);
       if (error.response.status === 401) {
@@ -231,6 +233,7 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
         <Box>
           <h3>Teachers:</h3>
           <Autocomplete
+            key={automcompleteKey}
             multiple
             id="teachers"
             sx={{ width: "100%" }}
