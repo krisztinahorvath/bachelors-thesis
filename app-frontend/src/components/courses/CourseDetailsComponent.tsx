@@ -16,7 +16,7 @@ import { BACKEND_URL } from "../../constants";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
 import AddIcon from "@mui/icons-material/Add";
 import { User } from "../../models/User";
-import { debounce, head } from "lodash";
+import { debounce } from "lodash";
 
 interface AddCourseTeachers {
   teacherIds: number[];
@@ -166,7 +166,8 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
           filterSelectedOptions
           isOptionEqualToValue={(option, value) => option.id === value.id}
           onInputChange={handleInputChangeAuthors}
-          onChange={(event, value) => {
+          onChange={(_, value) => {
+            // event instead of _
             if (value) {
               console.log(value);
               const teacherIds = value.map(

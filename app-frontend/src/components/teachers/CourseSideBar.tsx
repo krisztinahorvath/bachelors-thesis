@@ -29,6 +29,8 @@ export const CourseSideBar = ({
         backgroundColor: "#d0e3fb",
         margin: "auto",
         marginLeft: "25%",
+        position: "sticky",
+        top: "2px",
         // paddingTop: "2.5%",
         // paddingBottom: "2.5%",
         // height: "16.3%",
