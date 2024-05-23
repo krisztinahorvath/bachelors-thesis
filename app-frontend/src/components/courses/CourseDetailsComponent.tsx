@@ -20,6 +20,7 @@ import { BACKEND_URL } from "../../constants";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
 import { debounce } from "lodash";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { UserType } from "../../models/User";
 
 interface CourseTeacherListDTO {
   teacherIds: number[];
@@ -34,6 +35,7 @@ interface TeacherDTO {
 export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
   courseData,
 }) => {
+  const [userType, setUserType] = useState<UserType>();
   const [open, setOpen] = useState(false);
   const [course, setCourse] = useState<Course>(courseData);
   const [suggestedTeachers, setSuggestedTeachers] = useState<TeacherDTO[]>([]);
@@ -45,7 +47,6 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
       teacherIds: [],
     });
   const currentTeacherEmail = getEmail();
-  const currentUserType = getUserType();
 
   const handleClose = () => {
     setOpen(false);
@@ -110,6 +111,11 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
   };
 
   useEffect(() => {
+    const userTypeLocalStorage = getUserType();
+
+    if (userTypeLocalStorage === "0") setUserType(UserType.Teacher);
+    else if (userTypeLocalStorage === "1") setUserType(UserType.Student);
+
     fetchCourseTeachers();
   }, [course.id]);
 
@@ -216,9 +222,11 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
             readOnly: true,
           }}
         />
-        <Button onClick={generateEnrollmentKey}>
-          Generate new enrollment key
-        </Button>
+        {userType === UserType.Teacher && (
+          <Button onClick={generateEnrollmentKey}>
+            Generate new enrollment key
+          </Button>
+        )}
       </Container>
       <Container
         sx={{
@@ -232,75 +240,52 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
       >
         <Box>
           <h3>Teachers:</h3>
-          <Autocomplete
-            key={automcompleteKey}
-            multiple
-            id="teachers"
-            sx={{ width: "100%" }}
-            options={suggestedTeachers}
-            getOptionLabel={(option) => `${option.name} - ${option.email}`}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Add Teachers"
-                variant="outlined"
-                placeholder="Teacher name"
+          {userType === UserType.Teacher && (
+            <>
+              <Autocomplete
+                key={automcompleteKey}
+                multiple
+                id="teachers"
+                sx={{ width: "100%" }}
+                options={suggestedTeachers}
+                getOptionLabel={(option) => `${option.name} - ${option.email}`}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Add Teachers"
+                    variant="outlined"
+                    placeholder="Teacher name"
+                  />
+                )}
+                filterSelectedOptions
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onInputChange={handleInputChangeAuthors}
+                onChange={(_, value) => {
+                  // event instead of _
+                  if (value) {
+                    console.log(value);
+                    const teacherIds = value.map(
+                      (teacher) => teacher?.id
+                    ) as number[];
+                    setAddCourseTeachers({
+                      ...addCourseTeachers,
+                      teacherIds: teacherIds,
+                    });
+                  }
+                }}
               />
-            )}
-            filterSelectedOptions
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            onInputChange={handleInputChangeAuthors}
-            onChange={(_, value) => {
-              // event instead of _
-              if (value) {
-                console.log(value);
-                const teacherIds = value.map(
-                  (teacher) => teacher?.id
-                ) as number[];
-                setAddCourseTeachers({
-                  ...addCourseTeachers,
-                  teacherIds: teacherIds,
-                });
-              }
-            }}
-          />
-          <Button onClick={postTeachersToCourse}>Add teachers to course</Button>
-          {/* {courseTeachers.map((teacher) => (
-            <Box
-              key={teacher.id}
-              sx={{ display: "flex", alignItems: "center", mb: 1 }}
-            >
-              {teacher.email === currentTeacherEmail && (
-                <Typography
-                  sx={{ mr: 2 }}
-                >{`${teacher.name}, Email: ${teacher.email} (You)`}</Typography>
-              )}
-              {teacher.email !== currentTeacherEmail && (
-                <>
-                  <Typography
-                    sx={{ mr: 2 }}
-                  >{`${teacher.name}, Email: ${teacher.email}`}</Typography>
-                  <IconButton
-                    edge="end"
-                    color="error"
-                    onClick={() => {
-                      setSelectedTeacherData(teacher);
-                      setOpen(true);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </>
-              )}
-            </Box>
-          ))} */}
+              <Button onClick={postTeachersToCourse}>
+                Add teachers to course
+              </Button>
+            </>
+          )}
           <table>
             <thead>
               <tr>
                 <th>#</th>
                 <th>Name</th>
                 <th>Email</th>
-                {currentUserType == "0" && <th>Action</th>}
+                {userType === UserType.Teacher && <th>Action</th>}
               </tr>
             </thead>
             <tbody>
@@ -316,7 +301,7 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
                     <span className="cell-header">Email:</span> {teacher.email}
                   </td>
                   <td>
-                    {currentUserType === "0" &&
+                    {userType === UserType.Teacher &&
                       teacher.email === currentTeacherEmail && (
                         <IconButton
                           disabled
@@ -333,7 +318,7 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
                           </Tooltip>
                         </IconButton>
                       )}{" "}
-                    {currentUserType === "0" &&
+                    {userType === UserType.Teacher &&
                       teacher.email !== currentTeacherEmail && (
                         <IconButton
                           color="error"
