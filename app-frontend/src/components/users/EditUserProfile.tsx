@@ -61,6 +61,7 @@ export const EditUserProfile = () => {
     email: "",
     nickname: "",
     image: "",
+    uniqueIdentificationCode: "",
   });
 
   useEffect(() => {
@@ -189,17 +190,33 @@ export const EditUserProfile = () => {
             }
           />
           {userType === UserType.Student && (
-            <StyledTextField
-              required
-              id="nickname"
-              label="Nickname"
-              value={user.nickname}
-              variant="outlined"
-              style={textFieldStyle}
-              onChange={(event) =>
-                setUser({ ...user, nickname: event.target.value })
-              }
-            />
+            <>
+              <StyledTextField
+                required
+                id="nickname"
+                label="Nickname"
+                value={user.nickname}
+                variant="outlined"
+                style={textFieldStyle}
+                onChange={(event) =>
+                  setUser({ ...user, nickname: event.target.value })
+                }
+              />
+              <StyledTextField
+                required
+                id="uniqueIdCode"
+                label="Unique Identification Code"
+                value={user.uniqueIdentificationCode}
+                variant="outlined"
+                style={textFieldStyle}
+                onChange={(event) =>
+                  setUser({
+                    ...user,
+                    uniqueIdentificationCode: event.target.value,
+                  })
+                }
+              />
+            </>
           )}
           <UploadImage
             imageUrl={imageUrl}

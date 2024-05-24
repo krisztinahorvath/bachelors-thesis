@@ -19,7 +19,6 @@ import { Leaderboard } from "./components/game-elements/Leaderboard";
 import { GradePageStudent } from "./components/students/GradePageStudent";
 import { AddAssignment } from "./components/assignments/AddAssignment";
 import { UpdateAssignment } from "./components/assignments/UpdateAssignment";
-// import { StudentAchievements } from "./components/game-elements/Badges";
 
 function App() {
   return (
@@ -37,7 +36,6 @@ function App() {
 
       <Router>
         <Routes>
-          {/* <Route path="/upload" element={<UploadFileComponent />} /> */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

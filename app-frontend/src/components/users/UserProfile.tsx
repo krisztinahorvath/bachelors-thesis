@@ -13,9 +13,10 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants";
 import { displayErrorMessage } from "../ToastMessage";
+import { DeleteAccountDialog } from "./DeleteAccountDialog";
 
 export const UserProfile = () => {
-  const [userType, setUserType] = useState<UserType>();
+  const [userType, setUserType] = useState<UserType>(0);
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -23,6 +24,11 @@ export const UserProfile = () => {
     image: "",
     uniqueIdentificationCode: "",
   });
+
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     const userTypeLocalStorage = getUserType();
@@ -72,23 +78,52 @@ export const UserProfile = () => {
               {/* Content for the left side */}
               <Avatar
                 sx={{ width: "10vw", height: "10vw" }}
-                //alt="Avatar"
                 src={`data:image/jpg;base64,${user.image}`}
               />
             </Grid>
             <Grid item xs={6}>
-              Name: {user.name} <br />
-              Nickname: {user.nickname} <br />
-              Email: {user.email} <br />
-              Unique Identification Code: {user.uniqueIdentificationCode}
+              <strong> Name:</strong> {user.name} <br />
+              {userType === UserType.Student && (
+                <>
+                  {" "}
+                  <strong>Nickname:</strong> {user.nickname} <br />
+                </>
+              )}
+              <strong>Email:</strong> {user.email} <br />
+              {userType === UserType.Student && (
+                <>
+                  <strong>Unique Identification Code:</strong>{" "}
+                  {user.uniqueIdentificationCode}
+                </>
+              )}
             </Grid>
           </Grid>
 
-          <Button component={Link} to="/edit-profile" variant="contained">
+          <Button
+            component={Link}
+            to="/edit-profile"
+            variant="outlined"
+            sx={{ background: "#f3f3f3" }}
+          >
             Edit Profile
+          </Button>
+          <Button
+            color="error"
+            sx={{ marginLeft: "2.5%", background: "#f3f3f3" }}
+            variant="outlined"
+            onClick={() => setOpen(true)}
+          >
+            Delete Account
           </Button>
         </Box>
       </Container>
+      {open && (
+        <DeleteAccountDialog
+          open={open}
+          handleClose={handleClose}
+          userType={userType}
+        />
+      )}
     </>
   );
 };

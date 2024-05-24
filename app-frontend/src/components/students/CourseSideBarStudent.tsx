@@ -26,6 +26,7 @@ export const CourseSideBarStudent = ({
   const handleNavigateTo = (tabName: string) => {
     onSelectTab(tabName);
     setSelectedTab(tabName);
+    // window.location.hash = `#${tabName}`;
   };
 
   return (
@@ -58,17 +59,6 @@ export const CourseSideBarStudent = ({
             Course Details
           </Typography>
         </MenuItem>
-        {/* <MenuItem
-          selected={selectedTab === "students"}
-          onClick={() => handleNavigateTo("students")}
-        >
-          <ListItemIcon>
-            <SchoolIcon fontSize="small" />
-          </ListItemIcon>
-          <Typography variant="inherit" noWrap>
-            Enrolled Students
-          </Typography>
-        </MenuItem> */}
         <MenuItem
           selected={selectedTab === "assignments"}
           onClick={() => handleNavigateTo("assignments")}
@@ -83,6 +73,8 @@ export const CourseSideBarStudent = ({
         <MenuItem
           selected={selectedTab === "grades"}
           onClick={() => handleNavigateTo("grades")}
+          // component="a"
+          // href="#grades"
         >
           <ListItemIcon>
             <GradingIcon fontSize="small" />

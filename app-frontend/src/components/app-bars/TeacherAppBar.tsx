@@ -14,7 +14,6 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import Logout from "@mui/icons-material/Logout";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import { Settings } from "@mui/icons-material";
 import Divider from "@mui/material/Divider";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { getImage, handleLogoutUtil } from "../../utils/auth-utils";
@@ -27,6 +26,7 @@ const appBarStyles = {
   boxShadow: "none",
   paddingLeft: "2.5%",
   paddingRight: "2.5%",
+  marginTop: "4px",
 };
 
 const buttonStyle = {
@@ -37,7 +37,7 @@ const buttonStyle = {
   fontSize: "1rem",
 };
 
-const pages = ["Courses", "Blog"];
+// const pages = ["Courses", "Blog"];
 export const TeacherAppBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -65,7 +65,6 @@ export const TeacherAppBar = () => {
     <AppBar sx={appBarStyles}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* <MenuBookIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
           <Typography
             variant="h6"
             noWrap
@@ -83,7 +82,7 @@ export const TeacherAppBar = () => {
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
+            {/* <IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
@@ -92,8 +91,8 @@ export const TeacherAppBar = () => {
               color="inherit"
             >
               <MenuIcon />
-            </IconButton>
-            <Menu
+            </IconButton> */}
+            {/* <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
@@ -116,7 +115,7 @@ export const TeacherAppBar = () => {
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
-            </Menu>
+            </Menu> */}
           </Box>
           <MenuBookIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
@@ -138,8 +137,13 @@ export const TeacherAppBar = () => {
           >
             Online Grades Register
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+            }}
+          >
+            {/* {pages.map((page) => (
               <Button
                 key={page}
                 component={Link}
@@ -150,7 +154,7 @@ export const TeacherAppBar = () => {
               >
                 {page}
               </Button>
-            ))}
+            ))} */}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
@@ -178,11 +182,6 @@ export const TeacherAppBar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {/* {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))} */}
               <MenuItem
                 component={Link}
                 to={`/my-profile`}
@@ -193,21 +192,8 @@ export const TeacherAppBar = () => {
                 </ListItemIcon>
                 My Profile
               </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
-                <ListItemIcon>
-                  <AccountCircleIcon fontSize="small" />
-                </ListItemIcon>
-                My account
-              </MenuItem>
 
               <Divider />
-
-              <MenuItem onClick={handleCloseUserMenu}>
-                <ListItemIcon>
-                  <Settings fontSize="small" />
-                </ListItemIcon>
-                Settings
-              </MenuItem>
               <MenuItem
                 component={Link}
                 to={`/`}
@@ -215,7 +201,6 @@ export const TeacherAppBar = () => {
                   handleCloseUserMenu();
                   handleLogoutUtil();
                 }}
-                // selected={location.pathname === `/`}
               >
                 <ListItemIcon>
                   <Logout fontSize="small" />

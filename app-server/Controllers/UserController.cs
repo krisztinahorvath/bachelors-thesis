@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
@@ -132,7 +133,7 @@ namespace app_server.Controllers
 
             if (user == null)
             {
-                return Unauthorized("Invalid username or password.");
+                return Unauthorized("Invalid email or password.");
             }
 
             // Generate JWT token
@@ -223,6 +224,41 @@ namespace app_server.Controllers
                 }
             }
 
+
+            return NoContent();
+        }
+
+        // DELETE: api/users
+        [HttpDelete("account/{email}/{password}")]
+        public async Task<ActionResult> UnenrollFromCourse(string email, string password)
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+
+            // validate token data
+            var tokenData = ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 == null))
+                return Unauthorized("Invalid token.");
+
+            var userId = tokenData!.Item1;
+
+            // make sure the person deleting the course is a teacher at that course
+            if (!_context.Users.Any(t => t.Id == userId && t.Email == email && t.Password == HashPassword(password)))
+            {
+                return Unauthorized("Invalid data provided.");
+            }
+
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

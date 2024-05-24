@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { Student } from "../../models/Student";
 import { getToken } from "../../utils/auth-utils";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
-import AddIcon from "@mui/icons-material/Add";
+// import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Button,
@@ -101,13 +101,13 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
         <p>No students enrolled at course.</p>
       )}
 
-      {!loading && (
+      {/* {!loading && (
         <IconButton component={Link} sx={{ mr: 3 }} to={`/students/add`}>
           <Tooltip title="Add a new student" arrow>
             <AddIcon color="primary" />
           </Tooltip>
         </IconButton>
-      )}
+      )} */}
 
       {!loading && students.length > 0 && (
         <Container sx={{ marginLeft: "2.5%" }}>

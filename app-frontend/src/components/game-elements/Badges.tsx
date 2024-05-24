@@ -6,8 +6,6 @@ import Origami from "../../assets/origami.svg";
 import Astronaut from "../../assets/astronaut.svg";
 import Lightbulb from "../../assets/lightbulb.svg";
 import MarioMushroom from "../../assets/mariomushroom.svg";
-import Genius from "../../assets/genius.svg";
-import EarlyBird from "../../assets/earlybird.svg";
 import Clock from "../../assets/clock.svg";
 
 const AirplaneBadge = () => {
@@ -28,14 +26,6 @@ const LightbulbBadge = () => {
 
 const MarioMushroomBadge = () => {
   return <img src={MarioMushroom} alt="mushroom" style={{ width: "35%" }} />;
-};
-
-const GeniusBadge = () => {
-  return <img src={Genius} alt="genius" style={{ width: "35%" }} />;
-};
-
-const EarlyBirdBadge = () => {
-  return <img src={EarlyBird} alt="early bird" style={{ width: "35%" }} />;
 };
 
 const OnTimeBadge = () => {
@@ -81,24 +71,10 @@ const icons: {
     achieved: false,
   },
   6: {
-    icon: <GeniusBadge />,
-    description: "Genius",
-    achievementCriteria:
-      "Unlocked at reaching 100% of the\n available grade idk change this.",
-    achieved: false,
-  },
-  7: {
-    icon: <EarlyBirdBadge />,
-    description: "Early bird",
-    achievementCriteria:
-      "Badge unlocked after turning in x% of assignments 2 weeks before the deadline.",
-    achieved: false,
-  },
-  8: {
     icon: <OnTimeBadge />,
     description: "Always on time",
     achievementCriteria:
-      "Badge unlocked after turning in x% of assignments 2 weeks before the deadline.",
+      "Badge unlocked after turning in 75% of assignments before the deadline.",
     achieved: true,
   },
 };
@@ -138,7 +114,7 @@ export const StudentAchievements: React.FC<{ courseData: any }> = ({
   return (
     <>
       <h2>Achievements at {courseData.name}</h2>
-      <Container sx={{ marginTop: "5%", marginBottom: "5%" }}>
+      <Container sx={{ marginTop: "5%" }}>
         <Grid container spacing={3}>
           {Object.keys(icons).map((key) => (
             <IconWithDescription key={key} iconData={icons[key]} />
