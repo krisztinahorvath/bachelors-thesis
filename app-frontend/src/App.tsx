@@ -20,6 +20,7 @@ import { GradePageStudent } from "./components/students/GradePageStudent";
 import { AddAssignment } from "./components/assignments/AddAssignment";
 import { UpdateAssignment } from "./components/assignments/UpdateAssignment";
 import { UpdatePassword } from "./components/users/UpdatePassword";
+import { UpdateCourse } from "./components/courses/UpdateCourse";
 
 function App() {
   return (
@@ -87,6 +88,16 @@ function App() {
               <PrivateRoute
                 allowedUsers={[UserType.Student]}
                 element={<GradePageStudent />}
+              />
+            }
+          />
+
+          <Route
+            path="/course/:courseIndex/update"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Teacher]}
+                element={<UpdateCourse />}
               />
             }
           />

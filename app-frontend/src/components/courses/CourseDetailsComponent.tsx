@@ -20,7 +20,9 @@ import { BACKEND_URL } from "../../constants";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
 import { debounce } from "lodash";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { UserType } from "../../models/User";
+import { useNavigate } from "react-router-dom";
 
 interface CourseTeacherListDTO {
   teacherIds: number[];
@@ -32,11 +34,14 @@ interface TeacherDTO {
   email: string;
 }
 
-export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
-  courseData,
-}) => {
+export const CourseDetailsComponent: React.FC<{
+  courseData: any;
+  courseIndex: any;
+}> = ({ courseData, courseIndex }) => {
+  const navigate = useNavigate();
   const [userType, setUserType] = useState<UserType>();
-  const [open, setOpen] = useState(false);
+  const [openDeleteTeacherDialog, setOpenDeleteTeacherDialog] = useState(false);
+  const [openDeleteCourseDialog, setOpenDeleteCourseDialog] = useState(false);
   const [course, setCourse] = useState<Course>(courseData);
   const [suggestedTeachers, setSuggestedTeachers] = useState<TeacherDTO[]>([]);
   const [courseTeachers, setCourseTeachers] = useState<TeacherDTO[]>([]);
@@ -49,11 +54,11 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
   const currentTeacherEmail = getEmail();
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenDeleteTeacherDialog(false);
   };
 
-  const handleDelete = async () => {
-    setOpen(false);
+  const handleDeleteTeacher = async () => {
+    setOpenDeleteTeacherDialog(false);
     try {
       const authToken = getToken();
       await axios.delete(
@@ -79,6 +84,30 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
       } else {
         displayErrorMessage(
           "An error occurred while trying to remove the teacher from this course."
+        );
+      }
+    }
+  };
+
+  const handleDeleteCourse = async () => {
+    setOpenDeleteCourseDialog(false);
+    try {
+      const authToken = getToken();
+      await axios.delete(`${BACKEND_URL}/courses/${course.id}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      displaySuccessMessage("Course deleted successfully!");
+      navigate("/teacher-dashboard");
+    } catch (error: any) {
+      console.log(error);
+      if (error.response) {
+        const errorMessage = error.response.data;
+        displayErrorMessage(errorMessage);
+      } else {
+        displayErrorMessage(
+          "An error occurred while trying to delete this course."
         );
       }
     }
@@ -213,9 +242,9 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
         sx={{
           display: "flex",
           flexDirection: "row",
-          // alignItems: "center",
+          alignItems: "center",
           marginTop: "2.5%",
-          marginLeft: "4.5%",
+          marginLeft: "5%",
           justifyContent: "flex-start",
         }}
       >
@@ -226,11 +255,67 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
           InputProps={{
             readOnly: true,
           }}
+          sx={{
+            minWidth: "110px",
+            width: "110px",
+          }}
         />
         {userType === UserType.Teacher && (
-          <Button onClick={generateEnrollmentKey}>
-            Generate new enrollment key
-          </Button>
+          <>
+            <Button
+              onClick={generateEnrollmentKey}
+              sx={{ marginLeft: "2%" }}
+              style={{ outline: "none" }}
+            >
+              Generate new enrollment key
+            </Button>
+            <IconButton
+              color="primary"
+              edge="end"
+              aria-label="update"
+              sx={{ padding: "10px", marginLeft: "2.5%" }} //marginLeft: "10vw"
+              style={{ outline: "none" }}
+              onClick={() => navigate(`/course/${courseIndex}/update`)}
+            >
+              <Tooltip title="Update course" arrow>
+                <EditIcon sx={{ fontSize: "1.7rem" }} />
+              </Tooltip>
+            </IconButton>
+            <IconButton
+              color="error"
+              edge="end"
+              aria-label="delete"
+              onClick={() => setOpenDeleteCourseDialog(true)}
+              sx={{ padding: "10px", marginRight: "5%" }}
+              style={{ outline: "none" }}
+            >
+              <Tooltip title="Delete course" arrow>
+                <DeleteIcon sx={{ fontSize: "1.7rem" }} />
+              </Tooltip>
+            </IconButton>
+            {/* <Button
+              // component={Link}
+              // to="/edit-profile"
+              variant="outlined"
+              sx={{ marginLeft: "2.5%", background: "#f3f3f3" }}
+              style={{ outline: "none" }}
+            >
+              Edit
+            </Button>
+            <Button
+              color="error"
+              sx={{
+                marginLeft: "2.5%",
+                background: "#f3f3f3",
+                marginRight: "2.5%",
+              }}
+              style={{ outline: "none" }}
+              variant="outlined"
+              // onClick={() => setOpen(true)}
+            >
+              Delete
+            </Button> */}
+          </>
         )}
       </Container>
       <Container
@@ -279,7 +364,10 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
                   }
                 }}
               />
-              <Button onClick={postTeachersToCourse}>
+              <Button
+                onClick={postTeachersToCourse}
+                style={{ outline: "none" }}
+              >
                 Add teachers to course
               </Button>
             </>
@@ -315,7 +403,7 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
                           aria-label="delete"
                           onClick={() => {
                             setSelectedTeacherData(teacher);
-                            setOpen(true);
+                            setOpenDeleteTeacherDialog(true);
                           }}
                         >
                           <Tooltip title="Remove student from course" arrow>
@@ -331,8 +419,9 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
                           aria-label="delete"
                           onClick={() => {
                             setSelectedTeacherData(teacher);
-                            setOpen(true);
+                            setOpenDeleteTeacherDialog(true);
                           }}
+                          style={{ outline: "none" }}
                         >
                           <Tooltip title="Remove teacher from course" arrow>
                             <DeleteIcon />
@@ -348,7 +437,7 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
       </Container>
 
       <Dialog
-        open={open}
+        open={openDeleteTeacherDialog}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -366,7 +455,36 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
           <Button onClick={handleClose} autoFocus>
             Cancel
           </Button>
-          <Button onClick={handleDelete}>Delete</Button>
+          <Button onClick={handleDeleteTeacher} sx={{ color: "red" }}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openDeleteCourseDialog}
+        onClose={() => setOpenDeleteCourseDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Delete course</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete course{" "}
+            <strong>{courseData?.name} </strong>?{" "}
+            <span style={{ color: "red", display: "block" }}>
+              You will lose all data, including assignments and grades, make
+              sure to save anything important before deleting it.
+            </span>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDeleteCourseDialog(false)} autoFocus>
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteCourse} sx={{ color: "red" }}>
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </>

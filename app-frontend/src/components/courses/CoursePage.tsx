@@ -173,7 +173,10 @@ export const CoursePage = () => {
                   </Typography>
                 </Box>
               </Card>
-              <CourseDetailsComponent courseData={course} />
+              <CourseDetailsComponent
+                courseData={course}
+                courseIndex={courseIndex}
+              />
             </>
           )}
 

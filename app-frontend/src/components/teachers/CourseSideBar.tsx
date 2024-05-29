@@ -40,6 +40,28 @@ export const CourseSideBar = ({
       }}
     >
       <MenuList>
+        {/* <MenuItem
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            pointerEvents: "none",
+            // color: "gray",
+          }}
+        >
+          <Typography
+            variant="inherit"
+            noWrap
+            style={{
+              fontWeight: "bold",
+              color: "inherit",
+              textAlign: "center",
+            }}
+          >
+            Course Name
+          </Typography>
+        </MenuItem> */}
+
         <MenuItem
           selected={selectedTab === "details"}
           onClick={() => handleNavigateTo("details")}
