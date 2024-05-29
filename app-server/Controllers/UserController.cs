@@ -194,7 +194,7 @@ namespace app_server.Controllers
 
         // PUT: api/users/profile
         [HttpPut("profile")]
-        public async Task<IActionResult> UpdateUserProfile([FromForm] string userDTO, [FromForm] IFormFile image)
+        public async Task<IActionResult> UpdateUserProfile([FromForm] string userDTO, [FromForm] IFormFile? image = null)
         {
             // Deserialize userDTO JSON string to UserDTO object
             var userInput = JsonConvert.DeserializeObject<UserDTO>(userDTO);
@@ -227,9 +227,13 @@ namespace app_server.Controllers
                     return NotFound();
 
                 teacher.Name = userInput.Name;
-                teacher.Email = userInput.Email;
 
-                if(userInput.Image.Length > 0)
+                if (teacher.Email != userInput.Email)
+                    if (!_validate.IsEmailUnique(_context, userInput.Email))
+                        return BadRequest("Email must be unique, another user is already using this email.");
+                    else teacher.Email = userInput.Email;
+
+                if(userInput.Image != null)
                     teacher.Image = userInput.Image;
 
                 try
@@ -255,10 +259,22 @@ namespace app_server.Controllers
                     return NotFound();
 
                 student.Name = userInput.Name;
-                student.Email = userInput.Email;
-                if (userInput.Image.Length > 0)
+
+                if (student.Email != userInput.Email)
+                    if (!_validate.IsEmailUnique(_context, userInput.Email))
+                        return BadRequest("Email must be unique, another user is already using this email.");
+                    else student.Email = userInput.Email;
+
+                if (userInput.Image != null)
                     student.Image = userInput.Image;
-                student.Nickname = userInput.Nickname;
+
+                if (userInput.Nickname != student.Nickname)
+                    if (!_validate.IsNicknameUnique(_context, userInput.Nickname))
+                        return BadRequest("Nickname must be unique.");
+                    else
+                        student.Nickname = userInput.Nickname;
+
+                /// MAKE SURE THIS IS UNIQUE TOO????
                 student.UniqueIdentificationCode = userInput.UniqueIdentificationCode;
 
                 try

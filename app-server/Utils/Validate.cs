@@ -62,7 +62,7 @@ namespace app_server.Utils
             return !_context.Users.Any(a => a.Email == email);
         }
 
-        private bool IsNicknameUnique(in StudentsRegisterContext _context, string nickname)
+        public bool IsNicknameUnique(in StudentsRegisterContext _context, string nickname)
         {
             return !_context.Students.Any(a => a.Nickname == nickname);
         }

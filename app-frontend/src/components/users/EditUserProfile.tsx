@@ -122,6 +122,7 @@ export const EditUserProfile = () => {
         name: user.name,
         email: user.email,
         nickname: user.nickname,
+        UniqueIdentificationCode: user.uniqueIdentificationCode,
       })
     );
     if (user.image) {
@@ -139,10 +140,6 @@ export const EditUserProfile = () => {
       displaySuccessMessage("Your profile was updated successfuly!");
       navigate("/my-profile");
 
-      //   const base64String = btoa(
-      //     String.fromCharCode(...new Uint8Array(imageUrl))
-      //   );
-      //   setImage(base64String);
       setEmail(user.email);
     } catch (error: any) {
       console.log(error);
