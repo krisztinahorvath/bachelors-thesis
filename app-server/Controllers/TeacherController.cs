@@ -1,9 +1,7 @@
 ﻿using app_server.Models;
 using app_server.Models.DTOs;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace app_server.Controllers
 {
@@ -61,6 +59,42 @@ namespace app_server.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Teachers added successfully to course!" });
+        }
+
+        // DELETE: api/teachers/remove-teacher-from-course/5/5
+        [HttpDelete("remove-teacher-from-course/{courseId}/{teacherId}")]
+        public async Task<ActionResult> UnenrollFromCourse(long courseId, long teacherId)
+        {
+            if (_context.Courses == null)
+            {
+                return NotFound();
+            }
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Teacher))
+                return Unauthorized("Invalid token or user is not a teacher.");
+
+            var currentTeacherId = tokenData.Item1;
+
+            // make sure the person removing the teacher from the course is a course teacher
+            if (!_context.CourseTeachers.Any(t => t.TeacherId == currentTeacherId && t.CourseId == courseId))
+            {
+                return Unauthorized("You can't remove a teacher from a courses that you aren't a teacher for");
+            }
+
+            var courseTeacher = await _context.CourseTeachers
+                .FirstOrDefaultAsync(e => e.TeacherId == teacherId && e.CourseId == courseId);
+
+            if (courseTeacher == null)
+            {
+                return NotFound();
+            }
+
+            _context.CourseTeachers.Remove(courseTeacher);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
 

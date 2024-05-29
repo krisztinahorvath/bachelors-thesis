@@ -57,7 +57,7 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
     try {
       const authToken = getToken();
       await axios.delete(
-        `${BACKEND_URL}/assignments/${selectedTeacherData?.id}`,
+        `${BACKEND_URL}/teachers/remove-teacher-from-course/${course.id}/${selectedTeacherData?.id}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -73,9 +73,14 @@ export const CourseDetailsComponent: React.FC<{ courseData: any }> = ({
       displaySuccessMessage("Teacher removed successfully from this course!");
     } catch (error: any) {
       console.log(error);
-      if (error.response.status === 401) {
-        displayErrorMessage(error.response.data);
-      } else displayErrorMessage("Error: " + error);
+      if (error.response) {
+        const errorMessage = error.response.data;
+        displayErrorMessage(errorMessage);
+      } else {
+        displayErrorMessage(
+          "An error occurred while trying to remove the teacher from this course."
+        );
+      }
     }
   };
 

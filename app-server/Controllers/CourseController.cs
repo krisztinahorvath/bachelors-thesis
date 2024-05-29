@@ -187,7 +187,7 @@ namespace app_server.Controllers
             // make sure the person deleting the course is a teacher at that course
             if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == courseId))
             {
-                return Unauthorized("You can't delete courses that you aren't a teacher for.");
+                return Unauthorized("You can't generate an enrollment key for courses that you aren't a teacher for.");
             }
 
             var course = await _context.Courses.FindAsync(courseId);
