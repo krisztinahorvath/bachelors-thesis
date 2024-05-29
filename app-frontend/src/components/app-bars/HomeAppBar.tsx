@@ -47,7 +47,7 @@ const buttonStyle = {
   fontSize: "1rem",
 };
 
-const pages = ["About us", "Log In", "Register"];
+const pages = ["Log In", "Register"];
 
 export const HomeAppBar = () => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);

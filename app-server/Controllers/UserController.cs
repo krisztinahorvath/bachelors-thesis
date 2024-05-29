@@ -148,18 +148,68 @@ namespace app_server.Controllers
             return Ok(new { token, user.UserType, user.Email, user.Image});
         }
 
+        // PATCH: api/users/update-password
+        [HttpPatch("update-password")]
+        public async Task<IActionResult> UpdatePassword(UserPasswordUpdateDTO userPasswordUpdateDTO)
+        {
+            // validate token data
+            var tokenData = ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 == null))
+                return Unauthorized("Invalid token data.");
+
+            var userId = tokenData!.Item1;
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return BadRequest("User not found.");
+
+            if (user.Password != HashPassword(userPasswordUpdateDTO.OldPassword))
+                return BadRequest("Incorrect password provided");
+
+            if (!_validate.IsPasswordValid(userPasswordUpdateDTO.NewPassword))
+                return BadRequest("The password must have at least 8 characters and " +
+                    "must contain at least one upper letter and a digit.");
+
+            user.Password = HashPassword(userPasswordUpdateDTO.NewPassword);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(userId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok("Password updated successfully");
+
+        }
+
         // PUT: api/users/profile
         [HttpPut("profile")]
-        public async Task<IActionResult> CreateCourse([FromForm] string userDTO, [FromForm] IFormFile image)
+        public async Task<IActionResult> UpdateUserProfile([FromForm] string userDTO, [FromForm] IFormFile image)
         {
             // Deserialize userDTO JSON string to UserDTO object
             var userInput = JsonConvert.DeserializeObject<UserDTO>(userDTO);
 
+            if (userInput == null)
+                return BadRequest();
+
             // Convert IFormFile to byte array
-            using (var memoryStream = new MemoryStream())
+            if (image != null)
             {
-                await image.CopyToAsync(memoryStream);
-                userInput.Image = memoryStream.ToArray();
+                using (var memoryStream = new MemoryStream())
+                {
+                    await image.CopyToAsync(memoryStream);
+                    userInput.Image = memoryStream.ToArray();
+                }
             }
 
             // validate token data
@@ -178,7 +228,9 @@ namespace app_server.Controllers
 
                 teacher.Name = userInput.Name;
                 teacher.Email = userInput.Email;
-                teacher.Image = userInput.Image;
+
+                if(userInput.Image.Length > 0)
+                    teacher.Image = userInput.Image;
 
                 try
                 {
@@ -204,8 +256,10 @@ namespace app_server.Controllers
 
                 student.Name = userInput.Name;
                 student.Email = userInput.Email;
-                student.Image = userInput.Image;
+                if (userInput.Image.Length > 0)
+                    student.Image = userInput.Image;
                 student.Nickname = userInput.Nickname;
+                student.UniqueIdentificationCode = userInput.UniqueIdentificationCode;
 
                 try
                 {
@@ -263,6 +317,11 @@ namespace app_server.Controllers
             return NoContent();
         }
 
+        private bool UserExists(long id)
+        {
+            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
         private bool TeacherExists(long id)
         {
             return (_context.Teachers?.Any(e => e.Id == id)).GetValueOrDefault();
@@ -272,7 +331,6 @@ namespace app_server.Controllers
         {
             return (_context.Students?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-
 
         public static Tuple<long, UserType>? ExtractUserIdAndJWTToken(ClaimsPrincipal claims)
         { 

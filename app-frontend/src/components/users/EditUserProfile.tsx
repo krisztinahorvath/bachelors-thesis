@@ -158,7 +158,7 @@ export const EditUserProfile = () => {
   };
 
   return (
-    <React.Fragment>
+    <>
       {userType === UserType.Student && <StudentAppBar />}
       {userType === UserType.Teacher && <TeacherAppBar />}
       <Grid
@@ -229,6 +229,6 @@ export const EditUserProfile = () => {
           </Button>
         </form>
       </Grid>
-    </React.Fragment>
+    </>
   );
 };

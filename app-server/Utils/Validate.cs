@@ -80,7 +80,7 @@ namespace app_server.Utils
             }
         }
 
-        private bool IsPasswordValid(string password)
+        public bool IsPasswordValid(string password)
         {
             return password.Length >= 8 && password.Any(char.IsUpper) && password.Any(char.IsDigit);
         }

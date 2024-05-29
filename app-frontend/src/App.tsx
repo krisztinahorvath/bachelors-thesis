@@ -19,6 +19,7 @@ import { Leaderboard } from "./components/game-elements/Leaderboard";
 import { GradePageStudent } from "./components/students/GradePageStudent";
 import { AddAssignment } from "./components/assignments/AddAssignment";
 import { UpdateAssignment } from "./components/assignments/UpdateAssignment";
+import { UpdatePassword } from "./components/users/UpdatePassword";
 
 function App() {
   return (
@@ -56,6 +57,16 @@ function App() {
               <PrivateRoute
                 allowedUsers={[UserType.Student, UserType.Teacher]}
                 element={<EditUserProfile />}
+              />
+            }
+          />
+
+          <Route
+            path="/change-password"
+            element={
+              <PrivateRoute
+                allowedUsers={[UserType.Student, UserType.Teacher]}
+                element={<UpdatePassword />}
               />
             }
           />

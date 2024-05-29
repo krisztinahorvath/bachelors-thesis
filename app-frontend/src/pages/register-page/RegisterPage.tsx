@@ -32,7 +32,9 @@ import { UserRegisterDTO } from "../../models/UserRegisterDTO";
 
 export const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
+  const [showPasswordValueError, setShowPasswordValueError] = useState(false);
+  const [showRetypedPassword, setShowRetypedPassword] = useState(false);
+  const [retypedPasswordError, setRetypedPasswordError] = useState(false);
   const [retypedPassword, setRetypedPassword] = useState("");
   const navigate = useNavigate();
 
@@ -40,7 +42,7 @@ export const RegisterPage = () => {
     name: "",
     email: "",
     password: "",
-    userType: UserType.Student,
+    userType: UserType.Teacher,
     nickname: "",
     uniqueIdentificationCode: "",
   });
@@ -49,10 +51,20 @@ export const RegisterPage = () => {
     const newPassword = event.target.value;
     setUser({ ...user, password: newPassword });
 
+    if (
+      !(
+        newPassword.length >= 8 &&
+        /[A-Z]/.test(newPassword) &&
+        /\d/.test(newPassword)
+      )
+    ) {
+      setShowPasswordValueError(true);
+    } else setShowPasswordValueError(false);
+
     if (retypedPassword && newPassword !== retypedPassword) {
-      setPasswordError(true);
+      setRetypedPasswordError(true);
     } else {
-      setPasswordError(false);
+      setRetypedPasswordError(false);
     }
   };
 
@@ -61,14 +73,17 @@ export const RegisterPage = () => {
     setRetypedPassword(retypePassword);
 
     if (user.password && retypePassword !== user.password) {
-      setPasswordError(true);
+      setRetypedPasswordError(true);
     } else {
-      setPasswordError(false);
+      setRetypedPasswordError(false);
       setUser({ ...user, password: retypePassword });
     }
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleClickShowRetypedPassword = () =>
+    setShowRetypedPassword((show) => !show);
 
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -231,29 +246,35 @@ export const RegisterPage = () => {
               ),
             }}
             onChange={handlePasswordChange}
+            error={showPasswordValueError}
+            helperText={
+              showPasswordValueError
+                ? "The password must have at least 8 characters and must contain at least one upper letter and a digit."
+                : ""
+            }
           />
           <StyledTextField
             required
             id="retype-password"
             label="Retype password"
             variant="outlined"
-            type={showPassword ? "text" : "password"}
+            type={showRetypedPassword ? "text" : "password"}
             style={textFieldStyle}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={handleClickShowPassword}
+                    onClick={handleClickShowRetypedPassword}
                     onMouseDown={handleMouseDownPassword}
                   >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                    {showRetypedPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
             onChange={handleRetypePasswordChange}
-            error={passwordError}
-            helperText={passwordError ? "Passwords do not match" : ""}
+            error={retypedPasswordError}
+            helperText={retypedPasswordError ? "Passwords do not match" : ""}
           />
           {isStudentSelected && (
             <>

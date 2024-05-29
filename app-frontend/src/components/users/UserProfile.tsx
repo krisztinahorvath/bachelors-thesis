@@ -101,9 +101,17 @@ export const UserProfile = () => {
 
           <Button
             component={Link}
-            to="/edit-profile"
+            to="/change-password"
             variant="outlined"
             sx={{ background: "#f3f3f3" }}
+          >
+            Change Password
+          </Button>
+          <Button
+            component={Link}
+            to="/edit-profile"
+            variant="outlined"
+            sx={{ marginLeft: "2.5%", background: "#f3f3f3" }}
           >
             Edit Profile
           </Button>
