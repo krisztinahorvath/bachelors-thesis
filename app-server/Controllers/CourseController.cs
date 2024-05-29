@@ -506,7 +506,7 @@ namespace app_server.Controllers
         
         // PUT: api/courses
         [HttpPut]
-        public async Task<IActionResult> PutCourse([FromForm] string courseDTO, [FromForm] IFormFile image)
+        public async Task<IActionResult> PutCourse([FromForm] string courseDTO, [FromForm] IFormFile? image = null)
         {
             var userInput = JsonConvert.DeserializeObject<CourseDTO>(courseDTO);
 
@@ -515,11 +515,14 @@ namespace app_server.Controllers
 
             var courseId = userInput.Id;
 
-            // Convert IFormFile to byte array
-            using (var memoryStream = new MemoryStream())
+            if(image != null)
             {
-                await image.CopyToAsync(memoryStream);
-                userInput.Image = memoryStream.ToArray();
+                // Convert IFormFile to byte array
+                using (var memoryStream = new MemoryStream())
+                {
+                    await image.CopyToAsync(memoryStream);
+                    userInput.Image = memoryStream.ToArray();
+                }
             }
 
             // validate token data
@@ -543,7 +546,9 @@ namespace app_server.Controllers
             }
 
             course.Name = userInput.Name;
-            course.Image = userInput.Image;
+
+            if (userInput.Image != null)
+                course.Image = userInput.Image;
 
             try
             {

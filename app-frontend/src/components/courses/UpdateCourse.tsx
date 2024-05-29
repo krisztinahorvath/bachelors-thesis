@@ -95,9 +95,6 @@ export const UpdateCourse = () => {
     }
 
     try {
-      console.log(formData);
-      console.log(course);
-
       await axios.put(`${BACKEND_URL}/courses`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
