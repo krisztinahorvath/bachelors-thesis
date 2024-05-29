@@ -504,13 +504,22 @@ namespace app_server.Controllers
             return Ok(enrollment);
         }
         
-        // PUT: api/courses/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCourse(long id, CourseDTO courseDTO)
+        // PUT: api/courses
+        [HttpPut]
+        public async Task<IActionResult> PutCourse([FromForm] string courseDTO, [FromForm] IFormFile image)
         {
-            if(id != courseDTO.Id)
-            {
+            var userInput = JsonConvert.DeserializeObject<CourseDTO>(courseDTO);
+
+            if (userInput == null)
                 return BadRequest();
+
+            var courseId = userInput.Id;
+
+            // Convert IFormFile to byte array
+            using (var memoryStream = new MemoryStream())
+            {
+                await image.CopyToAsync(memoryStream);
+                userInput.Image = memoryStream.ToArray();
             }
 
             // validate token data
@@ -521,19 +530,20 @@ namespace app_server.Controllers
             var teacherId = tokenData!.Item1;
 
             // make sure the person updating the course is a teacher at that course
-            if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == id))
+            if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == courseId))
             {
                 return Unauthorized("You can't update courses that you aren't a teacher for");
             }
 
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _context.Courses.FindAsync(courseId);
 
             if(course == null)
             {
                 return NotFound();
             }
 
-            course.Name = courseDTO.Name;
+            course.Name = userInput.Name;
+            course.Image = userInput.Image;
 
             try
             {
@@ -541,7 +551,7 @@ namespace app_server.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CourseExists(id))
+                if (!CourseExists(courseId))
                 {
                     return NotFound();
                 }

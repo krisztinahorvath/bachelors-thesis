@@ -22,7 +22,7 @@ import { debounce } from "lodash";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { UserType } from "../../models/User";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface CourseTeacherListDTO {
   teacherIds: number[];
@@ -269,18 +269,25 @@ export const CourseDetailsComponent: React.FC<{
             >
               Generate new enrollment key
             </Button>
-            <IconButton
-              color="primary"
-              edge="end"
-              aria-label="update"
-              sx={{ padding: "10px", marginLeft: "2.5%" }} //marginLeft: "10vw"
-              style={{ outline: "none" }}
-              onClick={() => navigate(`/course/${courseIndex}/update`)}
-            >
-              <Tooltip title="Update course" arrow>
-                <EditIcon sx={{ fontSize: "1.7rem" }} />
-              </Tooltip>
-            </IconButton>
+            <Link to={`/course/${courseIndex}/update`} state={course}>
+              <IconButton
+                color="primary"
+                edge="end"
+                aria-label="update"
+                sx={{ padding: "10px", marginLeft: "2.5%" }} //marginLeft: "10vw"
+                style={{ outline: "none" }}
+                // onClick={() =>
+                //   navigate(`/course/${courseIndex}/details`, {
+                //     state: { courseData },
+                //   })
+                // }
+              >
+                <Tooltip title="Update course" arrow>
+                  <EditIcon sx={{ fontSize: "1.7rem" }} />
+                </Tooltip>
+              </IconButton>
+            </Link>
+
             <IconButton
               color="error"
               edge="end"
