@@ -25,10 +25,7 @@ namespace app_server.Controllers
         // GET: api/students/user-preferences
         [HttpGet("user-preferences")]
         public async Task<ActionResult<StudentUserPreferenceDTO>> GetUserPreferences()
-        {
-            if (_context.Students == null)
-                return NotFound();
-
+        { 
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
             if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
@@ -36,21 +33,18 @@ namespace app_server.Controllers
 
             var studentId = tokenData.Item1;
 
-            var userPreference = await _context.UserPreferences.FirstOrDefaultAsync(x => x.StudentId == studentId);
+            var userPreference = await _studentService.GetUserPreferences(studentId);
 
             if (userPreference == null)
                 return NotFound();
 
-            return StudentUserPreferenceToDTO(userPreference);
+            return userPreference;
         }
 
         // GET: api/students/student-grades-at-course/5
         [HttpGet("student-grades-at-course/{courseId}")]
         public async Task<ActionResult<StudentFinalGradeDTO>> GetStudentSituationAtCourse(long courseId)
         {
-            if (_context.Students == null)
-                return NotFound();
-
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
             if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
@@ -58,25 +52,12 @@ namespace app_server.Controllers
 
             var studentId = tokenData.Item1;
 
-            var query = from enrollment in _context.Enrollments
-                        where enrollment.CourseId == courseId && enrollment.StudentId == studentId
-                        join grade in _context.Grades.Where(g => g.Assignment.CourseId == courseId) on studentId equals grade.StudentId into studentGrades
-                        select new 
-                        {
-                            FinalGrade = studentGrades.Sum(g => g.Score * g.Assignment.Weight) / 100,
-                        };
-
-            var result = await query.FirstOrDefaultAsync();
+            var result = await _studentService.GetStudentSituationAtCourse(studentId, courseId);
 
             if (result == null)
                 return NotFound();
 
-            return Ok(new StudentFinalGradeDTO
-            {
-                FinalGrade = result.FinalGrade,
-                ExperiencePoints = (int)(result.FinalGrade * 300)
-
-            });
+            return result;
         }
 
         // GET: api/students/achievements/5
@@ -93,7 +74,7 @@ namespace app_server.Controllers
 
             var studentId = tokenData.Item1;
 
-            var achievement = await _studentService.FetchStudentAchievementsAsync(courseId, studentId);
+            var achievement = await _studentService.FetchStudentAchievements(courseId, studentId);
 
             if(achievement == null)
                 return NotFound();
@@ -105,9 +86,6 @@ namespace app_server.Controllers
         [HttpGet("assignments-and-grades/{courseId}")]
         public async Task<ActionResult<IEnumerable<AssignmentAndGradeDTO>>> GetStudentAssignmentAndGrades(long courseId)
         {
-            if (_context.Students == null)
-                return NotFound();
-
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
             if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
@@ -115,25 +93,17 @@ namespace app_server.Controllers
 
             var studentId = tokenData.Item1;
 
-            return await _context.Assignments
-               .Where(a => a.CourseId == courseId)
-               .OrderBy(a => a.DueDate)
-               .Select(x => new AssignmentAndGradeDTO
-               {
-                   AssignmentId = x.Id,
-                   Name = x.Name,
-                   Description = x.Description,
-                   DueDate = x.DueDate,
-                   Weight = x.Weight,
-                   Score = x.Grades!.Where(g => g.StudentId == studentId).Select(g => g.Score).FirstOrDefault(),
-                   DateReceived = x.Grades!.Where(g => g.StudentId == studentId).Select(g => g.DateReceived).FirstOrDefault(),
+            var result = await _studentService.GetStudentAssignmentAndGrades(studentId, courseId);
 
-               }).ToListAsync();
+            if (result == null)
+                return NotFound();
+
+            return result;
         }
 
         // PUT: api/students/user-preferences
         [HttpPut("user-preferences")]
-        public async Task<IActionResult> PutAssignments(StudentUserPreferenceDTO studentUserPreferenceDTO)
+        public async Task<IActionResult> UpdateStudentPreferences(StudentUserPreferenceDTO studentUserPreferenceDTO)
         {
             // validate token data
             var tokenData = UserController.ExtractUserIdAndJWTToken(User);
@@ -142,55 +112,16 @@ namespace app_server.Controllers
 
             var studentId = tokenData!.Item1;
 
-            var userPreference = await _context.UserPreferences.FirstOrDefaultAsync(x => x.StudentId == studentId);
-
-            if (userPreference == null)
-            {
-                return NotFound();
-            }
-
-            userPreference.ShowPoints = studentUserPreferenceDTO.ShowPoints;
-            userPreference.ShowLevels = studentUserPreferenceDTO.ShowLevels;
-            userPreference.ShowBadges = studentUserPreferenceDTO.ShowBadges;
-            userPreference.ShowProgressBars = studentUserPreferenceDTO.ShowProgressBars;
-            userPreference.ShowLeaderboards = studentUserPreferenceDTO.ShowLeaderboards;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StudentExists(studentId))
-                {
+                var result = await _studentService.UpdateStudentPreferences(studentId, studentUserPreferenceDTO);
+                if (result == null)
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                else return NoContent();
             }
-
-            return NoContent();
-        }
-
-        
-
-        private bool StudentExists(long id)
-        {
-            return (_context.Students?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-        private static StudentUserPreferenceDTO StudentUserPreferenceToDTO(UserPreference userPreference)
-        {
-            return new StudentUserPreferenceDTO
-            {
-                ShowPoints = userPreference.ShowPoints,
-                ShowLevels = userPreference.ShowLevels,
-                ShowBadges = userPreference.ShowBadges,
-                ShowProgressBars = userPreference.ShowProgressBars,
-                ShowLeaderboards = userPreference.ShowLeaderboards,
-            };
+            catch (DbUpdateConcurrencyException) {
+                return NotFound();
+            }
         }
     }
 }
