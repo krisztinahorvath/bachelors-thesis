@@ -95,8 +95,7 @@ export const AddCoursePage = () => {
     }
 
     try {
-      // const headers = {headers: {Authorization: `Bearer ${getToken()}`}, 'Content-Type': 'multipart/form-data'};
-      await axios.post(`${BACKEND_URL}/courses/create`, formData, {
+      await axios.post(`${BACKEND_URL}/courses`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${getToken()}`,
