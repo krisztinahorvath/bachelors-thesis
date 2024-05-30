@@ -52,7 +52,14 @@ namespace app_server
                 });
 
             builder.Services.AddSingleton<Validate>();
+
+            // services for the controllers
             builder.Services.AddScoped<StudentService>();
+            builder.Services.AddScoped<GradeService>();
+            builder.Services.AddScoped<TeacherService>();
+            builder.Services.AddScoped<AssignmentService>();
+            builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<CourseService>();
 
             var connectionString = builder.Configuration.GetConnectionString("StudentsRegisterDatabase");
             builder.Services.AddDbContext<StudentsRegisterContext>(options =>

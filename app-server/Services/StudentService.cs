@@ -1,7 +1,5 @@
-﻿using app_server.Controllers;
-using app_server.Models;
+﻿using app_server.Models;
 using app_server.Models.DTOs;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
