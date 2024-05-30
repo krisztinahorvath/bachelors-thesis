@@ -257,7 +257,7 @@ namespace app_server.Services
             return (_context.Students?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        private static Tuple<long, UserType>? ExtractUserIdAndJWTToken(ClaimsPrincipal claims)
+        public static Tuple<long, UserType>? ExtractUserIdAndJWTToken(ClaimsPrincipal claims)
         {
             if (claims == null || claims.Identity?.IsAuthenticated == false) // token might be expired
                 return null;

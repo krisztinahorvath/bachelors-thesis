@@ -1,5 +1,6 @@
 ﻿using app_server.Controllers;
 using app_server.Models;
+using app_server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -16,7 +17,7 @@ namespace app_server.Utils
                 return;
             }
 
-            var tokenData = UserController.ExtractUserIdAndJWTToken(user);
+            var tokenData = UserService.ExtractUserIdAndJWTToken(user);
             if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 == null)
             {
                 context.Result = new UnauthorizedObjectResult("Invalid token.");
@@ -39,7 +40,7 @@ namespace app_server.Utils
                 return;
             }
 
-            var tokenData = UserController.ExtractUserIdAndJWTToken(user);
+            var tokenData = UserService.ExtractUserIdAndJWTToken(user);
             if (tokenData == null || tokenData?.Item1 == null || tokenData.Item2 != UserType.Student)
             {
                 context.Result = new UnauthorizedObjectResult("Invalid token or user is not a student.");
@@ -61,7 +62,7 @@ namespace app_server.Utils
                 return;
             }
 
-            var tokenData = UserController.ExtractUserIdAndJWTToken(user);
+            var tokenData = UserService.ExtractUserIdAndJWTToken(user);
             if (tokenData == null || tokenData?.Item1 == null || tokenData.Item2 != UserType.Teacher)
             {
                 context.Result = new UnauthorizedObjectResult("Invalid token or user is not a teacher.");

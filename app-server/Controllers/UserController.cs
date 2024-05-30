@@ -172,20 +172,5 @@ namespace app_server.Controllers
 
             return NoContent();
         }
-
-      
-        public static Tuple<long, UserType>? ExtractUserIdAndJWTToken(ClaimsPrincipal claims)
-        { 
-           if (claims == null || claims.Identity?.IsAuthenticated == false) // token might be expired
-                return null;
-
-           if (!long.TryParse(claims.FindFirst(ClaimTypes.NameIdentifier)?.Value, out long userId))
-                return null;
-
-            if (!Enum.TryParse<UserType>(claims.FindFirst(ClaimTypes.Role)?.Value, out var userType))
-                return null;
-
-            return new Tuple<long, UserType>(userId, userType);
-        }
     }
 }
