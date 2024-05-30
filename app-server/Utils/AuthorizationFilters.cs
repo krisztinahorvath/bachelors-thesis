@@ -24,6 +24,7 @@ namespace app_server.Utils
             }
 
             context.HttpContext.Items["UserId"] = tokenData.Item1;
+            context.HttpContext.Items["UserType"] = tokenData.Item2;
         }
     }
 

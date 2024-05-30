@@ -57,17 +57,17 @@ namespace app_server.Utils
             return true;
         }
 
-        public bool IsEmailUnique(in StudentsRegisterContext _context, string email)
+        public static bool IsEmailUnique(in StudentsRegisterContext _context, string email)
         {
             return !_context.Users.Any(a => a.Email == email);
         }
 
-        public bool IsNicknameUnique(in StudentsRegisterContext _context, string nickname)
+        public static bool IsNicknameUnique(in StudentsRegisterContext _context, string nickname)
         {
             return !_context.Students.Any(a => a.Nickname == nickname);
         }
 
-        private bool IsEmailValid(string email)
+        public static bool IsEmailValid(string email)
         {
             try
             {

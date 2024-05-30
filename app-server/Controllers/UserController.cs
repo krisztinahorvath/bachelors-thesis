@@ -1,23 +1,32 @@
 ﻿using app_server.Models;
 using app_server.Models.DTOs;
+using app_server.Services;
 using app_server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace app_server.Controllers
 {
     // ************************************
     // TODO: create a logout with jwt blacklist and when i check if a token is blacklisted, remove the tokens that are expired, 
     //       or remove them another time, make it efficient???
+    // ************************************
+
+
+    // ************************************
+    // TODO: USE VALIDATE USER FIELDS HERE ????????????????????????????????
+    //
+
     // ************************************
 
 
@@ -28,63 +37,29 @@ namespace app_server.Controllers
         private readonly StudentsRegisterContext _context;
         private readonly JwtSettings _jwtSettings;
         private readonly Validate _validate;
+        private readonly UserService _userService;
 
-        public UserController(StudentsRegisterContext context, IOptions<JwtSettings> jwtSettings, Validate validate)
+        public UserController(StudentsRegisterContext context, IOptions<JwtSettings> jwtSettings, Validate validate, UserService userService)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
             _validate = validate;
-        }
-
-        // GET: api/users
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser(int pageNumber = 0, int pageSize = 10)
-        {
-            if (_context.Users == null)
-                return NotFound();
-
-            return await _context.Users
-                .Skip(pageNumber * pageSize)
-                .Take(pageSize)
-
-                .ToListAsync();
+            _userService = userService;
         }
 
         // GET: api/users/user-profile
         [HttpGet("user-profile")]
+        [AuthorizeGeneralUser]
         public async Task<ActionResult<UserDTO>> GetUserProfile()
         {
-            if (_context.Users == null)
+            var userId = (long)HttpContext.Items["UserId"];
+            var userType = (UserType)HttpContext.Items["UserType"];
+
+            var result = await _userService.GetUserProfile(userId, userType);
+            if (result == null)
                 return NotFound();
 
-            // validate token data
-            var tokenData = ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || tokenData?.Item1 == null || tokenData.Item2 == null)
-                return Unauthorized("Invalid token.");
-
-            var userId = tokenData.Item1;
-            var userType = tokenData.Item2;
-
-            UserDTO user = new();
-            if(userType == UserType.Teacher)
-            {
-                var teacher = await _context.Teachers.FindAsync(userId);
-                user.Name = teacher.Name;
-                user.Email = teacher.Email;
-                user.Image = teacher.Image;
-            }
-            else if(userType == UserType.Student)
-            {
-                var student = await _context.Students.FindAsync(userId);
-                user.Name = student.Name;
-                user.Email = student.Email;
-                user.Image = student.Image;
-                user.Nickname = student.Nickname;
-                user.UniqueIdentificationCode = student.UniqueIdentificationCode;
-            }
-
-            return user;
+            return result;
         }
 
         // POST: api/users/register
@@ -97,29 +72,11 @@ namespace app_server.Controllers
             if (isValidUser != "")
                 return BadRequest(isValidUser);
 
-            userRegisterDTO.Password = HashPassword(userRegisterDTO.Password);
+            var result = await _userService.Register(userRegisterDTO);
+            if (result == null)
+                return BadRequest();
 
-            User newUser;
-            if (userRegisterDTO.UserType == UserType.Teacher)
-            {
-                newUser = new TeacherFactory().CreateUser(userRegisterDTO);
-                _context.Add(newUser);
-                await _context.SaveChangesAsync();
-            }
-            else if (userRegisterDTO.UserType == UserType.Student)
-            {
-                newUser = new StudentFactory().CreateUser(userRegisterDTO);
-                _context.Add(newUser);
-                await _context.SaveChangesAsync();
-
-                var userPreference = newUser.CreateUserPreference();
-                _context.UserPreferences.Add(userPreference);
-                await _context.SaveChangesAsync();
-            }
-            else
-                return BadRequest("Invalid UserType");
-
-            return newUser;
+            return result;
         }
 
         // POST: api/users/login
@@ -127,65 +84,37 @@ namespace app_server.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(UserLoginDTO userDTO)
         {
-            // Find user by username and password
-            User user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == userDTO.Email && u.Password == HashPassword(userDTO.Password));
-
-            if (user == null)
-            {
+            var (isValid, token, userType, email, image, nickname) = await _userService.Login(userDTO);
+            if (!isValid)
                 return Unauthorized("Invalid email or password.");
-            }
 
-            // Generate JWT token
-            string token = GenerateJwtToken(user);
+            if (userType == UserType.Student)
+                return Ok(new { token, userType, email, image, nickname });
 
-            if (user.UserType == UserType.Student) {
-                var student = await _context.Students.FindAsync(user.Id);
-                return Ok(new { token, user.UserType, user.Email, user.Image, student!.Nickname });
-            }
-               
-
-            return Ok(new { token, user.UserType, user.Email, user.Image});
+            return Ok(new { token, userType, email, image });
         }
 
         // PATCH: api/users/update-password
         [HttpPatch("update-password")]
+        [AuthorizeGeneralUser]
         public async Task<IActionResult> UpdatePassword(UserPasswordUpdateDTO userPasswordUpdateDTO)
         {
-            // validate token data
-            var tokenData = ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 == null))
-                return Unauthorized("Invalid token data.");
-
-            var userId = tokenData!.Item1;
-
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-                return BadRequest("User not found.");
-
-            if (user.Password != HashPassword(userPasswordUpdateDTO.OldPassword))
-                return BadRequest("Incorrect password provided");
-
+            // do validations
             if (!_validate.IsPasswordValid(userPasswordUpdateDTO.NewPassword))
                 return BadRequest("The password must have at least 8 characters and " +
                     "must contain at least one upper letter and a digit.");
 
-            user.Password = HashPassword(userPasswordUpdateDTO.NewPassword);
+            var userId = (long)HttpContext.Items["UserId"];
 
             try
             {
-                await _context.SaveChangesAsync();
+                var result = await _userService.UpdatePassword(userId, userPasswordUpdateDTO);
+                if (!result.Success)
+                    return BadRequest(result.ErrorMessage);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(userId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return Ok("Password updated successfully");
@@ -194,6 +123,7 @@ namespace app_server.Controllers
 
         // PUT: api/users/profile
         [HttpPut("profile")]
+        [AuthorizeGeneralUser]
         public async Task<IActionResult> UpdateUserProfile([FromForm] string userDTO, [FromForm] IFormFile? image = null)
         {
             // Deserialize userDTO JSON string to UserDTO object
@@ -201,6 +131,10 @@ namespace app_server.Controllers
 
             if (userInput == null)
                 return BadRequest();
+
+            // validate email structure
+            if (!Validate.IsEmailValid(userInput.Email))
+                return BadRequest("Invalid email provided.");
 
             // Convert IFormFile to byte array
             if (image != null)
@@ -212,86 +146,18 @@ namespace app_server.Controllers
                 }
             }
 
-            // validate token data
-            var tokenData = ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 == null))
-                return Unauthorized("Invalid token.");
+            var userId = (long)HttpContext.Items["UserId"];
+            var userType = (UserType)HttpContext.Items["UserType"];
 
-            var userId = tokenData!.Item1;
-            var userType = tokenData!.Item2;
-
-            if(userType == UserType.Teacher)
+            try
             {
-                var teacher = await _context.Teachers.FindAsync(userId);
-                if (teacher == null)
-                    return NotFound();
-
-                teacher.Name = userInput.Name;
-
-                if (teacher.Email != userInput.Email)
-                    if (!_validate.IsEmailUnique(_context, userInput.Email))
-                        return BadRequest("Email must be unique, another user is already using this email.");
-                    else teacher.Email = userInput.Email;
-
-                if(userInput.Image != null)
-                    teacher.Image = userInput.Image;
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TeacherExists(userId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                var result = await _userService.UpdateUserProfile(userId, userType, userInput);
+                if (!result.Success)
+                    return BadRequest(result.ErrorMessage);
             }
-            else if(userType == UserType.Student)
+            catch (DbUpdateConcurrencyException)
             {
-                var student = await _context.Students.FindAsync(userId);
-                if (student == null)
-                    return NotFound();
-
-                student.Name = userInput.Name;
-
-                if (student.Email != userInput.Email)
-                    if (!_validate.IsEmailUnique(_context, userInput.Email))
-                        return BadRequest("Email must be unique, another user is already using this email.");
-                    else student.Email = userInput.Email;
-
-                if (userInput.Image != null)
-                    student.Image = userInput.Image;
-
-                if (userInput.Nickname != student.Nickname)
-                    if (!_validate.IsNicknameUnique(_context, userInput.Nickname))
-                        return BadRequest("Nickname must be unique.");
-                    else
-                        student.Nickname = userInput.Nickname;
-
-                /// MAKE SURE THIS IS UNIQUE TOO????
-                student.UniqueIdentificationCode = userInput.UniqueIdentificationCode;
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(userId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                return NotFound("An error occured while updating your profile.");
             }
 
 
@@ -300,54 +166,19 @@ namespace app_server.Controllers
 
         // DELETE: api/users
         [HttpDelete("account/{email}/{password}")]
-        public async Task<ActionResult> UnenrollFromCourse(string email, string password)
+        [AuthorizeGeneralUser]
+        public async Task<ActionResult> DeleteAccount(string email, string password)
         {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
+            var userId = (long)HttpContext.Items["UserId"];
 
-            // validate token data
-            var tokenData = ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 == null))
-                return Unauthorized("Invalid token.");
-
-            var userId = tokenData!.Item1;
-
-            // make sure the person deleting the course is a teacher at that course
-            if (!_context.Users.Any(t => t.Id == userId && t.Email == email && t.Password == HashPassword(password)))
-            {
-                return Unauthorized("Invalid data provided.");
-            }
-
-            var user = await _context.Users.FindAsync(userId);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            var result = await _userService.DeleteAccount(userId, email, password);
+            if (!result.Success)
+                return Unauthorized(result.ErrorMessage);
 
             return NoContent();
         }
 
-        private bool UserExists(long id)
-        {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-        private bool TeacherExists(long id)
-        {
-            return (_context.Teachers?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-        private bool StudentExists(long id)
-        {
-            return (_context.Students?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
+      
         public static Tuple<long, UserType>? ExtractUserIdAndJWTToken(ClaimsPrincipal claims)
         { 
            if (claims == null || claims.Identity?.IsAuthenticated == false) // token might be expired
@@ -360,31 +191,6 @@ namespace app_server.Controllers
                 return null;
 
             return new Tuple<long, UserType>(userId, userType);
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new[]
-            {
-                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                 new Claim(ClaimTypes.Role, user.UserType.ToString()),
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(120),
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        public static string HashPassword(string password)
-        {
-            byte[] bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
-            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using app_server.Controllers;
 using app_server.Models;
+using app_server.Services;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +17,7 @@ namespace app_server.Utils
 
         private const int NO_GRADES = 100; 
 
-        private static readonly string PASSWORD = UserController.HashPassword("test");
+        private static readonly string PASSWORD = UserService.HashPassword("test");
 
         private static readonly List<string> COURSE_NAMES = new List<string>
         {

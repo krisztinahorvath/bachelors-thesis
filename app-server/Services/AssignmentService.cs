@@ -1,5 +1,4 @@
-﻿using app_server.Controllers;
-using app_server.Models;
+﻿using app_server.Models;
 using app_server.Models.DTOs;
 using app_server.Utils;
 using Microsoft.AspNetCore.Mvc;
