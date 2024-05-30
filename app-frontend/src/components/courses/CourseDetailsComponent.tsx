@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Grid,
   IconButton,
   TextField,
   Tooltip,
@@ -239,18 +238,8 @@ export const CourseDetailsComponent: React.FC<{
 
   return (
     <>
-      {/* <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-      > */}
       <Box
-        // onSubmit={handleSubmit}
         sx={{
-          // display: "flex",
-          // flexDirection: "column",
-          // width: { xs: "80%", sm: "40%" },
           width: "95%",
         }}
       >
@@ -437,7 +426,6 @@ export const CourseDetailsComponent: React.FC<{
           </Box>
         </Container>
       </Box>
-      {/* </Grid> */}
 
       <Dialog
         open={openDeleteTeacherDialog}

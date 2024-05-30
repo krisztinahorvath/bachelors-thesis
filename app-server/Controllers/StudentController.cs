@@ -1,5 +1,6 @@
 ﻿using app_server.Models;
 using app_server.Models.DTOs;
+using app_server.Services;
 using app_server.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +13,13 @@ namespace app_server.Controllers
     {
         private readonly StudentsRegisterContext _context;
         private readonly Validate _validate;
+        private readonly StudentService _studentService;
 
-        public StudentController(StudentsRegisterContext context, Validate validate)
+        public StudentController(StudentsRegisterContext context, Validate validate, StudentService studentService)
         {
             _context = context;
             _validate = validate;
+            _studentService = studentService;
         }
 
         // GET: api/students/user-preferences
@@ -74,6 +77,28 @@ namespace app_server.Controllers
                 ExperiencePoints = (int)(result.FinalGrade * 300)
 
             });
+        }
+
+        // GET: api/students/achievements/5
+        [HttpGet("achievements/{courseId}")]
+        public async Task<ActionResult<StudentAchievementDTO>> GetStudentAchievementsAtCourse(long courseId)
+        {
+            if (_context.Students == null)
+                return NotFound();
+
+            // validate token data
+            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
+            if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
+                return Unauthorized("Invalid token or user is not a student.");
+
+            var studentId = tokenData.Item1;
+
+            var achievement = await _studentService.FetchStudentAchievementsAsync(courseId, studentId);
+
+            if(achievement == null)
+                return NotFound();
+
+            return Ok(achievement);
         }
 
         // GET: api/students/assignments-and-grades/5
@@ -148,6 +173,8 @@ namespace app_server.Controllers
 
             return NoContent();
         }
+
+        
 
         private bool StudentExists(long id)
         {

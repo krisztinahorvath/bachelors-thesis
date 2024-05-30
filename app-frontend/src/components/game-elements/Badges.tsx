@@ -78,7 +78,7 @@ const icons: {
     icon: <OnTimeBadge />,
     description: "Always on time",
     achievementCriteria:
-      "Badge unlocked after turning in 75% of assignments before the deadline.",
+      "Unlocked after turning in 75% of assignments before the deadline.",
     achieved: false,
   },
 };
@@ -111,36 +111,22 @@ export const StudentAchievements: React.FC<{ courseData: any }> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [pointsVisibility, setPointsVisibility] = useState(false);
-  const [level, setLevel] = useState(-1);
-  const [, setFinalGradeData] = useState({
+  const [studentData, setStudentData] = useState({
+    studentId: 0,
     finalGrade: 0,
     experiencePoints: 0,
+    onTimeBadgeUnlocked: false,
+    level: 0,
   });
-
-  const computeLevel = (grade: number) => {
-    if (grade < 2) {
-      setLevel(1);
-    } else if (grade >= 2 && grade < 4) {
-      setLevel(2);
-    } else if (grade >= 4 && grade < 6.5) {
-      setLevel(3);
-    } else if (grade >= 6.5 && grade < 9.5) {
-      setLevel(4);
-    } else setLevel(5);
-  };
 
   useEffect(() => {
     setLoading(true);
     if (getShowPoints() === "true") setPointsVisibility(true);
     const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
     axios
-      .get(
-        `${BACKEND_URL}/students/student-grades-at-course/${courseData.id}`,
-        headers
-      )
+      .get(`${BACKEND_URL}/students/achievements/${courseData.id}`, headers)
       .then((response) => {
-        setFinalGradeData(response.data);
-        computeLevel(response.data.finalGrade);
+        setStudentData(response.data);
         setLoading(false);
       })
       .catch((error: any) => {
@@ -164,11 +150,16 @@ export const StudentAchievements: React.FC<{ courseData: any }> = ({
         <Container sx={{ marginTop: "5%" }}>
           <Grid container spacing={3}>
             {Object.keys(icons).map((key) => {
-              const achieved = level >= parseInt(key);
+              const achieved =
+                key === "6"
+                  ? studentData.onTimeBadgeUnlocked // Check specifically for the On Time Badge
+                  : studentData.level >= parseInt(key);
+
               const iconData = {
                 ...icons[key],
                 achieved: achieved,
               };
+
               return <IconWithDescription key={key} iconData={iconData} />;
             })}
           </Grid>

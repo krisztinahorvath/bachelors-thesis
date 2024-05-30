@@ -1,4 +1,5 @@
 using app_server.Models;
+using app_server.Services;
 using app_server.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,7 @@ namespace app_server
                 });
 
             builder.Services.AddSingleton<Validate>();
+            builder.Services.AddScoped<StudentService>();
 
             var connectionString = builder.Configuration.GetConnectionString("StudentsRegisterDatabase");
             builder.Services.AddDbContext<StudentsRegisterContext>(options =>
