@@ -1,4 +1,3 @@
-import { useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Container, Grid, Typography } from "@mui/material";
 import Airplane from "../../assets/airplane.svg";
@@ -110,13 +109,10 @@ const IconWithDescription: React.FC<{
 export const StudentAchievements: React.FC<{ courseData: any }> = ({
   courseData,
 }) => {
-  const location = useLocation();
-  //   const courseData = location.state;
-
   const [loading, setLoading] = useState(false);
   const [pointsVisibility, setPointsVisibility] = useState(false);
   const [level, setLevel] = useState(-1);
-  const [finalGradeData, setFinalGradeData] = useState({
+  const [, setFinalGradeData] = useState({
     finalGrade: 0,
     experiencePoints: 0,
   });

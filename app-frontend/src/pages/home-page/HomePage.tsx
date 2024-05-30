@@ -39,12 +39,17 @@ export const HomePage = () => {
         </Container>
 
         <div style={divStyle}>
-          <img
-            src="/homePage.jpg"
-            alt="Online Learning Vectors by Vecteezy"
-            style={imageStyle}
-            className="responsive-image" // Apply the CSS class for responsiveness
-          />
+          <a
+            href="https://www.vecteezy.com/free-vector/online-learning"
+            target="_blank"
+          >
+            <img
+              src="/homePage.jpg"
+              alt="Online Learning Vectors by Vecteezy"
+              style={imageStyle}
+              className="responsive-image" // Apply the CSS class for responsiveness
+            />
+          </a>
         </div>
       </Container>
     </React.Fragment>

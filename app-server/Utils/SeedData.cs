@@ -160,7 +160,6 @@ namespace app_server.Utils
                 {
                     Name = COURSE_NAMES[random.Next(COURSE_NAMES.Count)],
                     EnrollmentKey = GenerateUniqueAlphaNumeric(existingEnrollmentKeys, faker),
-                    MinimumPassingGrade = 5
                 };
 
                 existingEnrollmentKeys.Add(course.EnrollmentKey);

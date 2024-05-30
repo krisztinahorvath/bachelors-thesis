@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   IconButton,
   TextField,
   Tooltip,
@@ -238,210 +239,205 @@ export const CourseDetailsComponent: React.FC<{
 
   return (
     <>
-      <Container
+      {/* <Grid
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+      > */}
+      <Box
+        // onSubmit={handleSubmit}
         sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          marginTop: "2.5%",
-          marginLeft: "5%",
-          justifyContent: "flex-start",
+          // display: "flex",
+          // flexDirection: "column",
+          // width: { xs: "80%", sm: "40%" },
+          width: "95%",
         }}
       >
-        <TextField
-          id="outlined-read-only-input"
-          label="Enrollment key"
-          value={course.enrollmentKey}
-          InputProps={{
-            readOnly: true,
-          }}
+        <Container
           sx={{
-            minWidth: "110px",
-            width: "110px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: "2.5%",
+            marginLeft: "5%",
+            justifyContent: "flex-start",
           }}
-        />
-        {userType === UserType.Teacher && (
-          <>
-            <Button
-              onClick={generateEnrollmentKey}
-              sx={{ marginLeft: "2%" }}
-              style={{ outline: "none" }}
-            >
-              Generate new enrollment key
-            </Button>
-            <Link to={`/course/${courseIndex}/update`} state={course}>
-              <IconButton
-                color="primary"
-                edge="end"
-                aria-label="update"
-                sx={{ padding: "10px", marginLeft: "2.5%" }} //marginLeft: "10vw"
-                style={{ outline: "none" }}
-                // onClick={() =>
-                //   navigate(`/course/${courseIndex}/details`, {
-                //     state: { courseData },
-                //   })
-                // }
-              >
-                <Tooltip title="Update course" arrow>
-                  <EditIcon sx={{ fontSize: "1.7rem" }} />
-                </Tooltip>
-              </IconButton>
-            </Link>
-
-            <IconButton
-              color="error"
-              edge="end"
-              aria-label="delete"
-              onClick={() => setOpenDeleteCourseDialog(true)}
-              sx={{ padding: "10px", marginRight: "5%" }}
-              style={{ outline: "none" }}
-            >
-              <Tooltip title="Delete course" arrow>
-                <DeleteIcon sx={{ fontSize: "1.7rem" }} />
-              </Tooltip>
-            </IconButton>
-            {/* <Button
-              // component={Link}
-              // to="/edit-profile"
-              variant="outlined"
-              sx={{ marginLeft: "2.5%", background: "#f3f3f3" }}
-              style={{ outline: "none" }}
-            >
-              Edit
-            </Button>
-            <Button
-              color="error"
-              sx={{
-                marginLeft: "2.5%",
-                background: "#f3f3f3",
-                marginRight: "2.5%",
-              }}
-              style={{ outline: "none" }}
-              variant="outlined"
-              // onClick={() => setOpen(true)}
-            >
-              Delete
-            </Button> */}
-          </>
-        )}
-      </Container>
-      <Container
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "flex-start",
-          marginLeft: "5%",
-          marginBottom: "2.5%",
-        }}
-      >
-        <Box>
-          <h3>Teachers:</h3>
+        >
+          <TextField
+            id="outlined-read-only-input"
+            label="Enrollment key"
+            value={course.enrollmentKey}
+            InputProps={{
+              readOnly: true,
+            }}
+            sx={{
+              minWidth: "110px",
+              width: "110px",
+            }}
+          />
           {userType === UserType.Teacher && (
             <>
-              <Autocomplete
-                key={automcompleteKey}
-                multiple
-                id="teachers"
-                sx={{ width: "100%" }}
-                options={suggestedTeachers}
-                getOptionLabel={(option) => `${option.name} - ${option.email}`}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Add Teachers"
-                    variant="outlined"
-                    placeholder="Teacher name"
-                  />
-                )}
-                filterSelectedOptions
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                onInputChange={handleInputChangeAuthors}
-                onChange={(_, value) => {
-                  // event instead of _
-                  if (value) {
-                    console.log(value);
-                    const teacherIds = value.map(
-                      (teacher) => teacher?.id
-                    ) as number[];
-                    setAddCourseTeachers({
-                      ...addCourseTeachers,
-                      teacherIds: teacherIds,
-                    });
-                  }
-                }}
-              />
               <Button
-                onClick={postTeachersToCourse}
+                onClick={generateEnrollmentKey}
+                sx={{ marginLeft: "2%" }}
                 style={{ outline: "none" }}
               >
-                Add teachers to course
+                Generate new enrollment key
               </Button>
+              <Link to={`/course/${courseIndex}/update`} state={course}>
+                <IconButton
+                  color="primary"
+                  edge="end"
+                  aria-label="update"
+                  sx={{ padding: "10px", marginLeft: "2.5%" }} //marginLeft: "10vw"
+                  style={{ outline: "none" }}
+                >
+                  <Tooltip title="Update course" arrow>
+                    <EditIcon sx={{ fontSize: "1.7rem" }} />
+                  </Tooltip>
+                </IconButton>
+              </Link>
+
+              <IconButton
+                color="error"
+                edge="end"
+                aria-label="delete"
+                onClick={() => setOpenDeleteCourseDialog(true)}
+                sx={{ padding: "10px", marginRight: "5%" }}
+                style={{ outline: "none" }}
+              >
+                <Tooltip title="Delete course" arrow>
+                  <DeleteIcon sx={{ fontSize: "1.7rem" }} />
+                </Tooltip>
+              </IconButton>
             </>
           )}
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Email</th>
-                {userType === UserType.Teacher && <th>Action</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {courseTeachers.map((teacher, index) => (
-                <tr key={index + 1}>
-                  <td>
-                    <span className="cell-header">#</span> {index + 1}
-                  </td>
-                  <td>
-                    <span className="cell-header">Name:</span> {teacher.name}
-                  </td>
-                  <td>
-                    <span className="cell-header">Email:</span> {teacher.email}
-                  </td>
-                  <td>
-                    {userType === UserType.Teacher &&
-                      teacher.email === currentTeacherEmail && (
-                        <IconButton
-                          disabled
-                          color="error"
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() => {
-                            setSelectedTeacherData(teacher);
-                            setOpenDeleteTeacherDialog(true);
-                          }}
-                        >
-                          <Tooltip title="Remove student from course" arrow>
-                            <DeleteIcon />
-                          </Tooltip>
-                        </IconButton>
-                      )}{" "}
-                    {userType === UserType.Teacher &&
-                      teacher.email !== currentTeacherEmail && (
-                        <IconButton
-                          color="error"
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() => {
-                            setSelectedTeacherData(teacher);
-                            setOpenDeleteTeacherDialog(true);
-                          }}
-                          style={{ outline: "none" }}
-                        >
-                          <Tooltip title="Remove teacher from course" arrow>
-                            <DeleteIcon />
-                          </Tooltip>
-                        </IconButton>
-                      )}
-                  </td>
+        </Container>
+        <Container
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
+            marginLeft: "5%",
+            marginBottom: "2.5%",
+          }}
+        >
+          <Box>
+            <h3>Teachers:</h3>
+            {userType === UserType.Teacher && (
+              <>
+                <Autocomplete
+                  key={automcompleteKey}
+                  multiple
+                  id="teachers"
+                  sx={{ width: "100%" }}
+                  options={suggestedTeachers}
+                  getOptionLabel={(option) =>
+                    `${option.name} - ${option.email}`
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Add Teachers"
+                      variant="outlined"
+                      placeholder="Teacher name"
+                    />
+                  )}
+                  filterSelectedOptions
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  onInputChange={handleInputChangeAuthors}
+                  onChange={(_, value) => {
+                    // event instead of _
+                    if (value) {
+                      console.log(value);
+                      const teacherIds = value.map(
+                        (teacher) => teacher?.id
+                      ) as number[];
+                      setAddCourseTeachers({
+                        ...addCourseTeachers,
+                        teacherIds: teacherIds,
+                      });
+                    }
+                  }}
+                />
+                <Button
+                  onClick={postTeachersToCourse}
+                  style={{ outline: "none" }}
+                >
+                  Add teachers to course
+                </Button>
+              </>
+            )}
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  {userType === UserType.Teacher && <th>Action</th>}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </Box>
-      </Container>
+              </thead>
+              <tbody>
+                {courseTeachers.map((teacher, index) => (
+                  <tr key={index + 1}>
+                    <td>
+                      <span className="cell-header">#</span> {index + 1}
+                    </td>
+                    <td>
+                      <span className="cell-header">Name:</span> {teacher.name}
+                    </td>
+                    <td>
+                      <span className="cell-header">Email:</span>{" "}
+                      {teacher.email}
+                    </td>
+                    <td>
+                      {userType === UserType.Teacher &&
+                        teacher.email === currentTeacherEmail && (
+                          <IconButton
+                            disabled
+                            color="error"
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() => {
+                              setSelectedTeacherData(teacher);
+                              setOpenDeleteTeacherDialog(true);
+                            }}
+                          >
+                            <Tooltip title="Remove student from course" arrow>
+                              <DeleteIcon />
+                            </Tooltip>
+                          </IconButton>
+                        )}{" "}
+                      {userType === UserType.Teacher &&
+                        teacher.email !== currentTeacherEmail && (
+                          <IconButton
+                            color="error"
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() => {
+                              setSelectedTeacherData(teacher);
+                              setOpenDeleteTeacherDialog(true);
+                            }}
+                            style={{ outline: "none" }}
+                          >
+                            <Tooltip title="Remove teacher from course" arrow>
+                              <DeleteIcon />
+                            </Tooltip>
+                          </IconButton>
+                        )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Box>
+        </Container>
+      </Box>
+      {/* </Grid> */}
 
       <Dialog
         open={openDeleteTeacherDialog}

@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-// import { Link } from "react-router-dom";
 import { Student } from "../../models/Student";
 import { getToken } from "../../utils/auth-utils";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
-// import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Button,
@@ -101,16 +99,8 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
         <p>No students enrolled at course.</p>
       )}
 
-      {/* {!loading && (
-        <IconButton component={Link} sx={{ mr: 3 }} to={`/students/add`}>
-          <Tooltip title="Add a new student" arrow>
-            <AddIcon color="primary" />
-          </Tooltip>
-        </IconButton>
-      )} */}
-
       {!loading && students.length > 0 && (
-        <Container sx={{ marginLeft: "2.5%" }}>
+        <Container sx={{ marginLeft: "2.5%", width: "98%" }}>
           <table>
             <thead>
               <tr>
@@ -155,11 +145,6 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
             </tbody>
           </table>
 
-          {/* <DeleteDialog
-               serverUrl={`courses/unenroll/${courseId}/${studentId}`}
-               title="Remove student from course"
-               description={`Are you sure you want to remove ${studentName} from this course? All their course related data will be deleted.`}
-            /> */}
           <Dialog
             open={open}
             onClose={handleClose}
@@ -179,7 +164,9 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
               <Button onClick={handleClose} autoFocus>
                 Cancel
               </Button>
-              <Button onClick={handleDelete}>Delete</Button>
+              <Button onClick={handleDelete} sx={{ color: "red" }}>
+                Delete
+              </Button>
             </DialogActions>
           </Dialog>
         </Container>

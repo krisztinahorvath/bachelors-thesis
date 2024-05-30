@@ -13,6 +13,7 @@ export const textContainerStyle = {
   textAlign: "left",
   width: "30%",
   paddingLeft: "2.5%",
+  zIndex: 1000,
 };
 
 export const typographyStyle2 = {
@@ -28,7 +29,7 @@ export const divStyle: React.CSSProperties = {
   position: "fixed",
   bottom: "-10%",
   right: "-30%",
-  zIndex: -1,
+  zIndex: 1,
 };
 
 export const imageStyle: React.CSSProperties = {

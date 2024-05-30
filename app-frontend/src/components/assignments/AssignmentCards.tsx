@@ -250,7 +250,9 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
           <Button onClick={handleClose} autoFocus>
             Cancel
           </Button>
-          <Button onClick={handleDelete}>Delete</Button>
+          <Button onClick={handleDelete} sx={{ color: "red" }}>
+            Delete
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>
