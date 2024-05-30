@@ -4,6 +4,7 @@ using app_server.Services;
 using app_server.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace app_server.Controllers
 {
@@ -11,27 +12,21 @@ namespace app_server.Controllers
     [ApiController]
     public class StudentController: ControllerBase
     {
-        private readonly StudentsRegisterContext _context;
         private readonly Validate _validate;
         private readonly StudentService _studentService;
 
-        public StudentController(StudentsRegisterContext context, Validate validate, StudentService studentService)
+        public StudentController(Validate validate, StudentService studentService)
         {
-            _context = context;
             _validate = validate;
             _studentService = studentService;
         }
 
         // GET: api/students/user-preferences
         [HttpGet("user-preferences")]
+        [AuthorizeStudent]
         public async Task<ActionResult<StudentUserPreferenceDTO>> GetUserPreferences()
-        { 
-            // validate token data
-            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
-                return Unauthorized("Invalid token or user is not a student.");
-
-            var studentId = tokenData.Item1;
+        {
+            var studentId = (long)HttpContext.Items["StudentId"];
 
             var userPreference = await _studentService.GetUserPreferences(studentId);
 
@@ -43,14 +38,10 @@ namespace app_server.Controllers
 
         // GET: api/students/student-grades-at-course/5
         [HttpGet("student-grades-at-course/{courseId}")]
+        [AuthorizeStudent]
         public async Task<ActionResult<StudentFinalGradeDTO>> GetStudentSituationAtCourse(long courseId)
         {
-            // validate token data
-            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
-                return Unauthorized("Invalid token or user is not a student.");
-
-            var studentId = tokenData.Item1;
+            var studentId = (long)HttpContext.Items["StudentId"];
 
             var result = await _studentService.GetStudentSituationAtCourse(studentId, courseId);
 
@@ -62,17 +53,10 @@ namespace app_server.Controllers
 
         // GET: api/students/achievements/5
         [HttpGet("achievements/{courseId}")]
+        [AuthorizeStudent]
         public async Task<ActionResult<StudentAchievementDTO>> GetStudentAchievementsAtCourse(long courseId)
         {
-            if (_context.Students == null)
-                return NotFound();
-
-            // validate token data
-            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
-                return Unauthorized("Invalid token or user is not a student.");
-
-            var studentId = tokenData.Item1;
+            var studentId = (long)HttpContext.Items["StudentId"];
 
             var achievement = await _studentService.FetchStudentAchievements(courseId, studentId);
 
@@ -84,14 +68,10 @@ namespace app_server.Controllers
 
         // GET: api/students/assignments-and-grades/5
         [HttpGet("assignments-and-grades/{courseId}")]
+        [AuthorizeStudent]
         public async Task<ActionResult<IEnumerable<AssignmentAndGradeDTO>>> GetStudentAssignmentAndGrades(long courseId)
         {
-            // validate token data
-            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student)
-                return Unauthorized("Invalid token or user is not a student.");
-
-            var studentId = tokenData.Item1;
+            var studentId = (long)HttpContext.Items["StudentId"];
 
             var result = await _studentService.GetStudentAssignmentAndGrades(studentId, courseId);
 
@@ -103,14 +83,10 @@ namespace app_server.Controllers
 
         // PUT: api/students/user-preferences
         [HttpPut("user-preferences")]
+        [AuthorizeStudent]
         public async Task<IActionResult> UpdateStudentPreferences(StudentUserPreferenceDTO studentUserPreferenceDTO)
         {
-            // validate token data
-            var tokenData = UserController.ExtractUserIdAndJWTToken(User);
-            if (tokenData == null || (tokenData?.Item1 == null || tokenData?.Item2 != UserType.Student))
-                return Unauthorized("Invalid token or user is not a student.");
-
-            var studentId = tokenData!.Item1;
+            var studentId = (long)HttpContext.Items["StudentId"];
 
             try
             {
