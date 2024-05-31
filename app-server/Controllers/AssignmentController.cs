@@ -12,29 +12,13 @@ namespace app_server.Controllers
     [ApiController]
     public class AssignmentController : ControllerBase
     {
-        private readonly StudentsRegisterContext _context;
         private readonly Validate _validate;
         private readonly AssignmentService _assignmentService;
 
-        public AssignmentController(StudentsRegisterContext context, Validate validate, AssignmentService assignmentService)
+        public AssignmentController(Validate validate, AssignmentService assignmentService)
         {
-            _context = context;
             _validate = validate;
             _assignmentService = assignmentService;
-        }
-
-        // GET: api/assignments 
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<AssignmentDTO>>> GetAssignments()
-        {
-            if (_context.Assignments == null)
-            {
-                return NotFound();
-            }
-
-            return await _context.Assignments
-                .Select(x => AssignmentService.AssignmentToDTO(x)).ToListAsync();
         }
 
         // GET: api/assignments/5
@@ -82,7 +66,7 @@ namespace app_server.Controllers
             if (assignment == null)
                 return Problem();
 
-            return CreatedAtAction(nameof(GetAssignments), new { id = assignment.Id }, assignment);
+            return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, assignment);
         }
 
         // PUT: api/assignments/5

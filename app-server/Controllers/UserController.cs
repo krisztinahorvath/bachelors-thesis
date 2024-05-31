@@ -30,14 +30,12 @@ namespace app_server.Controllers
     public class UserController : ControllerBase
     {
         private readonly StudentsRegisterContext _context;
-        private readonly JwtSettings _jwtSettings;
         private readonly Validate _validate;
         private readonly UserService _userService;
 
-        public UserController(StudentsRegisterContext context, IOptions<JwtSettings> jwtSettings, Validate validate, UserService userService)
+        public UserController(StudentsRegisterContext context, Validate validate, UserService userService)
         {
             _context = context;
-            _jwtSettings = jwtSettings.Value;
             _validate = validate;
             _userService = userService;
         }

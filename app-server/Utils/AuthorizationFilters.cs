@@ -1,5 +1,4 @@
-﻿using app_server.Controllers;
-using app_server.Models;
+﻿using app_server.Models;
 using app_server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
