@@ -1,8 +1,6 @@
-﻿using app_server.Models;
-using app_server.Models.DTOs;
+﻿using app_server.Models.DTOs;
 using app_server.Services;
 using app_server.Utils;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

@@ -29,13 +29,11 @@ namespace app_server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly StudentsRegisterContext _context;
         private readonly Validate _validate;
         private readonly UserService _userService;
 
-        public UserController(StudentsRegisterContext context, Validate validate, UserService userService)
+        public UserController(Validate validate, UserService userService)
         {
-            _context = context;
             _validate = validate;
             _userService = userService;
         }
@@ -61,9 +59,9 @@ namespace app_server.Controllers
         public async Task<ActionResult<User>> Register(UserRegisterDTO userRegisterDTO)
         {
             // validate input fields
-            var isValidUser = _validate.ValidateUserFields(userRegisterDTO, _context);
-            if (isValidUser != "")
-                return BadRequest(isValidUser);
+            //var isValidUser = _validate.ValidateUserFields(userRegisterDTO, _context);
+            //if (isValidUser != "")
+            //    return BadRequest(isValidUser);
 
             var result = await _userService.Register(userRegisterDTO);
             if (result == null)

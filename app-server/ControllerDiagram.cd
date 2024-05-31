@@ -1,44 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="app_server.Controllers.AssignmentController">
-    <Position X="8.5" Y="0.75" Width="2.5" />
+    <Position X="4.5" Y="7.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAABAAgCAABAAABAEAAABIQAAAEAAEgAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAgBAABAAAAAEAAAAIQAAAEAAAgAAA=</HashCode>
       <FileName>Controllers\AssignmentController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Controllers.CourseController">
-    <Position X="11.25" Y="0.75" Width="3" />
+    <Position X="10" Y="4.25" Width="3" />
     <TypeIdentifier>
-      <HashCode>AYAAAAAACAAAREAgIoiIAACAAgACABAAAAAAIQMAAAA=</HashCode>
+      <HashCode>AYAAAAIACAAAQAAgIgAAAACAAgAAAAAAAAAAIQMAAAA=</HashCode>
       <FileName>Controllers\CourseController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Controllers.GradeController">
-    <Position X="14.75" Y="0.75" Width="2.25" />
+    <Position X="7.5" Y="7" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAFAAgAAABAAAABAEAAAACAAAAAAAAEAA=</HashCode>
+      <HashCode>AAAIAAAAAAAAAAAgAAABAAAAAAEAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Controllers\GradeController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Controllers.StudentController">
-    <Position X="17.5" Y="0.75" Width="2.5" />
+    <Position X="4.5" Y="4.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>ACAAAAAAAAAIBAAiAAAAAAAAAEAAAAAAAAAABAAAAAA=</HashCode>
+      <HashCode>ACAAAAAAAAAABAAiAAAAAAkAABAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Controllers\StudentController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Controllers.TeacherController">
-    <Position X="20.25" Y="0.75" Width="2.25" />
+    <Position X="7.5" Y="4.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAQBAAAAAQIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AIAAAAAAAAAQAAAAAAQAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
       <FileName>Controllers\TeacherController.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Controllers.UserController">
-    <Position X="22.75" Y="0.75" Width="2.25" />
+    <Position X="2.25" Y="4.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAEBAAgAAAABACAAIABAAAAEAAQBAAACQA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAgAAAABAAAAAQBAAAAAAAUAQIAAAA=</HashCode>
       <FileName>Controllers\UserController.cs</FileName>
     </TypeIdentifier>
   </Class>

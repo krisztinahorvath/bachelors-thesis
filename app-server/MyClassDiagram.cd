@@ -1,115 +1,151 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="app_server.Models.Assignment">
-    <Position X="2.25" Y="0.5" Width="1.5" />
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="app_server.Models.User">
+    <Position X="8.5" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAGAAAAAAAgACAAAIAAAAQAACAAAAAAAAAAAAEAAAA=</HashCode>
-      <FileName>Models\Assignment.cs</FileName>
+      <HashCode>AAACAAAAACAAAAAAAAAAAAQAAAAACBACAAAAAABAAAA=</HashCode>
+      <FileName>Models\User.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="app_server.Models.Course">
-    <Position X="0.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAICABAAAAAAAAAAAAAAAAQAAAAAABAAAAAAAEAAAAA=</HashCode>
-      <FileName>Models\Course.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="app_server.Models.CourseTeacher">
-    <Position X="4" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAEEAAAAAAAAAAAAAIAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Models\CourseTeacher.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="app_server.Models.Enrollment">
-    <Position X="2.25" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAEAAAAQAAAAAAAAIAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
-      <FileName>Models\Enrollment.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="app_server.Models.Grade">
-    <Position X="0.5" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAQAAgAAgAAAAAAQAAAIAAAAAAAAAAAAACAAA=</HashCode>
-      <FileName>Models\Grade.cs</FileName>
-    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="UserType" />
+    </ShowAsAssociation>
   </Class>
   <Class Name="app_server.Models.Student">
-    <Position X="4.5" Y="3.75" Width="1.5" />
-    <InheritanceLine Type="app_server.Models.User" ManuallyRouted="true">
-      <Path>
-        <Point X="6.5" Y="3.017" />
-        <Point X="6.5" Y="3.597" />
-        <Point X="5.386" Y="3.597" />
-        <Point X="5.386" Y="3.75" />
-        <Point X="5.25" Y="3.75" />
-      </Path>
-    </InheritanceLine>
+    <Position X="6.5" Y="3.5" Width="3" />
+    <AssociationLine Name="UserPreferences" Type="app_server.Models.UserPreference">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.53" Y="0.082" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Grades" Type="app_server.Models.Grade">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-1.075" Y="0.245" Height="0.182" Width="1.545" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAABAAAAQAAAAAAAAAAAAAAAAAAEAAAAAAAAAAFAAAA=</HashCode>
       <FileName>Models\Student.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="UserPreferences" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Grades" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="app_server.Models.Teacher">
-    <Position X="7.25" Y="4" Width="1.5" />
-    <InheritanceLine Type="app_server.Models.User" ManuallyRouted="true">
-      <Path>
-        <Point X="6.5" Y="3.017" />
-        <Point X="6.5" Y="3.576" />
-        <Point X="8" Y="3.576" />
-        <Point X="8" Y="4" />
-      </Path>
-    </InheritanceLine>
+    <Position X="10.25" Y="3.5" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
       <FileName>Models\Teacher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="app_server.Models.User">
-    <Position X="5.75" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAACAAAAAAAAAAAAQAAAAACBACAAAAAABAAAA=</HashCode>
-      <FileName>Models\User.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="app_server.Models.UserFactory">
-    <Position X="9" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Models\UserFactory.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="app_server.Models.StudentFactory">
-    <Position X="10" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Models\UserFactory.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="app_server.Models.TeacherFactory">
-    <Position X="7.75" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Models\UserFactory.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="app_server.Models.UserPreference">
-    <Position X="9.75" Y="3.25" Width="1.5" />
+    <Position X="7" Y="6.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAACAAAAQAEAAAAAAAIAAAQAAAQEAAAAAAAAAAACAAA=</HashCode>
       <FileName>Models\UserPreference.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Student" />
+    </ShowAsAssociation>
   </Class>
-  <Class Name="app_server.Models.StudentsRegisterContext">
-    <Position X="12" Y="2" Width="2" />
+  <Class Name="app_server.Models.Course">
+    <Position X="0.5" Y="3.75" Width="3" />
+    <AssociationLine Name="Assignments" Type="app_server.Models.Assignment">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-1.258" Y="0.293" Height="0.182" Width="1.832" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAIAACAAQAAAAAAAAAAAAAAAEAAAACAAAAAQAhEAAAA=</HashCode>
-      <FileName>Models\StudentsRegisterContext.cs</FileName>
+      <HashCode>AAICABAAAAAAAAAAAAAAAAQAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Course.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Assignments" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="app_server.Models.Assignment">
+    <Position X="0.75" Y="7" Width="2.25" />
+    <AssociationLine Name="Course" Type="app_server.Models.Course">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.334" Y="0.298" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Grades" Type="app_server.Models.Grade">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.071" Y="0.021" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAGAAAAAAAgACAAAIAAAAQAACAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Models\Assignment.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Course" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Grades" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="app_server.Models.Grade">
+    <Position X="4.5" Y="7" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAgAAgAAAAAAQAAAIAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Models\Grade.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Assignment" />
+      <Property Name="Student" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="app_server.Models.Enrollment">
+    <Position X="3.25" Y="1" Width="1.75" />
+    <AssociationLine Name="Course" Type="app_server.Models.Course" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4" Y="2.296" />
+        <Point X="4" Y="5.01" />
+        <Point X="3.5" Y="5.01" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Student" Type="app_server.Models.Student" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.5" Y="2.296" />
+        <Point X="4.5" Y="5.265" />
+        <Point X="5.385" Y="5.265" Type="JumpStart" />
+        <Point X="5.552" Y="5.265" Type="JumpEnd" />
+        <Point X="5.901" Y="5.265" Type="JumpStart" />
+        <Point X="6.068" Y="5.265" Type="JumpEnd" />
+        <Point X="6.5" Y="5.265" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAQAAAAAAAAIAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Models\Enrollment.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Course" />
+      <Property Name="Student" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="app_server.Models.CourseTeacher">
+    <Position X="10.25" Y="6.75" Width="1.5" />
+    <AssociationLine Name="Course" Type="app_server.Models.Course">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.372" Y="0.294" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAEEAAAAAAAAAAAAAIAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\CourseTeacher.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Course" />
+      <Property Name="Teacher" />
+    </ShowAsAssociation>
   </Class>
   <Enum Name="app_server.Models.UserType">
-    <Position X="11.5" Y="0.5" Width="1.5" />
+    <Position X="6" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\User.cs</FileName>

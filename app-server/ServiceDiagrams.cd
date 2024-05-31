@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="app_server.Services.AssignmentService">
+    <Position X="6.75" Y="1.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAABAAABAEAAABIQAAAEAAEgAAA=</HashCode>
+      <FileName>Services\AssignmentService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="app_server.Services.CourseService">
+    <Position X="9" Y="0.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AYAAAAAACAAAREAAIoiIAACAAgAAABAAAAAAIQMAAAA=</HashCode>
+      <FileName>Services\CourseService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="app_server.Services.GradeService">
+    <Position X="7.75" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAABAAAAAABAAAABAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Services\GradeService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="app_server.Services.StudentService">
+    <Position X="12" Y="0.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>ACQAAAAAAAAIBAACAAAAAAAAABAAAAwAAAAABAAAAAA=</HashCode>
+      <FileName>Services\StudentService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="app_server.Services.TeacherService">
+    <Position X="0.5" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAQBAAAAAQIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\TeacherService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="app_server.Services.UserService">
+    <Position X="0.5" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEBQAAAAAABAAAAIQBAAAAAAAQBQIACQA=</HashCode>
+      <FileName>Services\UserService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="app_server.Controllers.UserController">
+    <Position X="4" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAABAAAAAQBAAAAAAAUAQIAAAA=</HashCode>
+      <FileName>Controllers\UserController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_userService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="app_server.Controllers.TeacherController">
+    <Position X="4" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAQAAAAAAQAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\TeacherController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_teacherService" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="app_server.Controllers.AssignmentController" Collapsed="true">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgBAABAAAAAEAAAAIQAAAEAAAgAAA=</HashCode>
+      <FileName>Controllers\AssignmentController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="app_server.Controllers.CourseController" Collapsed="true">
+    <Position X="5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AYAAAAIACAAAQAAgIgAAAACAAgAAAAAAAAAAIQMAAAA=</HashCode>
+      <FileName>Controllers\CourseController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="app_server.Controllers.GradeController" Collapsed="true">
+    <Position X="4.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAgAAABAAAAAAEAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\GradeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="app_server.Controllers.StudentController">
+    <Position X="6.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAABAAiAAAAAAkAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\StudentController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_studentService" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
