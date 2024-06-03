@@ -86,6 +86,64 @@ namespace app_server.Services
             };
         }
 
+        // GET LEADERBOARD
+        public async Task<IEnumerable<LeaderboardDTO>?> GetLeaderboardAtCourse(long courseId, long userId)
+        {
+            // Cceck if user is a course teacher or is a student enrolled in the course
+            if (!_context.Enrollments.Any(e => e.CourseId == courseId && e.StudentId == userId) &&
+                !_context.CourseTeachers.Any(c => c.CourseId == courseId && c.TeacherId == userId))
+                return null;
+
+            // retrieve all student ids enrolled in the course
+            var studentIds = _context.Enrollments.Where(e => e.CourseId == courseId).Select(e => e.StudentId).ToList();
+
+            List<LeaderboardDTO> leaderboard = new List<LeaderboardDTO>();
+            foreach (var studentId in studentIds)
+            {
+                var achievement = await FetchStudentAchievements(courseId, studentId);
+                if (achievement != null)
+                {
+                    leaderboard.Add(new LeaderboardDTO
+                    {
+                        Nickname = _context.Students.FirstOrDefault(s => s.Id == studentId)?.Nickname,
+                        FinalGrade = (float)Math.Round(achievement.FinalGrade, 2),
+                        ExperiencePoints = achievement.ExperiencePoints,
+                        Image = _context.Students.FirstOrDefault(s => s.Id == studentId)?.Image,
+                        Level = achievement.Level,
+                        Rank = 0, // temporarly 0, will be updated after sorting
+                        OnTimeBadgeUnlocked = achievement.OnTimeBadgeUnlocked,
+                    });
+                }
+            }
+
+            // sort leaderboard by final grade and update ranks
+            leaderboard = leaderboard.OrderByDescending(x => x.FinalGrade).ToList();
+            for (int i = 0; i < leaderboard.Count; i++)
+            {
+                leaderboard[i].Rank = i + 1;
+            }
+
+            var top10 = leaderboard.Take(10).ToList();
+
+            // check if the current user's rank is beyond top 10 and add them if necessary
+            var userEntry = leaderboard.FirstOrDefault(x => x.Image == _context.Students.FirstOrDefault(s => s.Id == userId)?.Image);
+            if (userEntry != null && userEntry.Rank > 10)
+            {
+                top10.Add(new LeaderboardDTO
+                {
+                    Nickname = userEntry.Nickname,
+                    FinalGrade = userEntry.FinalGrade,
+                    ExperiencePoints = userEntry.ExperiencePoints,
+                    Rank = userEntry.Rank,
+                    Image = userEntry.Image,
+                    OnTimeBadgeUnlocked = userEntry.OnTimeBadgeUnlocked,
+                });
+            }
+
+            return top10;
+        }
+
+
         public async Task<ActionResult<IEnumerable<AssignmentAndGradeDTO>>?> GetStudentAssignmentAndGrades(long studentId, long courseId)
         {
             if (_context.Students == null)
@@ -166,7 +224,7 @@ namespace app_server.Services
             return count;
         }
 
-        private static int ComputeStudentLevel(float grade)
+        public static int ComputeStudentLevel(float grade)
         {
             if (grade < 2)
                 return 1;

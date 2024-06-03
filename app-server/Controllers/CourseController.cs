@@ -115,21 +115,6 @@ namespace app_server.Controllers
             return Ok(result);
         }
 
-        // GET: api/courses/leaderboard/5
-        [HttpGet("leaderboard/{courseId}")]
-        [AuthorizeGeneralUser]
-        public async Task<ActionResult<ICollection<LeaderboardDTO>>> GetLeaderboardAtCourse(long courseId)
-        {
-            var userId = (long)HttpContext.Items["UserId"];
-
-            var result = await _courseService.GetLeaderboardAtCourse(courseId, userId);
-            if (result == null)
-                return NotFound();
-
-
-            return Ok(result);
-        }
-
         // POST: api/courses
         [HttpPost]
         [AuthorizeTeacher]

@@ -19,8 +19,16 @@ import { displayErrorMessage } from "../ToastMessage";
 import Number1 from "../../assets/nr1.svg";
 import Number2 from "../../assets/nr2.svg";
 import Number3 from "../../assets/nr3.svg";
+import Airplane from "../../assets/airplane.svg";
+import Origami from "../../assets/origami.svg";
+import Astronaut from "../../assets/astronaut.svg";
+import Lightbulb from "../../assets/lightbulb.svg";
+import MarioMushroom from "../../assets/mariomushroom.svg";
+import Clock from "../../assets/clock.svg";
 import {
+  getShowBadges,
   getShowLeaderboards,
+  getShowLevels,
   getShowPoints,
 } from "../../utils/student-user-preferences";
 
@@ -30,7 +38,57 @@ interface LeaderboardDTO {
   finalGrade: number;
   experiencePoints: number;
   rank?: number;
+  level: number;
 }
+
+const AirplaneBadge = () => {
+  return <img src={Airplane} alt="airplane" style={{ width: "60px" }} />;
+};
+
+const OrigamiBadge = () => {
+  return <img src={Origami} alt="origami" style={{ width: "60px" }} />;
+};
+
+const AstronautBadge = () => {
+  return <img src={Astronaut} alt="origami" style={{ width: "60px" }} />;
+};
+
+const LightbulbBadge = () => {
+  return <img src={Lightbulb} alt="lightbulb" style={{ width: "60px" }} />;
+};
+
+const MarioMushroomBadge = () => {
+  return <img src={MarioMushroom} alt="mushroom" style={{ width: "60px" }} />;
+};
+
+const OnTimeBadge = () => {
+  return <img src={Clock} alt="on time" style={{ width: "60px" }} />;
+};
+
+const icons: {
+  [index: string]: {
+    icon: React.ReactElement;
+  };
+} = {
+  1: {
+    icon: <OrigamiBadge />,
+  },
+  2: {
+    icon: <AirplaneBadge />,
+  },
+  3: {
+    icon: <LightbulbBadge />,
+  },
+  4: {
+    icon: <MarioMushroomBadge />,
+  },
+  5: {
+    icon: <AstronautBadge />,
+  },
+  6: {
+    icon: <OnTimeBadge />,
+  },
+};
 
 const Number1Badge = () => {
   return <img src={Number1} alt="airplane" style={{ width: "45px" }} />;
@@ -44,6 +102,20 @@ const Number3Badge = () => {
   return <img src={Number3} alt="airplane" style={{ width: "40px" }} />;
 };
 
+const renderIconsForLevel = (level: number) => {
+  return (
+    <Box sx={{ paddingLeft: "10PX", display: "flex", flexWrap: "wrap" }}>
+      {Object.entries(icons)
+        .filter(([index]) => parseInt(index) <= level)
+        .map(([index, { icon }]) => (
+          <Box key={index} sx={{ padding: 1, minWidth: "60px" }}>
+            {icon}
+          </Box>
+        ))}
+    </Box>
+  );
+};
+
 export const Leaderboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,20 +123,28 @@ export const Leaderboard = () => {
   const currStudNickname = getNickname();
   const [pointsVisibility, setPointsVisibility] = useState(false);
   const [, setLeaderboardVisibility] = useState(false);
+  const [levelsVisibility, setLevelsVisibility] = useState(false);
+  const [badgesVisibility, setBadgesVisibility] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState<LeaderboardDTO[]>([]);
 
   useEffect(() => {
     setLoading(true);
-    if (getShowPoints() === "true") setPointsVisibility(true);
+
     if (getShowLeaderboards() === "true") setLeaderboardVisibility(true);
     else navigate("/");
+    if (getShowPoints() === "true") setPointsVisibility(true);
+    if (getShowLevels() === "true") setLevelsVisibility(true);
+    if (getShowBadges() === "true") setBadgesVisibility(true);
 
     const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
 
     axios
-      .get(`${BACKEND_URL}/courses/leaderboard/${courseData.courseId}`, headers)
+      .get(
+        `${BACKEND_URL}/students/leaderboard/${courseData.courseId}`,
+        headers
+      )
       .then((response) => {
         setStudents(response.data);
         setLoading(false);
@@ -114,7 +194,6 @@ export const Leaderboard = () => {
                   // },
                 }}
               >
-                {/* <CardActionArea> */}
                 <CardContent sx={{ textAlign: "left" }}>
                   <Stack direction="row" alignItems="center" spacing={2}>
                     <Box display="flex" alignItems="center">
@@ -138,12 +217,17 @@ export const Leaderboard = () => {
                           </Typography>
                         )}
                     </Box>
-                    <Stack direction="row" alignItems="center" spacing={2}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={2}
+                      // sx={{ width: "100%" }}
+                    >
                       <Avatar
                         sx={{ width: 40, height: 40 }}
                         src={`data:image/jpg;base64,${student.image}`}
                       />
-                      <Box>
+                      <Box sx={{ width: "125px" }}>
                         <Typography
                           gutterBottom
                           component="div"
@@ -162,18 +246,26 @@ export const Leaderboard = () => {
                         </Typography>
                         {pointsVisibility ? (
                           <Typography variant="body2" color="text.secondary">
-                            Points: {student.experiencePoints} XP
+                            <strong>Points:</strong> {student.experiencePoints}{" "}
+                            XP
                           </Typography>
                         ) : (
                           <Typography variant="body2" color="text.secondary">
-                            Final grade: {student.finalGrade}{" "}
+                            <strong>Final grade:</strong> {student.finalGrade}
                           </Typography>
                         )}
+                        {levelsVisibility && (
+                          <Typography variant="body2" color="text.secondary">
+                            <strong>Level:</strong> {student.level}
+                          </Typography>
+                        )}
+                      </Box>
+                      <Box>
+                        {badgesVisibility && renderIconsForLevel(student.level)}
                       </Box>
                     </Stack>
                   </Stack>
                 </CardContent>
-                {/* </CardActionArea> */}
               </Card>
             ))}
           </Container>

@@ -64,6 +64,21 @@ namespace app_server.Controllers
             return Ok(achievement);
         }
 
+        // GET: api/students/leaderboard/5
+        [HttpGet("leaderboard/{courseId}")]
+        [AuthorizeGeneralUser]
+        public async Task<ActionResult<ICollection<LeaderboardDTO>>> GetLeaderboardAtCourse(long courseId)
+        {
+            var userId = (long)HttpContext.Items["UserId"];
+
+            var result = await _studentService.GetLeaderboardAtCourse(courseId, userId);
+            if (result == null)
+                return NotFound();
+
+
+            return Ok(result);
+        }
+
         // GET: api/students/assignments-and-grades/5
         [HttpGet("assignments-and-grades/{courseId}")]
         [AuthorizeStudent]

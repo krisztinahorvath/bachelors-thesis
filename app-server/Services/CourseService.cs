@@ -226,63 +226,6 @@ namespace app_server.Services
             return studentsData;
         }
 
-        // GET LEADERBOARD
-        public async Task<IEnumerable<LeaderboardDTO>?> GetLeaderboardAtCourse(long courseId, long userId)
-        {
-            // check if user is a course teacher or it is a student enrolled to that course
-            if (!_context.Enrollments.Any(e => e.CourseId == courseId && e.StudentId == userId) &&
-                !_context.CourseTeachers.Any(c => c.CourseId == courseId && c.TeacherId == userId))
-                return null;
-
-            int noAssignments = await _context.Assignments.CountAsync(a => a.CourseId == courseId);
-            if (noAssignments == 0)
-                return null;
-
-            var query = from enrollment in _context.Enrollments
-                        where enrollment.CourseId == courseId
-                        join student in _context.Students on enrollment.StudentId equals student.Id
-                        join grade in _context.Grades.Where(g => g.Assignment.CourseId == courseId) on enrollment.StudentId equals grade.StudentId into studentGrades
-                        select new
-                        {
-                            student.Id,
-                            student.Nickname,
-                            FinalGrade = studentGrades.Sum(g => g.Score * g.Assignment.Weight) / 100,
-                            student.Image
-                        };
-
-            query = query.OrderByDescending(x => x.FinalGrade);
-
-            var leaderboard = await query.ToListAsync();
-
-            // current user's ranking
-            var userRank = leaderboard.FindIndex(x => x.Id == userId) + 1;
-            var userEntry = leaderboard.FirstOrDefault(x => x.Id == userId);
-
-            var top10 = leaderboard.Take(10).Select((entry, index) => new LeaderboardDTO
-            {
-                Nickname = entry.Nickname,
-                FinalGrade = (float)Math.Round(entry.FinalGrade, 2),
-                ExperiencePoints = (int)(entry.FinalGrade * 300),
-                Image = entry.Image,
-                Rank = index + 1
-            }).ToList();
-
-            // if current user is not in top 10, still display their rank
-            if (userEntry != null && userRank > 10)
-            {
-                top10.Add(new LeaderboardDTO
-                {
-                    Nickname = userEntry.Nickname,
-                    FinalGrade = (float)Math.Round(userEntry.FinalGrade, 2),
-                    ExperiencePoints = (int)(userEntry.FinalGrade * 300),
-                    Rank = userRank,
-                    Image = userEntry.Image
-                });
-            }
-
-            return top10;
-        }
-
         // CREATE COURSE
         public async Task<OperationResult<Course>> CreateCourse(CourseDTO courseDTO, long teacherId)
         {
