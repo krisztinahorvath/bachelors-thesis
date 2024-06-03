@@ -39,37 +39,18 @@ export const GradePageStudent = () => {
   const [progressBarsVisibility, setProgressBarsVisibility] = useState(false);
   const [pointsVisibility, setPointsVisibility] = useState(false);
 
-  const [level, setLevel] = useState(-1);
-  const [pointsLeftUntilNextLevel, setPointsLeftUntilNextLevel] = useState(0.0);
   const [assignments, setAssignments] = useState<AssignmentAndGradeDTO[]>([]);
-  const xpValue = 300;
 
   const [finalGradeData, setFinalGradeData] = useState({
     finalGrade: 0,
     experiencePoints: 0,
+    level: 0,
+    experiecenPointsUntilNextLevel: 0,
+    gradeUntilNextLevel: 0,
   });
 
   const [loading, setLoading] = useState(false);
-
-  const computeLevel = (grade: number) => {
-    if (grade < 2) {
-      setLevel(1);
-      const res = 2 - grade;
-      setPointsLeftUntilNextLevel(parseFloat(res.toFixed(2)));
-    } else if (grade >= 2 && grade < 4) {
-      setLevel(2);
-      const res = 4 - grade;
-      setPointsLeftUntilNextLevel(parseFloat(res.toFixed(2)));
-    } else if (grade >= 4 && grade < 6.5) {
-      setLevel(3);
-      const res = 6.5 - grade;
-      setPointsLeftUntilNextLevel(parseFloat(res.toFixed(2)));
-    } else if (grade >= 6.5 && grade < 9.5) {
-      setLevel(4);
-      const res = 9.5 - grade;
-      setPointsLeftUntilNextLevel(parseFloat(res.toFixed(2)));
-    } else setLevel(5);
-  };
+  const xpValue = 300;
 
   const formatDate = (date: Date) => {
     const d = new Date(date);
@@ -98,8 +79,6 @@ export const GradePageStudent = () => {
     ])
       .then(([finalGradeResponse, assignmentsResponse]) => {
         setFinalGradeData(finalGradeResponse.data);
-        computeLevel(finalGradeResponse.data.finalGrade);
-        console.log(pointsLeftUntilNextLevel);
 
         setAssignments(assignmentsResponse.data);
         setLoading(false);
@@ -154,19 +133,23 @@ export const GradePageStudent = () => {
         >
           {levelsVisibility && (
             <>
-              <CustomizedSteppers activeSteps={level - 1} />
+              <CustomizedSteppers activeSteps={finalGradeData.level - 1} />
               {pointsVisibility ? (
                 <p>
                   You have <strong>{finalGradeData.experiencePoints} XP</strong>
                   .
-                  {pointsLeftUntilNextLevel > 0 ? (
+                  {finalGradeData.experiecenPointsUntilNextLevel > 0 ? (
                     <>
                       {" "}
                       You need an additonal{" "}
                       <strong>
-                        {Math.round(pointsLeftUntilNextLevel * xpValue)} XP
+                        {Math.round(
+                          finalGradeData.experiecenPointsUntilNextLevel
+                        )}{" "}
+                        XP
                       </strong>{" "}
-                      to reach <strong>Level {level + 1}</strong>.
+                      to reach <strong>Level {finalGradeData.level + 1}</strong>
+                      .
                     </>
                   ) : (
                     <> Congratulations!. You've reached the final level!</>
@@ -175,12 +158,15 @@ export const GradePageStudent = () => {
               ) : (
                 <p>
                   You have <strong>{finalGradeData.finalGrade} points </strong>.
-                  {pointsLeftUntilNextLevel > 0 ? (
+                  {finalGradeData.gradeUntilNextLevel > 0 ? (
                     <>
                       {" "}
                       You need an additonal{" "}
-                      <strong>{pointsLeftUntilNextLevel} point(s)</strong> to
-                      reach <strong>Level {level + 1}</strong>.
+                      <strong>
+                        {finalGradeData.gradeUntilNextLevel} point(s)
+                      </strong>{" "}
+                      to reach <strong>Level {finalGradeData.level + 1}</strong>
+                      .
                     </>
                   ) : (
                     <> Congratulations!. You've reached the final level!</>

@@ -45,10 +45,15 @@ namespace app_server.Services
             if (result == null)
                 return null;
 
+            var gradeUntilNextLevel = (float)Math.Round(ComputeStudentsPointsUntilNextLevel(result.FinalGrade), 2);
+
             return new StudentFinalGradeDTO
             {
                 FinalGrade = result.FinalGrade,
-                ExperiencePoints = (int)(result.FinalGrade * 300)
+                ExperiencePoints = (int)(result.FinalGrade * 300),
+                Level = ComputeStudentLevel(result.FinalGrade),
+                GradeUntilNextLevel = gradeUntilNextLevel,
+                ExperiecenPointsUntilNextLevel = (int)(300 * gradeUntilNextLevel)
             };
         }
 
@@ -224,7 +229,7 @@ namespace app_server.Services
             return count;
         }
 
-        public static int ComputeStudentLevel(float grade)
+        private static int ComputeStudentLevel(float grade)
         {
             if (grade < 2)
                 return 1;
@@ -235,6 +240,27 @@ namespace app_server.Services
             else if (grade >= 6.5 && grade < 9.5)
                 return 4;
             return 5;
+        }
+
+        private static float ComputeStudentsPointsUntilNextLevel(float grade)
+        {
+            if (grade < 2)
+            {
+                return 2 - grade;
+            }
+            else if (grade >= 2 && grade < 4)
+            {
+                return 4 - grade;
+            }
+            else if (grade >= 4 && grade < 6.5)
+            {
+                return (float)(6.5 - grade);
+            }
+            else if (grade >= 6.5 && grade < 9.5)
+            {
+                return (float)(9.5 - grade);
+            }
+            else return 0;
         }
 
         private static StudentUserPreferenceDTO StudentUserPreferenceToDTO(UserPreference userPreference)
