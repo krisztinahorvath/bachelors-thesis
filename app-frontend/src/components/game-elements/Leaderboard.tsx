@@ -39,6 +39,7 @@ interface LeaderboardDTO {
   experiencePoints: number;
   rank?: number;
   level: number;
+  onTimeBadgeUnlocked: boolean;
 }
 
 const AirplaneBadge = () => {
@@ -102,11 +103,15 @@ const Number3Badge = () => {
   return <img src={Number3} alt="airplane" style={{ width: "40px" }} />;
 };
 
-const renderIconsForLevel = (level: number) => {
+const renderIconsForLevel = (level: number, onTimeBadgeUnlocked: boolean) => {
   return (
     <Box sx={{ paddingLeft: "10PX", display: "flex", flexWrap: "wrap" }}>
       {Object.entries(icons)
-        .filter(([index]) => parseInt(index) <= level)
+        .filter(
+          ([index]) =>
+            parseInt(index) <= level ||
+            (parseInt(index) === 6 && onTimeBadgeUnlocked)
+        )
         .map(([index, { icon }]) => (
           <Box key={index} sx={{ padding: 1, minWidth: "60px" }}>
             {icon}
@@ -261,7 +266,11 @@ export const Leaderboard = () => {
                         )}
                       </Box>
                       <Box>
-                        {badgesVisibility && renderIconsForLevel(student.level)}
+                        {badgesVisibility &&
+                          renderIconsForLevel(
+                            student.level,
+                            student.onTimeBadgeUnlocked
+                          )}
                       </Box>
                     </Stack>
                   </Stack>
