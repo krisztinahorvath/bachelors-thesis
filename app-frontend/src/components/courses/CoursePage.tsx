@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { Course } from "../../models/Course";
 import { BACKEND_URL } from "../../constants";
 import { Box, Card, CardMedia, Grid, Typography } from "@mui/material";
@@ -16,11 +16,12 @@ import { CourseSideBarStudent } from "../students/CourseSideBarStudent";
 import { StudentAppBar } from "../app-bars/StudentAppBar";
 import { StudentAchievements } from "../game-elements/Badges";
 import { CourseDetailsComponent } from "./CourseDetailsComponent";
+import { GradePageStudent } from "../students/GradePageStudent";
+import { Leaderboard } from "../game-elements/Leaderboard";
 
 export const CoursePage = () => {
   const { courseIndex } = useParams<{ courseIndex: string }>();
   const [userType, setUserType] = useState<UserType>();
-  const navigate = useNavigate();
 
   const location = useLocation();
   const courseId = location.state;
@@ -66,31 +67,6 @@ export const CoursePage = () => {
       fetchCourse();
     }
   }, [courseId]);
-
-  useEffect(() => {
-    if (selectedTab === "leaderboard") {
-      // Ensure courseId is set before navigating
-      if (course.id && courseIndex) {
-        navigate(`/course/${courseIndex}/leaderboard`, {
-          state: { courseId: course.id, courseName: course.name },
-        });
-        setSelectedTab("");
-      } else {
-        // Handle the case where course data is not available yet
-        console.log("Course data is not available yet.");
-      }
-    } else if (selectedTab === "grades" && userType === UserType.Student) {
-      if (course.id && courseIndex) {
-        navigate(`/course/${courseIndex}/my-grades`, {
-          state: { courseId: course.id, courseName: course.name },
-        });
-        setSelectedTab("");
-      } else {
-        // Handle the case where course data is not available yet
-        console.log("Course data is not available yet.");
-      }
-    }
-  }, [selectedTab, course, courseIndex, navigate]);
 
   return (
     <React.Fragment>
@@ -191,6 +167,12 @@ export const CoursePage = () => {
           )}
           {userType === UserType.Student && selectedTab === "achievements" && (
             <StudentAchievements courseData={course} />
+          )}
+          {userType === UserType.Student && selectedTab === "grades" && (
+            <GradePageStudent courseData={course} />
+          )}
+          {userType === UserType.Student && selectedTab === "leaderboard" && (
+            <Leaderboard courseData={course} />
           )}
         </Grid>
       </Grid>

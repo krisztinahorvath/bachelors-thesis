@@ -15,8 +15,6 @@ import { AddCoursePage } from "./components/courses/AddCoursePage";
 import { StudentUserPreferences } from "./components/students/StudentUserPreferences";
 import { UserProfile } from "./components/users/UserProfile";
 import { EditUserProfile } from "./components/users/EditUserProfile";
-import { Leaderboard } from "./components/game-elements/Leaderboard";
-import { GradePageStudent } from "./components/students/GradePageStudent";
 import { AddAssignment } from "./components/assignments/AddAssignment";
 import { UpdateAssignment } from "./components/assignments/UpdateAssignment";
 import { UpdatePassword } from "./components/users/UpdatePassword";
@@ -83,16 +81,6 @@ function App() {
           />
 
           <Route
-            path="/course/:courseIndex/my-grades"
-            element={
-              <PrivateRoute
-                allowedUsers={[UserType.Student]}
-                element={<GradePageStudent />}
-              />
-            }
-          />
-
-          <Route
             path="/course/:courseIndex/update"
             element={
               <PrivateRoute
@@ -102,16 +90,6 @@ function App() {
             }
           />
 
-          {/* <Route
-            path="/course/:courseIndex/my-achievements"
-            element={
-              <PrivateRoute
-                allowedUsers={[UserType.Student]}
-                element={<StudentAchievements />}
-              />
-            }
-          /> */}
-
           {/* gamification */}
           <Route
             path="/student-preferences"
@@ -119,16 +97,6 @@ function App() {
               <PrivateRoute
                 allowedUsers={[UserType.Student]}
                 element={<StudentUserPreferences />}
-              />
-            }
-          />
-
-          <Route
-            path="/course/:courseIndex/leaderboard"
-            element={
-              <PrivateRoute
-                allowedUsers={[UserType.Student, UserType.Teacher]}
-                element={<Leaderboard />}
               />
             }
           />
@@ -179,14 +147,6 @@ function App() {
               />
             }
           />
-          {/* <Route path="/course/update" 
-            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<UpdateCoursePage/>}/>} 
-          />
-          <Route path="/course/delete" 
-            element={<PrivateRoute allowedUsers={[UserType.Teacher]} element={<DeleteCoursePage/>}/>} 
-          /> */}
-
-          {/* <Route path="*" element={< NoPage/>}/> */}
         </Routes>
       </Router>
     </React.Fragment>

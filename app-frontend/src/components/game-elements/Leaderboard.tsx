@@ -2,15 +2,13 @@ import {
   Avatar,
   Box,
   Card,
-  // CardActionArea,
   CardContent,
   CircularProgress,
   Container,
   Stack,
   Typography,
 } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
-import { StudentAppBar } from "../app-bars/StudentAppBar";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getNickname, getToken } from "../../utils/auth-utils";
 import axios from "axios";
@@ -121,10 +119,10 @@ const renderIconsForLevel = (level: number, onTimeBadgeUnlocked: boolean) => {
   );
 };
 
-export const Leaderboard = () => {
+export const Leaderboard: React.FC<{
+  courseData: any;
+}> = ({ courseData }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const courseData = location.state;
   const currStudNickname = getNickname();
   const [pointsVisibility, setPointsVisibility] = useState(false);
   const [, setLeaderboardVisibility] = useState(false);
@@ -146,10 +144,7 @@ export const Leaderboard = () => {
     const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
 
     axios
-      .get(
-        `${BACKEND_URL}/students/leaderboard/${courseData.courseId}`,
-        headers
-      )
+      .get(`${BACKEND_URL}/students/leaderboard/${courseData.id}`, headers)
       .then((response) => {
         setStudents(response.data);
         setLoading(false);
@@ -169,7 +164,6 @@ export const Leaderboard = () => {
 
   return (
     <>
-      <StudentAppBar />
       <Container>
         {loading && <CircularProgress />}
         {!loading && students.length === 0 && (
@@ -185,7 +179,7 @@ export const Leaderboard = () => {
               },
             }}
           >
-            <h2> Leaderboard for {courseData.courseName}:</h2>
+            <h2> Leaderboard for {courseData.name}:</h2>
             {students.map((student, index) => (
               <Card
                 key={index}
@@ -247,7 +241,6 @@ export const Leaderboard = () => {
                           {student.nickname === currStudNickname
                             ? `${student.nickname} (You)`
                             : student.nickname}
-                          {/* {student.nickname} */}
                         </Typography>
                         {pointsVisibility ? (
                           <Typography variant="body2" color="text.secondary">

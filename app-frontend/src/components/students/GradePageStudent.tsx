@@ -7,8 +7,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { StudentAppBar } from "../app-bars/StudentAppBar";
-import { useLocation } from "react-router-dom";
 import { CustomProgressBar } from "../game-elements/CustomProgressBar";
 import { CustomizedSteppers } from "../game-elements/Levels";
 import { BACKEND_URL } from "../../constants";
@@ -32,9 +30,9 @@ interface AssignmentAndGradeDTO {
   dateReceived: Date;
 }
 
-export const GradePageStudent = () => {
-  const location = useLocation();
-  const courseData = location.state;
+export const GradePageStudent: React.FC<{
+  courseData: any;
+}> = ({ courseData }) => {
   const [levelsVisibility, setLevelsVisibility] = useState(false);
   const [progressBarsVisibility, setProgressBarsVisibility] = useState(false);
   const [pointsVisibility, setPointsVisibility] = useState(false);
@@ -55,7 +53,7 @@ export const GradePageStudent = () => {
   const formatDate = (date: Date) => {
     const d = new Date(date);
     const day = d.getDate().toString().padStart(2, "0");
-    const month = (d.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
+    const month = (d.getMonth() + 1).toString().padStart(2, "0"); // months are zero-based
     const year = d.getFullYear();
     return `${day}/${month}/${year}`;
   };
@@ -69,11 +67,11 @@ export const GradePageStudent = () => {
     const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
     Promise.all([
       axios.get(
-        `${BACKEND_URL}/students/student-grades-at-course/${courseData.courseId}`,
+        `${BACKEND_URL}/students/student-grades-at-course/${courseData.id}`,
         headers
       ),
       axios.get(
-        `${BACKEND_URL}/students/assignments-and-grades/${courseData.courseId}`,
+        `${BACKEND_URL}/students/assignments-and-grades/${courseData.id}`,
         headers
       ),
     ])
@@ -92,13 +90,15 @@ export const GradePageStudent = () => {
 
   return (
     <>
-      <StudentAppBar />
+      {!loading && assignments.length === 0 && (
+        <p>No assignments to display.</p>
+      )}
+
       <Container>
-        <h2>Grades at {courseData.courseName}:</h2>
-        <Container sx={{ width: "70%", marginBottom: "20px" }}>
+        <h2>Grades at {courseData.name}:</h2>
+        <Container sx={{ width: "80%", marginBottom: "20px" }}>
           {progressBarsVisibility && (
             <>
-              {/* <p>Course progress:</p> */}
               <Tooltip
                 title={`You have completed ${Math.round(
                   finalGradeData.finalGrade * 10
@@ -176,9 +176,6 @@ export const GradePageStudent = () => {
             </>
           )}
         </Container>
-        {/* <div style={{ display: "grid", placeItems: "center" }}>
-        <Divider sx={{ width: "65%", marginTop: "3%", marginBottom: "3%" }} />
-      </div> */}
 
         <Container
           sx={{
@@ -186,7 +183,7 @@ export const GradePageStudent = () => {
             //   width: "100%", // set width to 100% by default
             "@media (min-width: 768px)": {
               minWidth: "70%", // set minWidth to 70% for screens wider than 768px
-              width: "75%", // unset width to allow minWidth to take effect
+              width: "85%", // unset width to allow minWidth to take effect
               // marginTop: "5%",
             },
           }}
