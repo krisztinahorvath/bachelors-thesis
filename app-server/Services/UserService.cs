@@ -53,12 +53,12 @@ namespace app_server.Services
         }
 
         // REGISTER
-        public async Task<ActionResult<User>?> Register(UserRegisterDTO userRegisterDTO)
+        public async Task<OperationResult<User>?> Register(UserRegisterDTO userRegisterDTO)
         {
-            // validate input fields
-            //var isValidUser = _validate.ValidateUserFields(userRegisterDTO, _context);
-            //if (isValidUser != "")
-            //    return BadRequest(isValidUser);
+           // validate input fields
+           var isValidUser = _validate.ValidateUserFields(userRegisterDTO, _context);
+            if (isValidUser != "")
+                return OperationResult<User>.FailResult(isValidUser);
 
             userRegisterDTO.Password = HashPassword(userRegisterDTO.Password);
 
@@ -80,9 +80,9 @@ namespace app_server.Services
                 await _context.SaveChangesAsync();
             }
             else 
-                return null;
+                return OperationResult<User>.FailResult("Invalid user type.");
 
-            return newUser;
+            return OperationResult<User>.SuccessResult(newUser);
         }
 
 
@@ -159,7 +159,7 @@ namespace app_server.Services
                 teacher.Name = userInput.Name;
 
                 if (teacher.Email != userInput.Email)
-                    if (!Validate.IsEmailUnique(_context, userInput.Email))
+                    if (!_validate.IsEmailUnique(_context, userInput.Email))
                         return OperationResult.FailResult("Email must be unique, another user is already using this email.");
                     else teacher.Email = userInput.Email;
 
@@ -191,7 +191,7 @@ namespace app_server.Services
                 student.Name = userInput.Name;
 
                 if (student.Email != userInput.Email)
-                    if (!Validate.IsEmailUnique(_context, userInput.Email))
+                    if (!_validate.IsEmailUnique(_context, userInput.Email))
                         return OperationResult.FailResult("Email must be unique, another user is already using this email.");
                     else student.Email = userInput.Email;
 
@@ -199,12 +199,11 @@ namespace app_server.Services
                     student.Image = userInput.Image;
 
                 if (userInput.Nickname != student.Nickname)
-                    if (!Validate.IsNicknameUnique(_context, userInput.Nickname))
+                    if (!_validate.IsNicknameUnique(_context, userInput.Nickname))
                         return OperationResult.FailResult("Nickname must be unique.");
                     else
                         student.Nickname = userInput.Nickname;
 
-                /// MAKE SURE THIS IS UNIQUE TOO????
                 student.UniqueIdentificationCode = userInput.UniqueIdentificationCode;
 
                 try
@@ -228,6 +227,7 @@ namespace app_server.Services
             return OperationResult.SuccessResult();
         }
 
+
         // DELETE ACCOUNT
         public async Task<OperationResult> DeleteAccount(long userId, string email, string password)
         {
@@ -236,6 +236,7 @@ namespace app_server.Services
                 return OperationResult.FailResult("No users exist.");
             }
 
+            // validation 
             if (_validate.IsStringEmpty(email) || _validate.IsStringEmpty(password))
                 return OperationResult.FailResult("Email and password fields are required to delete an account.");
 

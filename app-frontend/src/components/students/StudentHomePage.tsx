@@ -4,7 +4,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { CourseCards } from "../courses/CourseCards";
 import { UserType } from "../../models/User";
 import { useEffect, useState } from "react";
-import { EnrollDialog } from "../EnrollDialog";
+import { EnrollDialog } from "./EnrollDialog";
 
 export const StudentHomePage = () => {
   const [open, setOpen] = useState(false);

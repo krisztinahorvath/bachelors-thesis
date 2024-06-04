@@ -98,6 +98,13 @@ export const UpdatePassword = () => {
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
+    if (passwordError) {
+      displayErrorMessage(
+        "Make sure that the new password is of the required form."
+      );
+      return;
+    }
+
     const userPasswordUpdateDTO = {
       oldPassword: user.oldPassword,
       newPassword: user.newPassword,

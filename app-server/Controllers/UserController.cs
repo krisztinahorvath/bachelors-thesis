@@ -44,10 +44,10 @@ namespace app_server.Controllers
 
 
             var result = await _userService.Register(userRegisterDTO);
-            if (result == null)
-                return BadRequest();
+            if (!result.Success)
+                return BadRequest(result.ErrorMessage);
 
-            return result;
+            return result.Data;
         }
 
         // POST: api/users/login
@@ -92,17 +92,13 @@ namespace app_server.Controllers
         [AuthorizeGeneralUser]
         public async Task<IActionResult> UpdateUserProfile([FromForm] string userDTO, [FromForm] IFormFile? image = null)
         {
-            // Deserialize userDTO JSON string to UserDTO object
+            // deserialize userDTO JSON string to UserDTO object
             var userInput = JsonConvert.DeserializeObject<UserDTO>(userDTO);
 
             if (userInput == null)
                 return BadRequest();
 
-            // validate email structure
-            if (!Validate.IsEmailValid(userInput.Email))
-                return BadRequest("Invalid email provided.");
-
-            // Convert IFormFile to byte array
+            // convert IFormFile to byte array
             if (image != null)
             {
                 using (var memoryStream = new MemoryStream())

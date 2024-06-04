@@ -6,10 +6,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { getToken } from "../utils/auth-utils";
-import { BACKEND_URL } from "../constants";
+import { getToken } from "../../utils/auth-utils";
+import { BACKEND_URL } from "../../constants";
 import axios from "axios";
-import { displayErrorMessage, displaySuccessMessage } from "./ToastMessage";
+import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
 
 export const EnrollDialog: React.FC<{
   open: boolean;

@@ -49,14 +49,14 @@ const icons: {
     icon: <OrigamiBadge />,
     name: "Windmill Wizard",
     description:
-      "Embark on an epic journey of knowledge. <br /> <em>A gift for taking your first step.</em>",
+      "Embark on an epic journey of knowledge! <br /> <em>A gift for taking your first step.</em>",
     achievementCriteria: 0,
     achieved: true,
   },
   2: {
     icon: <AirplaneBadge />,
     name: "Paper Plane Pilot",
-    description: "Fold your way to success.",
+    description: "Fold your way to success!",
     achievementCriteria: 2,
     achieved: false,
   },
@@ -70,7 +70,7 @@ const icons: {
   4: {
     icon: <MarioMushroomBadge />,
     name: "Level-Up Legend",
-    description: "Unlocked at 40XP",
+    description: "Power up your knowledge!",
     achievementCriteria: 6.5,
     achieved: false,
   },

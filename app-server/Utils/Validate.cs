@@ -21,7 +21,7 @@ namespace app_server.Utils
                 return "Invalid email provided.";
 
             if (!IsEmailUnique(_context, user.Email))
-                return "The email must be unique.";
+                return "Email must be unique, another user is already using this email.";
 
             // password
             if (user.Password == "" || user.Password == null || !IsPasswordValid(user.Password))
@@ -31,7 +31,7 @@ namespace app_server.Utils
             // if user is student
             // nickname
             if (user.UserType == UserType.Student && !IsNicknameUnique(_context, user.Nickname!))
-                return "Nickname must be unique.";
+                return "Nickname must be unique, another user is already using this nickname.";
 
 
             return ""; // empty string for no errors
@@ -57,17 +57,17 @@ namespace app_server.Utils
             return true;
         }
 
-        public static bool IsEmailUnique(in StudentsRegisterContext _context, string email)
+        public bool IsEmailUnique(in StudentsRegisterContext _context, string email)
         {
             return !_context.Users.Any(a => a.Email == email);
         }
 
-        public static bool IsNicknameUnique(in StudentsRegisterContext _context, string nickname)
+        public bool IsNicknameUnique(in StudentsRegisterContext _context, string nickname)
         {
             return !_context.Students.Any(a => a.Nickname == nickname);
         }
 
-        public static bool IsEmailValid(string email)
+        public bool IsEmailValid(string email)
         {
             try
             {

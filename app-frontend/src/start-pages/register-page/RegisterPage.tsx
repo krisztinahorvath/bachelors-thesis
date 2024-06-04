@@ -97,13 +97,29 @@ export const RegisterPage = () => {
     setIsStudentSelected(event.target.value === "student");
   };
 
+  function isValidEmail(email: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+    return emailRegex.test(email);
+  }
+
   const handleRegister = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    if (showPasswordValueError || retypedPasswordError) {
+      displayErrorMessage(
+        "Make sure your passwords match and are of the required form."
+      );
+      return;
+    }
+    if (!isValidEmail(user.email)) {
+      displayErrorMessage("Email must be of the form: example@domain.com");
+      return;
+    }
 
     try {
       await axios.post(`${BACKEND_URL}/users/register`, user);
 
-      displaySuccessMessage("You created an account successfully!");
+      displaySuccessMessage("Your account was created successfully!");
       navigate("/login");
     } catch (error: any) {
       console.log(error);
@@ -111,7 +127,7 @@ export const RegisterPage = () => {
         const errorMessage = error.response.data;
         displayErrorMessage(errorMessage);
       } else {
-        displayErrorMessage("An error occurred while logging in.");
+        displayErrorMessage("An error occurred while creating your account.");
       }
     }
   };
@@ -261,7 +277,7 @@ export const RegisterPage = () => {
             }}
             onChange={handleRetypePasswordChange}
             error={retypedPasswordError}
-            helperText={retypedPasswordError ? "Passwords do not match" : ""}
+            helperText={retypedPasswordError ? "Passwords do not match." : ""}
           />
           {isStudentSelected && (
             <>
