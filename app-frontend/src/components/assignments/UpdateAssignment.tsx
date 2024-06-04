@@ -33,25 +33,17 @@ const StyledTextField = styled(TextField)({
   },
 });
 
-// const formStyle: React.CSSProperties = {
-//   display: "flex",
-//   flexDirection: "column",
-//   width: "40%",
-// };
-
 const textFieldStyle = {
   marginTop: "5%",
   backgroundColor: "#f5f5f5",
   border: "none",
   borderRadius: "10px",
-  // height: '20%'
 };
 
 const submitButtonStyle = {
   backgroundColor: "#84B1F2",
   color: "white",
   borderRadius: "10px",
-  // border: 'none',
   boxShadow: "0 0 10px #84B1F2",
   padding: "3%", // width
   marginTop: "8%",

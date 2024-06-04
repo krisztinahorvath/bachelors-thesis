@@ -4,14 +4,14 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
-import { BACKEND_URL } from "../constants";
-import { Course } from "../models/Course";
+import { BACKEND_URL } from "../../constants";
+import { Course } from "../../models/Course";
 import React, { useEffect, useState } from "react";
-import { getToken } from "../utils/auth-utils";
+import { getToken } from "../../utils/auth-utils";
 import axios from "axios";
-import { displayErrorMessage } from "./ToastMessage";
+import { displayErrorMessage } from "../ToastMessage";
 import { CircularProgress, Container } from "@mui/material";
-import { UserType } from "../models/User";
+import { UserType } from "../../models/User";
 
 export const CourseCards: React.FC<{ userType: UserType }> = ({ userType }) => {
   const [loading, setLoading] = useState(false);

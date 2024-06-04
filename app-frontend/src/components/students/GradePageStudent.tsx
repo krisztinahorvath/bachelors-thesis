@@ -126,7 +126,6 @@ export const GradePageStudent: React.FC<{
         <Container
           sx={{
             marginBottom: "30px",
-            //width: "100%", // set width to 100% by default
             "@media (min-width: 768px)": {
               minWidth: "70%", // set minWidth to 70% for screens wider than 768px
               width: "70%", // unset width to allow minWidth to take effect
@@ -182,11 +181,9 @@ export const GradePageStudent: React.FC<{
         <Container
           sx={{
             marginTop: "5%",
-            //   width: "100%", // set width to 100% by default
             "@media (min-width: 768px)": {
               minWidth: "70%", // set minWidth to 70% for screens wider than 768px
               width: "85%", // unset width to allow minWidth to take effect
-              // marginTop: "5%",
             },
           }}
         >

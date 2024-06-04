@@ -144,7 +144,6 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
         <Container>
           {assignments.map((card, index) => (
             <Card key={index} sx={{ marginBottom: 2 }}>
-              {/* <CardActionArea> */}
               <CardContent
                 sx={{
                   display: "flex",
@@ -227,7 +226,6 @@ export const AssignmentsCards: React.FC<ShowAssignmentsAtCourseProps> = ({
                   </Box>
                 )}
               </CardContent>
-              {/* </CardActionArea> */}
             </Card>
           ))}
         </Container>

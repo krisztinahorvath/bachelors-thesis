@@ -31,37 +31,12 @@ export const CourseSideBar = ({
         marginLeft: "25%",
         position: "sticky",
         top: "2px",
-        // paddingTop: "2.5%",
-        // paddingBottom: "2.5%",
-        // height: "16.3%",
         "@media (max-width: 768px)": {
           width: "100%",
         },
       }}
     >
       <MenuList>
-        {/* <MenuItem
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            pointerEvents: "none",
-            // color: "gray",
-          }}
-        >
-          <Typography
-            variant="inherit"
-            noWrap
-            style={{
-              fontWeight: "bold",
-              color: "inherit",
-              textAlign: "center",
-            }}
-          >
-            Course Name
-          </Typography>
-        </MenuItem> */}
-
         <MenuItem
           selected={selectedTab === "details"}
           onClick={() => handleNavigateTo("details")}

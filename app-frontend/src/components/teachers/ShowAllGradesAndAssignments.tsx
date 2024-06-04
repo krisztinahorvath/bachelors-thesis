@@ -350,7 +350,6 @@ export const ShowAllGradesAndAssignments: React.FC<
 
       {!loading && (
         <>
-          {/* <h2>Grades</h2> */}
           <Container sx={{ height: 600, width: "100%" }}>
             <ImportFromExcel
               courseId={courseId}

@@ -1,7 +1,7 @@
 import { StudentAppBar } from "../../components/app-bars/StudentAppBar";
 import { Container, Fab, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { CourseCards } from "../../components/CourseCards";
+import { CourseCards } from "../../components/courses/CourseCards";
 import { UserType } from "../../models/User";
 import { useEffect, useState } from "react";
 import { EnrollDialog } from "../../components/EnrollDialog";

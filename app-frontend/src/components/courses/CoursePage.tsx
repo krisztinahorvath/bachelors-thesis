@@ -82,15 +82,7 @@ export const CoursePage = () => {
             <CourseSideBarStudent onSelectTab={handleTabSelect} />
           )}
         </Grid>
-        <Grid
-          item
-          xs={10}
-          //   sx={{
-          //     paddingLeft: "2.5%",
-          //     paddingRight: "2.5%",
-          //     justifyContent: "flex-start",
-          //   }}
-        >
+        <Grid item xs={10}>
           {selectedTab === "details" && (
             <>
               <Card

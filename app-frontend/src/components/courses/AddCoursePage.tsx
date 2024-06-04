@@ -34,14 +34,12 @@ const textFieldStyle = {
   backgroundColor: "#f5f5f5",
   border: "none",
   borderRadius: "10px",
-  // height: '20%'
 };
 
 const submitButtonStyle = {
   backgroundColor: "#84B1F2",
   color: "white",
   borderRadius: "10px",
-  // border: 'none',
   boxShadow: "0 0 10px #84B1F2",
   padding: "3%", // width
   marginTop: "15%",
@@ -50,7 +48,6 @@ const submitButtonStyle = {
 
 export const AddCoursePage = () => {
   const navigate = useNavigate();
-  // const [imageData, setImageData] = useState<File | undefined>();
   const [imageUrl, setImageUrl] = useState("");
   const [course, setCourse] = useState({
     name: "",
@@ -69,7 +66,6 @@ export const AddCoursePage = () => {
   const handleFileChange = (event: any) => {
     const file = event.target.files[0];
     if (file && isValidFileType(file)) {
-      // setImageData(event.target.files[0]);
       setCourse({ ...course, image: event.target.files[0] });
       const url = URL.createObjectURL(file);
       setImageUrl(url);

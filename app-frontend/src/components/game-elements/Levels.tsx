@@ -55,8 +55,8 @@ const ColorlibStepIconRoot = styled("div")<{
   alignItems: "center",
   ...(ownerState.completed && {
     boxShadow: "0 4px 20px 0 rgba(0,0,0,.50)",
-    filter: "none", // Remove filter effect if completed
-    opacity: 1, // Set full opacity for completed steps
+    filter: "none", // remove filter effect if completed
+    opacity: 1, // set full opacity for completed steps
   }),
   ...(ownerState.active && {
     backgroundImage: "none",
@@ -64,8 +64,8 @@ const ColorlibStepIconRoot = styled("div")<{
   }),
   ...(!ownerState.completed &&
     !ownerState.active && {
-      filter: "grayscale(100%) blur(1px)", // Apply filter effect if not active or completed
-      opacity: 1, // Reduce opacity if not active or completed
+      filter: "grayscale(100%) blur(1px)", // apply filter effect if not active or completed
+      opacity: 1, // reduce opacity if not active or completed
     }),
 }));
 

@@ -186,11 +186,7 @@ export const Leaderboard: React.FC<{
                 sx={{
                   marginBottom: 2,
                   backgroundColor:
-                    student.nickname === currStudNickname ? "#e8f4f8" : "white", // Conditionally set the background color
-                  // "@media (min-width: 768px)": {
-                  //   minWidth: "110%", // set minWidth to 70% for screens wider than 768px
-                  //   width: "unset", // unset width to allow minWidth to take effect
-                  // },
+                    student.nickname === currStudNickname ? "#e8f4f8" : "white", // conditionally set the background color
                 }}
               >
                 <CardContent sx={{ textAlign: "left" }}>
@@ -216,12 +212,7 @@ export const Leaderboard: React.FC<{
                           </Typography>
                         )}
                     </Box>
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      spacing={2}
-                      // sx={{ width: "100%" }}
-                    >
+                    <Stack direction="row" alignItems="center" spacing={2}>
                       <Avatar
                         sx={{ width: 40, height: 40 }}
                         src={`data:image/jpg;base64,${student.image}`}

@@ -30,7 +30,6 @@ const submitButtonStyle = {
   backgroundColor: "#84B1F2",
   color: "white",
   borderRadius: "10px",
-  // border: 'none',
   boxShadow: "0 0 10px #84B1F2",
   padding: "3%", // width
   marginTop: "10%",
@@ -117,11 +116,6 @@ export const StudentUserPreferences = () => {
     }
   };
 
-  // ***************************************
-  //maybe add a picture in this page of a console and lay over the console the list with the toggles
-  // to make it more interesting
-  // ***************************************
-
   return (
     <>
       <StudentAppBar />
@@ -130,13 +124,8 @@ export const StudentUserPreferences = () => {
           sx={{
             width: "100%",
             maxWidth: 360,
-            // paddingTop: "0.5%",
             bgcolor: "background.paper",
             margin: "auto",
-            // display: "flex",
-            // flexDirection: "column",
-            // alognItem: "center",
-            // justifyContent: "center",
           }}
           subheader={
             <ListSubheader sx={{ fontSize: "1.3rem" }}>

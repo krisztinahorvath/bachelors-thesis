@@ -66,8 +66,6 @@ export const ImportFromExcel: React.FC<{
 }> = ({ courseId, onGradesSubmitted }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [fields, setFields] = useState(staticFields);
-  // const [submittedData, setSubmittedData] = useState<any[]>([]);
-  //const [headerData, setHeaderData] = useState<any[]>([]);
 
   useEffect(() => {
     const headers = { headers: { Authorization: `Bearer ${getToken()}` } };
@@ -183,7 +181,6 @@ export const ImportFromExcel: React.FC<{
         sx={{
           display: "flex",
           justifyContent: "flex-end",
-          // padding: "1rem", // Add padding as needed
 
           marginTop: "3%",
           marginRight: "2%",

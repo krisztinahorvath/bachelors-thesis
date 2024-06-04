@@ -26,7 +26,6 @@ export const CourseSideBarStudent = ({
   const handleNavigateTo = (tabName: string) => {
     onSelectTab(tabName);
     setSelectedTab(tabName);
-    // window.location.hash = `#${tabName}`;
   };
 
   return (
@@ -39,9 +38,6 @@ export const CourseSideBarStudent = ({
         marginLeft: "25%",
         position: "sticky",
         top: "2px",
-        // paddingTop: "2.5%",
-        // paddingBottom: "2.5%",
-        // height: "16.3%",
         "@media (max-width: 768px)": {
           width: "100%",
         },
@@ -73,8 +69,6 @@ export const CourseSideBarStudent = ({
         <MenuItem
           selected={selectedTab === "grades"}
           onClick={() => handleNavigateTo("grades")}
-          // component="a"
-          // href="#grades"
         >
           <ListItemIcon>
             <GradingIcon fontSize="small" />

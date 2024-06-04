@@ -1,5 +1,5 @@
 import { TeacherAppBar } from "../../components/app-bars/TeacherAppBar";
-import { CourseCards } from "../../components/CourseCards";
+import { CourseCards } from "../../components/courses/CourseCards";
 import { Container, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";

@@ -43,7 +43,6 @@ export const UserProfile = () => {
         setUser(response.data);
 
         if (response.data.image !== getImage()) {
-          // localStorage.removeItem("image");
           setImage(response.data.image);
         }
       })
