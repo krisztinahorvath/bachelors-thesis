@@ -12,12 +12,10 @@ namespace app_server.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
-        private readonly Validate _validate;
         private readonly CourseService _courseService;
 
-        public CourseController(Validate validate, CourseService courseService)
+        public CourseController(CourseService courseService)
         {
-            _validate = validate;
             _courseService = courseService;
         }
 
@@ -120,12 +118,12 @@ namespace app_server.Controllers
         [AuthorizeTeacher]
         public async Task<IActionResult> CreateCourse([FromForm] string courseDTO, [FromForm] IFormFile image)
         {
-            // Deserialize courseDTO JSON string to CourseDTO object
+            // deserialize courseDTO JSON string to CourseDTO object
             var courseInput = JsonConvert.DeserializeObject<CourseDTO>(courseDTO);
             if (courseInput == null)
                 return BadRequest();
 
-            // Convert IFormFile to byte array
+            // convert IFormFile to byte array
             using (var memoryStream = new MemoryStream())
             {
                 await image.CopyToAsync(memoryStream);
@@ -140,20 +138,6 @@ namespace app_server.Controllers
 
 
             return CreatedAtAction(nameof(GetCourseById), new { id = result.Data.Id }, result.Data);
-        }
-
-        // POST: api/courses/enroll/abcdefgh
-        [HttpPost("enroll/{enrollmentKey}")]
-        [AuthorizeStudent]
-        public async Task<ActionResult<Enrollment>> EnrollToCourse(string enrollmentKey)
-        {
-            var studentId = (long)HttpContext.Items["StudentId"];
-
-            var result = await _courseService.EnrollToCourse(enrollmentKey, studentId);
-            if (!result.Success)
-                return BadRequest(result.ErrorMessage);
-
-            return Ok(result);
         }
         
         // PUT: api/courses
@@ -198,20 +182,6 @@ namespace app_server.Controllers
             var teacherId = (long)HttpContext.Items["TeacherId"];
 
             var result = await _courseService.DeleteCourse(id, teacherId);
-            if (!result.Success)
-                return BadRequest(result.ErrorMessage);
-
-            return NoContent();
-        }
-
-        // DELETE: api/courses/unenroll/5/5
-        [HttpDelete("unenroll/{courseId}/{studentId}")]
-        [AuthorizeTeacher]
-        public async Task<ActionResult> UnenrollFromCourse(long courseId, long studentId)
-        {
-            var teacherId = (long)HttpContext.Items["TeacherId"];
-
-            var result = await _courseService.UnenrollFromCourse(courseId, studentId, teacherId);
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
 

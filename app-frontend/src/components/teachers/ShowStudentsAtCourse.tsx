@@ -62,7 +62,7 @@ export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
     try {
       const authToken = getToken();
       await axios.delete(
-        `${BACKEND_URL}/courses/unenroll/${courseId}/${studentId}`,
+        `${BACKEND_URL}/teachers/unenroll/${courseId}/${studentId}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,

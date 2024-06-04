@@ -1,4 +1,5 @@
-﻿using app_server.Models.DTOs;
+﻿using app_server.Models;
+using app_server.Models.DTOs;
 using app_server.Services;
 using app_server.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +11,10 @@ namespace app_server.Controllers
     [ApiController]
     public class StudentController: ControllerBase
     {
-        private readonly Validate _validate;
         private readonly StudentService _studentService;
 
-        public StudentController(Validate validate, StudentService studentService)
+        public StudentController(StudentService studentService)
         {
-            _validate = validate;
             _studentService = studentService;
         }
 
@@ -92,6 +91,21 @@ namespace app_server.Controllers
                 return NotFound();
 
             return result;
+        }
+
+
+        // POST: api/students/enroll/abcdefgh
+        [HttpPost("enroll/{enrollmentKey}")]
+        [AuthorizeStudent]
+        public async Task<ActionResult<Enrollment>> EnrollToCourse(string enrollmentKey)
+        {
+            var studentId = (long)HttpContext.Items["StudentId"];
+
+            var result = await _studentService.EnrollToCourse(enrollmentKey, studentId);
+            if (!result.Success)
+                return BadRequest(result.ErrorMessage);
+
+            return Ok(result);
         }
 
         // PUT: api/students/user-preferences

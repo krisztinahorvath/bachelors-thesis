@@ -9,12 +9,15 @@ namespace app_server.Services
     public class TeacherService
     {
         private readonly StudentsRegisterContext _context;
+        private readonly Validate _validate;
 
-        public TeacherService(StudentsRegisterContext context)
+        public TeacherService(StudentsRegisterContext context, Validate validate)
         {
             _context = context;
+            _validate = validate;
         }
 
+        // AUTOCOMPLETE FOR TEACHER NAMES
         public async Task<ActionResult<IEnumerable<TeacherDTO>>> AutocompleteName(long courseId, string query, int pageNumber = 1, int pageSize = 100)
         {
             var enrolledTeacherIds = await _context.CourseTeachers
@@ -32,6 +35,7 @@ namespace app_server.Services
             return names;
         }
 
+        // ADD TEACHERS TO COURSE
         public async Task<OperationResult> AddTeachersToCourse(long courseId, CourseTeacherListDTO addCourseTeachersDTO)
         {
             var course = await _context.Courses.FindAsync(courseId);
@@ -56,7 +60,8 @@ namespace app_server.Services
             return OperationResult.SuccessResult();
         }
 
-        public async Task<OperationResult> UnenrollFromCourse(long courseId, long teacherId, long currentLoggedInTeacherId)
+        // DELETE COURSE TEACHER
+        public async Task<OperationResult> DeleteCourseTeacher(long courseId, long teacherId, long currentLoggedInTeacherId)
         {
             if (_context.Courses == null)
             {
@@ -78,6 +83,34 @@ namespace app_server.Services
             }
 
             _context.CourseTeachers.Remove(courseTeacher);
+            await _context.SaveChangesAsync();
+
+            return OperationResult.SuccessResult();
+        }
+
+        // DELETE STUDENT FROM COURSE
+        public async Task<OperationResult> DeleteStudentFromCourse(long courseId, long studentId, long teacherId)
+        {
+            if (_context.Courses == null)
+            {
+                return OperationResult.FailResult("No courses found.");
+            }
+
+            // make sure the person deleting the course is a teacher at that course
+            if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == courseId))
+            {
+                return OperationResult.FailResult("You can't remove a student from a courses that you aren't a teacher for");
+            }
+
+            var enrollment = await _context.Enrollments
+                .FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == courseId);
+
+            if (enrollment == null)
+            {
+                return OperationResult.FailResult("Student not enrolled to course");
+            }
+
+            _context.Enrollments.Remove(enrollment);
             await _context.SaveChangesAsync();
 
             return OperationResult.SuccessResult();

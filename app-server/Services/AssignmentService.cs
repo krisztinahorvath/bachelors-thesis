@@ -9,13 +9,15 @@ namespace app_server.Services
     public class AssignmentService
     {
         private readonly StudentsRegisterContext _context;
+        private readonly Validate _validate;
 
-        public AssignmentService(StudentsRegisterContext context)
+        public AssignmentService(StudentsRegisterContext context, Validate validate)
         {
             _context = context;
+            _validate = validate;
         }
 
-        // GET
+        // GET ASSIGNMENT BY ID
         public async Task<ActionResult<AssignmentDTO>?> GetAssignmentById(long id)
         {
             if (_context.Assignments == null)
@@ -29,7 +31,7 @@ namespace app_server.Services
             return AssignmentToDTO(assignment);
         }
 
-        // GET
+        // GET ALL ASSIGNMENTS AT COURSE
         public async Task<ActionResult<IEnumerable<AssignmentDTO>>?> GetAllAssignmentsAtCourse(long courseId)
         {
             if (_context.Assignments == null)
@@ -43,7 +45,7 @@ namespace app_server.Services
                 .Select(x => AssignmentToDTO(x)).ToListAsync();
         }
 
-        //GET
+        // GET ALL ASSIGNMENT NAMES AT COURSE
         public async Task<ActionResult<IEnumerable<AssignmentNameDTO>>?> GetAllAssignmentNamesAtCourse(long courseId)
         {
             if (_context.Assignments == null)
@@ -53,11 +55,10 @@ namespace app_server.Services
 
             return await _context.Assignments
                 .Where(a => a.CourseId == courseId)
-                //.OrderBy(a => a.DueDate)
                 .Select(x => AssignmentNameToDTO(x)).ToListAsync();
         }
 
-        // POST
+        // CREATE ASSIGNMENT
         public async Task<AssignmentDTO?> CreateAssignment(AssignmentDTO assignmentDTO)
         {
             if (_context.Assignments == null)
@@ -80,7 +81,7 @@ namespace app_server.Services
             return AssignmentToDTO(assignment);
         }
 
-        // PUT
+        // UPDATE ASSIGNMENT
         public async Task<OperationResult> PutAssignments(long id, AssignmentDTO assignmentDTO, long teacherId)
         {
             // make sure the person updating the course is a teacher at that course
@@ -120,7 +121,7 @@ namespace app_server.Services
             return OperationResult.SuccessResult();
         }
 
-        // DELETE
+        // DELETE ASSIGNMENT
         public async Task<OperationResult> DeleteAssignment(long id, long teacherId)
         {
             if (_context.Assignments == null)

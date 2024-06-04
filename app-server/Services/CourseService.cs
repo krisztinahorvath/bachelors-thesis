@@ -258,47 +258,6 @@ namespace app_server.Services
             return OperationResult<Course>.SuccessResult(course);
         }
 
-        // ENROLL STUDENT TO COURSE
-        public async Task<OperationResult<Enrollment>> EnrollToCourse(string enrollmentKey, long studentId)
-        {
-            if (_context.Courses == null)
-            {
-                return OperationResult<Enrollment>.FailResult("Entity set 'StudentsRegisterContext.Courses'  is null.");
-            }
-
-            if (_context.Students == null)
-            {
-                return OperationResult<Enrollment>.FailResult("Entity set 'StudentsRegisterContext.Students'  is null.");
-            }
-
-            if (!_context.Students.Any(s => s.Id == studentId))
-            {
-                return OperationResult<Enrollment>.FailResult("Student doesn't exist!");
-            }
-
-            Course course = await _context.Courses.FirstOrDefaultAsync(c => c.EnrollmentKey == enrollmentKey);
-            if (course == null)
-            {
-                return OperationResult<Enrollment>.FailResult("Invalid enrollment key, no course could be found with key '" + enrollmentKey + "'.");
-            }
-
-            Enrollment existingEnrollment = await _context.Enrollments.FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == course.Id);
-
-            if (existingEnrollment != null)
-                return OperationResult<Enrollment>.FailResult("You are already enrolled to this course.");
-
-            Enrollment enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = course.Id,
-            };
-
-            _context.Enrollments.Add(enrollment);
-            await _context.SaveChangesAsync();
-
-            return OperationResult<Enrollment>.SuccessResult(enrollment);
-        }
-
         // PUT COURSE
         public async Task<OperationResult> PutCourse(CourseDTO courseDTO, long teacherId)
         {
@@ -362,34 +321,6 @@ namespace app_server.Services
             }
 
             _context.Courses.Remove(course);
-            await _context.SaveChangesAsync();
-
-            return OperationResult.SuccessResult();
-        }
-
-        // REMOVE STUDENT FROM COURSE
-        public async Task<OperationResult> UnenrollFromCourse(long courseId, long studentId, long teacherId)
-        {
-            if (_context.Courses == null)
-            {
-                return OperationResult.FailResult("No courses found.");
-            }
-
-            // make sure the person deleting the course is a teacher at that course
-            if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == courseId))
-            {
-                return OperationResult.FailResult("You can't remove a student from a courses that you aren't a teacher for");
-            }
-
-            var enrollment = await _context.Enrollments
-                .FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == courseId);
-
-            if (enrollment == null)
-            {
-                return OperationResult.FailResult("Student not enrolled to course");
-            }
-
-            _context.Enrollments.Remove(enrollment);
             await _context.SaveChangesAsync();
 
             return OperationResult.SuccessResult();

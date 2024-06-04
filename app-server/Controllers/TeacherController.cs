@@ -1,5 +1,4 @@
-﻿using app_server.Models;
-using app_server.Models.DTOs;
+﻿using app_server.Models.DTOs;
 using app_server.Services;
 using app_server.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -42,43 +41,29 @@ namespace app_server.Controllers
         // DELETE: api/teachers/remove-teacher-from-course/5/5
         [HttpDelete("remove-teacher-from-course/{courseId}/{teacherId}")]
         [AuthorizeTeacher]
-        public async Task<ActionResult> UnenrollFromCourse(long courseId, long teacherId)
+        public async Task<ActionResult> DeleteCourseTeacher(long courseId, long teacherId)
         {
             var currentLoggedInTeacherId = (long)HttpContext.Items["TeacherId"];
 
-            var result = await _teacherService.UnenrollFromCourse(courseId, teacherId, currentLoggedInTeacherId);
+            var result = await _teacherService.DeleteCourseTeacher(courseId, teacherId, currentLoggedInTeacherId);
             if (!result.Success)
                 return Problem(result.ErrorMessage);
 
             return NoContent();
         }
 
+        // DELETE: api/teachers/unenroll/5/5
+        [HttpDelete("unenroll/{courseId}/{studentId}")]
+        [AuthorizeTeacher]
+        public async Task<ActionResult> DeleteStudentFromCourse(long courseId, long studentId)
+        {
+            var teacherId = (long)HttpContext.Items["TeacherId"];
 
+            var result = await _teacherService.DeleteStudentFromCourse(courseId, studentId, teacherId);
+            if (!result.Success)
+                return BadRequest(result.ErrorMessage);
 
-        // ************************************
-        // TODO: create assignmnet for a given course
-        // ************************************
-
-        // ************************************
-        // TODO: grade assigmnet
-        // ************************************
-
-        // ************************************
-        // TODO: modify assigment 
-        // ************************************
-
-        // ************************************
-        // TODO: modify grade / grade details
-        // ************************************
-
-        // ************************************
-        // TODO: view all students enrolled at a course
-        // ************************************
-
-        // ************************************
-        // TODO: teacher wants to enroll to course => give permission?
-        // ************************************
-
-       
+            return NoContent();
+        }
     }
 }

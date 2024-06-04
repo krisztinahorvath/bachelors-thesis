@@ -167,7 +167,7 @@ export const Leaderboard: React.FC<{
       <Container>
         {loading && <CircularProgress />}
         {!loading && students.length === 0 && (
-          <p>No students to display for the leaderboard.</p>
+          <h2>No data available for the leaderboard.</h2>
         )}
 
         {!loading && students.length > 0 && (

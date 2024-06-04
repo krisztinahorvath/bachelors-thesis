@@ -10,12 +10,11 @@ namespace app_server.Controllers
     [ApiController]
     public class AssignmentController : ControllerBase
     {
-        private readonly Validate _validate;
         private readonly AssignmentService _assignmentService;
 
-        public AssignmentController(Validate validate, AssignmentService assignmentService)
+        public AssignmentController(AssignmentService assignmentService)
         {
-            _validate = validate;
+           
             _assignmentService = assignmentService;
         }
 

@@ -1,5 +1,6 @@
 ﻿using app_server.Models;
 using app_server.Models.DTOs;
+using app_server.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,12 +9,15 @@ namespace app_server.Services
     public class StudentService
     {
         private readonly StudentsRegisterContext _context;
+        private readonly Validate _validate;
 
-        public StudentService(StudentsRegisterContext context)
+        public StudentService(StudentsRegisterContext context, Validate validate)
         {
             _context = context;
+            _validate = validate;
         }
 
+        // GET USER PREFERENCE
         public async Task<ActionResult<StudentUserPreferenceDTO>?> GetUserPreferences(long studentId)
         {
             if (_context.Students == null)
@@ -27,6 +31,7 @@ namespace app_server.Services
             return StudentUserPreferenceToDTO(userPreference);
         }
 
+        // GET SITUATION AT COURSE
         public async Task<ActionResult<StudentFinalGradeDTO>?> GetStudentSituationAtCourse(long studentId, long courseId)
         {
             if (_context.Students == null)
@@ -57,6 +62,7 @@ namespace app_server.Services
             };
         }
 
+        // GET STUDENT ACHIEVEMENTS
         public async Task<StudentAchievementDTO?> FetchStudentAchievements(long courseId, long studentId)
         {
             var query = from enrollment in _context.Enrollments
@@ -78,7 +84,7 @@ namespace app_server.Services
             // see if 75% of assignments were done before the deadline
             var onTimeBadge = false;
 
-            if ((noAssignmentsAtCourse * 75) / 100 <= (int) noAssignmentsOnTime.Value)
+            if (noAssignmentsAtCourse != 0 && noAssignmentsOnTime.Value != 0 &&  (noAssignmentsAtCourse * 75) / 100 <= (int) noAssignmentsOnTime.Value)
                 onTimeBadge = true;
 
             return new StudentAchievementDTO
@@ -94,7 +100,13 @@ namespace app_server.Services
         // GET LEADERBOARD
         public async Task<IEnumerable<LeaderboardDTO>?> GetLeaderboardAtCourse(long courseId, long userId)
         {
-            // Cceck if user is a course teacher or is a student enrolled in the course
+
+            // check if there are any assignments that could have grades so that ledearboard has sense to exist
+            var noAssignmentsAtCourse = _context.Assignments.Where(a => a.CourseId == courseId).Count();
+            if (noAssignmentsAtCourse == 0)
+                return new List<LeaderboardDTO>();
+
+            // check if user is a course teacher or is a student enrolled in the course
             if (!_context.Enrollments.Any(e => e.CourseId == courseId && e.StudentId == userId) &&
                 !_context.CourseTeachers.Any(c => c.CourseId == courseId && c.TeacherId == userId))
                 return null;
@@ -148,7 +160,7 @@ namespace app_server.Services
             return top10;
         }
 
-
+        // GET ASSIGNMENTS AND GRADES
         public async Task<ActionResult<IEnumerable<AssignmentAndGradeDTO>>?> GetStudentAssignmentAndGrades(long studentId, long courseId)
         {
             if (_context.Students == null)
@@ -170,6 +182,48 @@ namespace app_server.Services
                }).ToListAsync();
         }
 
+        // ENROLL STUDENT TO COURSE
+        public async Task<OperationResult<Enrollment>> EnrollToCourse(string enrollmentKey, long studentId)
+        {
+            if (_context.Courses == null)
+            {
+                return OperationResult<Enrollment>.FailResult("Entity set 'StudentsRegisterContext.Courses'  is null.");
+            }
+
+            if (_context.Students == null)
+            {
+                return OperationResult<Enrollment>.FailResult("Entity set 'StudentsRegisterContext.Students'  is null.");
+            }
+
+            if (!_context.Students.Any(s => s.Id == studentId))
+            {
+                return OperationResult<Enrollment>.FailResult("Student doesn't exist!");
+            }
+
+            Course course = await _context.Courses.FirstOrDefaultAsync(c => c.EnrollmentKey == enrollmentKey);
+            if (course == null)
+            {
+                return OperationResult<Enrollment>.FailResult("Invalid enrollment key, no course could be found with key '" + enrollmentKey + "'.");
+            }
+
+            Enrollment existingEnrollment = await _context.Enrollments.FirstOrDefaultAsync(e => e.StudentId == studentId && e.CourseId == course.Id);
+
+            if (existingEnrollment != null)
+                return OperationResult<Enrollment>.FailResult("You are already enrolled to this course.");
+
+            Enrollment enrollment = new Enrollment
+            {
+                StudentId = studentId,
+                CourseId = course.Id,
+            };
+
+            _context.Enrollments.Add(enrollment);
+            await _context.SaveChangesAsync();
+
+            return OperationResult<Enrollment>.SuccessResult(enrollment);
+        }
+
+        // UPDATE USER PREFERENCES
         public async Task<bool?> UpdateStudentPreferences(long studentId, StudentUserPreferenceDTO studentUserPreferenceDTO)
         {
             var userPreference = await _context.UserPreferences.FirstOrDefaultAsync(x => x.StudentId == studentId);

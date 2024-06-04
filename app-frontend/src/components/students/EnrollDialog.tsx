@@ -35,7 +35,7 @@ export const EnrollDialog: React.FC<{
             };
 
             const response = await axios.post(
-              `${BACKEND_URL}/courses/enroll/${enrollmentKey}`,
+              `${BACKEND_URL}/students/enroll/${enrollmentKey}`,
               {},
               headers
             );
