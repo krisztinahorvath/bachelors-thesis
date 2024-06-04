@@ -102,22 +102,9 @@ export const RegisterPage = () => {
 
     try {
       await axios.post(`${BACKEND_URL}/users/register`, user);
-      // setToken(response.data.token);
-      // setUserType(response.data.userType);
-      // setEmail(response.data.email);
 
       displaySuccessMessage("You created an account successfully!");
       navigate("/login");
-
-      // if(response.data.userType === UserType.Student){
-      //   navigate("/student-dashboard");
-      // }
-      // else if(response.data.userType === UserType.Teacher){
-      //   navigate("/teacher-dashboard");
-      // }
-      // else{
-      //   displayErrorMessage("An unexpected error occured while logging in");
-      // }
     } catch (error: any) {
       console.log(error);
       if (error.response) {

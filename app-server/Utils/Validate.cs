@@ -7,13 +7,13 @@ namespace app_server.Utils
     {
         public Validate() { }
 
-        public string ValidateUserFields(UserRegisterDTO user, in StudentsRegisterContext _context) 
+        public string ValidateUserFields(UserRegisterDTO user, in StudentsRegisterContext _context)
         {
             if (user == null)
                 return "Invalid user data";
 
             // name
-            if (user.Name == "" || user.Name == null)
+            if (IsStringEmpty(user.Name))
                 return "The name field must not be null.";
 
             // email
@@ -83,6 +83,13 @@ namespace app_server.Utils
         public bool IsPasswordValid(string password)
         {
             return password.Length >= 8 && password.Any(char.IsUpper) && password.Any(char.IsDigit);
+        }
+
+        public bool IsStringEmpty (string myString){
+            if (myString == "" || myString == null)
+                return true;
+
+            return false;
         }
 
     }

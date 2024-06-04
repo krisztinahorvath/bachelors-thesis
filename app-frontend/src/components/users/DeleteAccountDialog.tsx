@@ -12,6 +12,9 @@ import { BACKEND_URL } from "../../constants";
 import { displayErrorMessage, displaySuccessMessage } from "../ToastMessage";
 import { UserType } from "../../models/User";
 import { useNavigate } from "react-router-dom";
+import { IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useState } from "react";
 
 export const DeleteAccountDialog: React.FC<{
   open: boolean;
@@ -19,6 +22,17 @@ export const DeleteAccountDialog: React.FC<{
   userType: UserType;
 }> = ({ open, handleClose, userType }) => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword((show) => !show);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
 
   return (
     <Dialog
@@ -94,7 +108,19 @@ export const DeleteAccountDialog: React.FC<{
           label="Password"
           fullWidth
           variant="standard"
-          type="password"
+          type={showPassword ? "text" : "password"}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
       </DialogContent>
       <DialogActions>

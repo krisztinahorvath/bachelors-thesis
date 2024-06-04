@@ -47,7 +47,7 @@ export const HomePage = () => {
               src="/homePage.jpg"
               alt="Online Learning Vectors by Vecteezy"
               style={imageStyle}
-              className="responsive-image" // Apply the CSS class for responsiveness
+              className="responsive-image"
             />
           </a>
         </div>

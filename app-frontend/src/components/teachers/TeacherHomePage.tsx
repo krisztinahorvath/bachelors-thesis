@@ -1,5 +1,5 @@
-import { TeacherAppBar } from "../../components/app-bars/TeacherAppBar";
-import { CourseCards } from "../../components/courses/CourseCards";
+import { TeacherAppBar } from "../app-bars/TeacherAppBar";
+import { CourseCards } from "../courses/CourseCards";
 import { Container, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
@@ -7,8 +7,6 @@ import Fab from "@mui/material/Fab";
 import { UserType } from "../../models/User";
 
 export const TeacherHomePage = () => {
-  // const location = useLocation();
-
   return (
     <>
       <TeacherAppBar />

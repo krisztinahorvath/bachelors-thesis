@@ -16,13 +16,16 @@ namespace app_server.Services
     {
         private readonly StudentsRegisterContext _context;
         private readonly JwtSettings _jwtSettings;
+        private readonly Validate _validate;
 
-        public UserService(StudentsRegisterContext context, IOptions<JwtSettings> jwtSettings)
+        public UserService(StudentsRegisterContext context, IOptions<JwtSettings> jwtSettings, Validate validate)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
+            _validate = validate;
         }
 
+        // GET USER PROFILE
         public async Task<ActionResult<UserDTO>?> GetUserProfile(long userId, UserType userType)
         {
             if (_context.Users == null)
@@ -49,8 +52,14 @@ namespace app_server.Services
             return user;
         }
 
+        // REGISTER
         public async Task<ActionResult<User>?> Register(UserRegisterDTO userRegisterDTO)
         {
+            // validate input fields
+            //var isValidUser = _validate.ValidateUserFields(userRegisterDTO, _context);
+            //if (isValidUser != "")
+            //    return BadRequest(isValidUser);
+
             userRegisterDTO.Password = HashPassword(userRegisterDTO.Password);
 
             User newUser;
@@ -105,6 +114,11 @@ namespace app_server.Services
         // UPDATE PASSWORD
         public async Task<OperationResult> UpdatePassword(long userId, UserPasswordUpdateDTO userPasswordUpdateDTO)
         {
+            // validations
+            if (!_validate.IsPasswordValid(userPasswordUpdateDTO.NewPassword))
+                return OperationResult.FailResult("The password must have at least 8 characters and " +
+                    "must contain at least one upper letter and a digit.");
+
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
                 return OperationResult.FailResult("User not found.");
@@ -219,14 +233,17 @@ namespace app_server.Services
         {
             if (_context.Users == null)
             {
-                return OperationResult.FailResult("");
+                return OperationResult.FailResult("No users exist.");
             }
 
+            if (_validate.IsStringEmpty(email) || _validate.IsStringEmpty(password))
+                return OperationResult.FailResult("Email and password fields are required to delete an account.");
 
-            // make sure the person deleting the course is a teacher at that course
+
+            // make sure the user exists
             if (!_context.Users.Any(t => t.Id == userId && t.Email == email && t.Password == HashPassword(password)))
             {
-                return OperationResult.FailResult("Invalid data provided.");
+                return OperationResult.FailResult("No user found with the provided data.");
             }
 
             var user = await _context.Users.FindAsync(userId);

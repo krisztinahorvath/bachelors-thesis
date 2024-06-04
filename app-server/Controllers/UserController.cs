@@ -5,36 +5,19 @@ using app_server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Security.Claims;
 
 
 namespace app_server.Controllers
 {
-    // ************************************
-    // TODO: create a logout with jwt blacklist and when i check if a token is blacklisted, remove the tokens that are expired, 
-    //       or remove them another time, make it efficient???
-    // ************************************
-
-
-    // ************************************
-    // TODO: USE VALIDATE USER FIELDS HERE ????????????????????????????????
-    //
-
-    // ************************************
-
-
     [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly Validate _validate;
         private readonly UserService _userService;
 
-        public UserController(Validate validate, UserService userService)
+        public UserController(UserService userService)
         {
-            _validate = validate;
             _userService = userService;
         }
 
@@ -58,10 +41,7 @@ namespace app_server.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<User>> Register(UserRegisterDTO userRegisterDTO)
         {
-            // validate input fields
-            //var isValidUser = _validate.ValidateUserFields(userRegisterDTO, _context);
-            //if (isValidUser != "")
-            //    return BadRequest(isValidUser);
+
 
             var result = await _userService.Register(userRegisterDTO);
             if (result == null)
@@ -89,12 +69,7 @@ namespace app_server.Controllers
         [HttpPatch("update-password")]
         [AuthorizeGeneralUser]
         public async Task<IActionResult> UpdatePassword(UserPasswordUpdateDTO userPasswordUpdateDTO)
-        {
-            // do validations
-            if (!_validate.IsPasswordValid(userPasswordUpdateDTO.NewPassword))
-                return BadRequest("The password must have at least 8 characters and " +
-                    "must contain at least one upper letter and a digit.");
-
+        { 
             var userId = (long)HttpContext.Items["UserId"];
 
             try

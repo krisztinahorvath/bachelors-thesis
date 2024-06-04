@@ -67,14 +67,14 @@ export const UserProfile = () => {
           sx={{
             borderRadius: "8px",
             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-            p: 2, // Adjust padding if necessary
+            p: 2, // adjust padding if necessary
           }}
         >
           <Grid container spacing={2}>
             <Grid item xs={6}>
               {" "}
-              {/* Takes 50% width on extra small screens and above */}
-              {/* Content for the left side */}
+              {/* takes 50% width on extra small screens and above */}
+              {/* content for the left side */}
               <Avatar
                 sx={{ width: "10vw", height: "10vw" }}
                 src={`data:image/jpg;base64,${user.image}`}

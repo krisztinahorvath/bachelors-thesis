@@ -1,10 +1,10 @@
-import { StudentAppBar } from "../../components/app-bars/StudentAppBar";
+import { StudentAppBar } from "../app-bars/StudentAppBar";
 import { Container, Fab, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { CourseCards } from "../../components/courses/CourseCards";
+import { CourseCards } from "../courses/CourseCards";
 import { UserType } from "../../models/User";
 import { useEffect, useState } from "react";
-import { EnrollDialog } from "../../components/EnrollDialog";
+import { EnrollDialog } from "../EnrollDialog";
 
 export const StudentHomePage = () => {
   const [open, setOpen] = useState(false);
@@ -27,13 +27,7 @@ export const StudentHomePage = () => {
   return (
     <>
       <StudentAppBar />
-      <Container
-      // sx={{
-      //   paddingLeft: "2.5%",
-      //   paddingRight: "2.5%",
-      //   justifyContent: "flex-start",
-      // }}
-      >
+      <Container>
         <h3 style={{ textAlign: "left", paddingLeft: "2.5%" }}>My courses:</h3>
         <Container
           sx={{
