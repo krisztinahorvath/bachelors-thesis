@@ -39,58 +39,68 @@ const OnTimeBadge = () => {
 const icons: {
   [index: string]: {
     icon: React.ReactElement;
+    name: string;
     description: string;
-    achievementCriteria: string;
+    achievementCriteria: number;
     achieved: boolean;
   };
 } = {
   1: {
     icon: <OrigamiBadge />,
-    description: "Beginner",
-    achievementCriteria: "Unlocked at 0XP",
+    name: "Windmill Wizard",
+    description:
+      "Embark on an epic journey of knowledge. <br /> <em>A gift for taking your first step.</em>",
+    achievementCriteria: 0,
     achieved: true,
   },
   2: {
     icon: <AirplaneBadge />,
-    description: "Intermediate",
-    achievementCriteria: "Unlocked at 600XP",
+    name: "Paper Plane Pilot",
+    description: "Fold your way to success.",
+    achievementCriteria: 2,
     achieved: false,
   },
   3: {
     icon: <LightbulbBadge />,
-    description: "Advanced",
-    achievementCriteria: "Unlocked at 30XP",
+    name: "Idea Illuminator",
+    description: "Brighten your path with brilliant insights!",
+    achievementCriteria: 4,
     achieved: false,
   },
   4: {
     icon: <MarioMushroomBadge />,
-    description: "Expert",
-    achievementCriteria: "Unlocked at 40XP",
+    name: "Level-Up Legend",
+    description: "Unlocked at 40XP",
+    achievementCriteria: 6.5,
     achieved: false,
   },
   5: {
     icon: <AstronautBadge />,
-    description: "Out of this world",
-    achievementCriteria: "Unlocked at 50XP",
+    name: "Galactic Guru",
+    description: "Rocket through learning milestones!",
     achieved: false,
+    achievementCriteria: 9.5,
   },
   6: {
     icon: <OnTimeBadge />,
-    description: "Always on time",
-    achievementCriteria:
-      "Unlocked after turning in 75% of assignments before the deadline.",
+    name: "Deadline Dominator",
+    description:
+      "Tick-tock, beat the clock! <br /> <em> Unlocked after presenting 75% of assignments before the deadline.</em>",
     achieved: false,
+    achievementCriteria: 0,
   },
 };
 
 const IconWithDescription: React.FC<{
   iconData: {
     icon: React.ReactElement;
+    name: string;
     description: string;
-    achievementCriteria: string;
+    achievementCriteria: number;
     achieved: boolean;
   };
-}> = ({ iconData }) => {
+  pointsVisibility: boolean;
+}> = ({ iconData, pointsVisibility }) => {
   const filterStyle = iconData.achieved
     ? "none"
     : "grayscale(100%) blur(1.5px)";
@@ -98,10 +108,33 @@ const IconWithDescription: React.FC<{
   return (
     <Grid item xs={12} sm={4} md={4} lg={4} xl={4}>
       <div style={{ filter: filterStyle }}>{iconData.icon}</div>
-      <Typography variant="body1">{iconData.description}</Typography>
-      <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
-        {iconData.achievementCriteria}
+      <Typography variant="body1">
+        <strong>{iconData.name}</strong>
       </Typography>
+      <Typography
+        variant="body2"
+        dangerouslySetInnerHTML={{ __html: iconData.description }}
+      />
+      {iconData.achievementCriteria > 0 && (
+        <>
+          {" "}
+          {pointsVisibility ? (
+            <Typography
+              variant="body2"
+              sx={{ whiteSpace: "pre-line", fontStyle: "italic" }}
+            >
+              Unlocked at {iconData.achievementCriteria * 300}XP.
+            </Typography>
+          ) : (
+            <Typography
+              variant="body2"
+              sx={{ whiteSpace: "pre-line", fontStyle: "italic" }}
+            >
+              Unlocked at {iconData.achievementCriteria} points.
+            </Typography>
+          )}
+        </>
+      )}
     </Grid>
   );
 };
@@ -152,7 +185,7 @@ export const StudentAchievements: React.FC<{ courseData: any }> = ({
             {Object.keys(icons).map((key) => {
               const achieved =
                 key === "6"
-                  ? studentData.onTimeBadgeUnlocked // Check specifically for the On Time Badge
+                  ? studentData.onTimeBadgeUnlocked // check specifically for the On Time Badge
                   : studentData.level >= parseInt(key);
 
               const iconData = {
@@ -160,7 +193,13 @@ export const StudentAchievements: React.FC<{ courseData: any }> = ({
                 achieved: achieved,
               };
 
-              return <IconWithDescription key={key} iconData={iconData} />;
+              return (
+                <IconWithDescription
+                  key={key}
+                  iconData={iconData}
+                  pointsVisibility={pointsVisibility}
+                />
+              );
             })}
           </Grid>
         </Container>

@@ -106,7 +106,9 @@ export const GradePageStudent: React.FC<{
                 arrow
               >
                 <div>
-                  <CustomProgressBar value={finalGradeData.finalGrade * 10} />
+                  <CustomProgressBar
+                    value={Math.round(finalGradeData.finalGrade * 10)}
+                  />
                 </div>
               </Tooltip>
 
@@ -152,7 +154,7 @@ export const GradePageStudent: React.FC<{
                       .
                     </>
                   ) : (
-                    <> Congratulations!. You've reached the final level!</>
+                    <> Congratulations! You've reached the final level!</>
                   )}
                 </p>
               ) : (
