@@ -1,10 +1,8 @@
-﻿using app_server.Controllers;
-using app_server.Models;
+﻿using app_server.Models;
 using app_server.Models.DTOs;
 using app_server.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System.Text;
 
 namespace app_server.Services
@@ -12,10 +10,12 @@ namespace app_server.Services
     public class CourseService
     {
         private readonly StudentsRegisterContext _context;
+        private readonly Validate _validate;
 
-        public CourseService(StudentsRegisterContext context)
+        public CourseService(StudentsRegisterContext context, Validate validate)
         {
             _context = context;
+            _validate = validate;
         }
 
         // GET COURSE BY ID
@@ -229,6 +229,10 @@ namespace app_server.Services
         // CREATE COURSE
         public async Task<OperationResult<Course>> CreateCourse(CourseDTO courseDTO, long teacherId)
         {
+            var isValidCourse = _validate.ValidateCourseFields(courseDTO);
+            if (isValidCourse != "")
+                return OperationResult<Course>.FailResult(isValidCourse);
+
             // valid teacher id
             if (!_context.Teachers.Any(t => t.Id == teacherId))
             {
@@ -258,7 +262,7 @@ namespace app_server.Services
             return OperationResult<Course>.SuccessResult(course);
         }
 
-        // PUT COURSE
+        // UPDATE COURSE
         public async Task<OperationResult> PutCourse(CourseDTO courseDTO, long teacherId)
         {
             var courseId = courseDTO.Id;

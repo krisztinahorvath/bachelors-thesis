@@ -37,9 +37,16 @@ namespace app_server.Utils
             return ""; // empty string for no errors
         }
 
-        public bool ValidateCourseFields()
+        public string ValidateCourseFields(CourseDTO course)
         {
-            return true;
+            // name
+            if (IsStringEmpty(course.Name))
+                return "The name field must not be empty.";
+
+            if (course.Image == null)
+                return "The image is a required field.";
+
+            return ""; // empty string for no errors
         }
 
         public string ValidateAssignmentFields(AssignmentDTO assignment)

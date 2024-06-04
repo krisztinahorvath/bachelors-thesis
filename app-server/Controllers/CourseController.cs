@@ -1,5 +1,4 @@
-﻿using app_server.Models;
-using app_server.Models.DTOs;
+﻿using app_server.Models.DTOs;
 using app_server.Services;
 using app_server.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -92,7 +91,6 @@ namespace app_server.Controllers
         [AuthorizeTeacher]
         public async Task<ActionResult<string>> GetNewEnrollmentKey(long courseId)
         {
-
             var teacherId = (long)HttpContext.Items["TeacherId"];
 
             var result = await _courseService.GetNewEnrollmentKey(courseId, teacherId);
@@ -102,6 +100,7 @@ namespace app_server.Controllers
             return Ok(result);
         }
 
+        // GET: api/courses/all/5
         [HttpGet("all/{courseId}")]
         [AuthorizeTeacher]
         public async Task<ActionResult<Dictionary<string, object>>> GetAllCourseStudentsAssignmentGrades(long courseId)
@@ -122,6 +121,9 @@ namespace app_server.Controllers
             var courseInput = JsonConvert.DeserializeObject<CourseDTO>(courseDTO);
             if (courseInput == null)
                 return BadRequest();
+
+            if (image == null)
+                return BadRequest("Image is a required field");
 
             // convert IFormFile to byte array
             using (var memoryStream = new MemoryStream())

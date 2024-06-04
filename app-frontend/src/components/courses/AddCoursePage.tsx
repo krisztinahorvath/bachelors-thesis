@@ -81,6 +81,11 @@ export const AddCoursePage = () => {
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
+    if (course.image === null) {
+      displayErrorMessage("Please upload an image for the course.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append(
       "courseDTO",

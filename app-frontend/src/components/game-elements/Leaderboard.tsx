@@ -173,7 +173,7 @@ export const Leaderboard: React.FC<{
         {!loading && students.length > 0 && (
           <Container
             sx={{
-              width: "80%",
+              width: "85%",
               "@media (max-width: 768px)": {
                 width: "100%",
               },
