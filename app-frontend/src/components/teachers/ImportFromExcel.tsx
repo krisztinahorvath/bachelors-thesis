@@ -156,8 +156,9 @@ export const ImportFromExcel: React.FC<{
       displaySuccessMessage("Grades have been successfully submitted.");
       onGradesSubmitted();
     } catch (error: any) {
+      console.log(error);
       if (error.response && error.response.data) {
-        displayErrorMessage(`Error: ${error.response.data}`);
+        displayErrorMessage(`Error: ${error.response.data.detail}`);
       } else {
         displayErrorMessage("An error occurred while submitting the grades.");
       }

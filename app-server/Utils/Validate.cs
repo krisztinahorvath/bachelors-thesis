@@ -56,10 +56,14 @@ namespace app_server.Utils
             return ""; // empty string for no errors
         }
 
-        public bool ValidateGradeFields()
+        public string ValidateGradeFields(GradeDTO grade)
         {
-            return true;
+            if (grade.Score < 0)
+                return "Grade must be a positive number";
+
+            return ""; // empty string for no errors
         }
+
 
         public bool IsEmailUnique(in StudentsRegisterContext _context, string email)
         {

@@ -9,15 +9,22 @@ namespace app_server.Services
     public class GradeService
     {
         private readonly StudentsRegisterContext _context;
+        private readonly Validate _validate;
 
-        public GradeService(StudentsRegisterContext context)
+        public GradeService(StudentsRegisterContext context, Validate validate)
         {
             _context = context;
+            _validate = validate;
         }
 
-        public async Task<ActionResult<GradeDTO>> CreateOrUpdateGrade(long teacherId, GradeDTO gradeDTO)
+        // CREATE OR UPDATE GRADE
+        public async Task<OperationResult<GradeDTO>> CreateOrUpdateGrade(long teacherId, GradeDTO gradeDTO)
         {
-            // Check if the grade already exists
+            var isGradeValid = _validate.ValidateGradeFields(gradeDTO);
+            if (isGradeValid != "")
+                return OperationResult<GradeDTO>.FailResult(isGradeValid);
+
+            // check if the grade already exists
             var existingGrade = await _context.Grades
                 .FirstOrDefaultAsync(g => g.StudentId == gradeDTO.StudentId && g.AssignmentId == gradeDTO.AssignmentId);
 
@@ -60,9 +67,10 @@ namespace app_server.Services
 
             gradeDTO.FinalGrade = result!.FinalGrade;
 
-            return gradeDTO;
+            return OperationResult<GradeDTO>.SuccessResult(gradeDTO);
         }
 
+        // CREATE OR UPDATE GRADES FROM IMPORT
         public async Task<OperationResult> CreateGradesFromImport(List<ImportGradeDTO> gradeDTOs, long courseId)
         {
 
@@ -129,6 +137,8 @@ namespace app_server.Services
             return OperationResult.SuccessResult();
         }
 
+
+        // UPDATE GRADE
         public async Task<OperationResult> PutGrade(long teacherId, long studentId, long assignmentId, GradeDTO gradeDTO)
         {
             var assignment = _context.Assignments.Find(assignmentId);

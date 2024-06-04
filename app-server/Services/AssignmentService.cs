@@ -89,6 +89,11 @@ namespace app_server.Services
         // UPDATE ASSIGNMENT
         public async Task<OperationResult> PutAssignments(long id, AssignmentDTO assignmentDTO, long teacherId)
         {
+            // validate fields
+            var isAssignmentValid = _validate.ValidateAssignmentFields(assignmentDTO);
+            if (isAssignmentValid != "")
+                return OperationResult.FailResult(isAssignmentValid);
+
             // make sure the person updating the course is a teacher at that course
             if (!_context.CourseTeachers.Any(t => t.TeacherId == teacherId && t.CourseId == assignmentDTO.CourseId))
             {

@@ -10,12 +10,10 @@ namespace app_server.Controllers
     [ApiController]
     public class GradeController : ControllerBase
     {
-        private readonly Validate _validate;
         private readonly GradeService _gradeService;
 
-        public GradeController(Validate validate, GradeService gradeService)
+        public GradeController(GradeService gradeService)
         {
-            _validate = validate;
             _gradeService = gradeService;
         }
 
@@ -28,11 +26,10 @@ namespace app_server.Controllers
 
             var result = await _gradeService.CreateOrUpdateGrade(teacherId, gradeDTO);
 
-            if (result == null)
-                return NotFound();
+            if (!result.Success)
+                return Problem(result.ErrorMessage);
             
-            // because the service takes a reference to the var
-            return Ok(gradeDTO);
+            return Ok(result.Data);
         }
 
         // POST: api/grades/create-from-import

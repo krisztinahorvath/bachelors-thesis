@@ -21,10 +21,6 @@ interface AssignmentNameDTO {
   weight: number;
 }
 
-interface ShowAllGradesAndAssignmentsProps {
-  courseId: any;
-}
-
 interface RowData {
   id: number;
   StudentName: string;
@@ -32,9 +28,9 @@ interface RowData {
   [key: string]: number | string | null | undefined | Date;
 }
 
-export const ShowAllGradesAndAssignments: React.FC<
-  ShowAllGradesAndAssignmentsProps
-> = ({ courseId }) => {
+export const ShowAllGradesAndAssignments: React.FC<{ courseId: any }> = ({
+  courseId,
+}) => {
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState<RowData[]>([]);
   const [assignments, setAssignments] = useState<AssignmentNameDTO[]>([]);
@@ -100,12 +96,13 @@ export const ShowAllGradesAndAssignments: React.FC<
     {
       field: `assignment${assignment.id}`,
       headerName: assignment.name,
+      type: "number",
       editable: true,
     },
     {
       field: `dateReceived${assignment.id}`,
       headerName: "Date Received",
-      width: 180,
+      width: 150,
       type: "dateTime",
       editable: true,
       valueFormatter: (value) => {
@@ -136,7 +133,7 @@ export const ShowAllGradesAndAssignments: React.FC<
     {
       field: "UniqueIdentificationCode",
       headerName: "Unique Id Code",
-      width: 180,
+      width: 150,
       editable: false,
       hideable: false,
       sortable: false,
@@ -231,6 +228,12 @@ export const ShowAllGradesAndAssignments: React.FC<
 
           // Check if the field value changed
           if (originalValue !== updatedValue) {
+            // Ensure the updated value is a positive number
+            if (parseFloat(updatedValue!.toString()) < 0) {
+              displayErrorMessage("Grade must be a positive number.");
+              return originalRow;
+            }
+
             changedCell = true;
             const dateReceivedKey = `dateReceived${assignmentId}`;
             let dateReceived = updatedRow[dateReceivedKey];
@@ -252,20 +255,35 @@ export const ShowAllGradesAndAssignments: React.FC<
               headers: { Authorization: `Bearer ${getToken()}` },
             };
 
-            // Send the payload to the server and await the response
-            const response = await axios.post(
-              `${BACKEND_URL}/grades/create`,
-              gradeDTO,
-              headers
-            );
+            try {
+              // Send the payload to the server and await the response
+              const response = await axios.post(
+                `${BACKEND_URL}/grades/create`,
+                gradeDTO,
+                headers
+              );
 
-            // Update the updated row with the new data returned by the server
-            updatedRow[dateReceivedKey] = new Date(response.data.dateReceived);
-            updatedRow[updatedField] = response.data.score;
-            updatedRow["FinalGrade"] = response.data.finalGrade;
+              // Update the updated row with the new data returned by the server
+              updatedRow[dateReceivedKey] = new Date(
+                response.data.dateReceived
+              );
+              updatedRow[updatedField] = response.data.score;
+              updatedRow["FinalGrade"] = response.data.finalGrade;
 
-            // Return the updated row to update the Data Grid internal state
-            return updatedRow;
+              // Return the updated row to update the Data Grid internal state
+              return updatedRow;
+            } catch (error: any) {
+              if (error.response) {
+                const errorMessage = error.response.data;
+                displayErrorMessage(`Grading failed: ${errorMessage}`);
+              } else {
+                displayErrorMessage(
+                  "An error occurred while trying to save the grade."
+                );
+              }
+
+              return originalRow;
+            }
           }
         }
 
@@ -305,21 +323,33 @@ export const ShowAllGradesAndAssignments: React.FC<
                 headers: { Authorization: `Bearer ${getToken()}` },
               };
 
-              // Send the payload to the server and await the response
-              const response = await axios.post(
-                `${BACKEND_URL}/grades/create`,
-                gradeDTO,
-                headers
-              );
+              try {
+                // Send the payload to the server and await the response
+                const response = await axios.post(
+                  `${BACKEND_URL}/grades/create`,
+                  gradeDTO,
+                  headers
+                );
 
-              // Update the updated row with the new data returned by the server
-              updatedRow[dateReceivedField] = new Date(
-                response.data.dateReceived
-              );
-              updatedRow[gradeKey] = response.data.score;
+                // Update the updated row with the new data returned by the server
+                updatedRow[dateReceivedField] = new Date(
+                  response.data.dateReceived
+                );
+                updatedRow[gradeKey] = response.data.score;
 
-              // Return the updated row to update the Data Grid internal state
-              return updatedRow;
+                // Return the updated row to update the Data Grid internal state
+                return updatedRow;
+              } catch (error: any) {
+                if (error.response) {
+                  const errorMessage = error.response.data;
+                  displayErrorMessage(`Date received failed: ${errorMessage}`);
+                } else {
+                  displayErrorMessage(
+                    "An error occurred while trying to update the assignment's date receival."
+                  );
+                }
+                return originalRow;
+              }
             }
           }
         }

@@ -152,7 +152,10 @@ export const CoursePage = () => {
             <ShowStudentsAtCourse courseId={courseId} />
           )}
           {selectedTab === "assignments" && (
-            <ShowAssignmentsAtCourse courseId={courseId} />
+            <ShowAssignmentsAtCourse
+              courseId={courseId}
+              courseName={course.name}
+            />
           )}
           {userType === UserType.Teacher && selectedTab === "grades" && (
             <ShowAllGradesAndAssignments courseId={courseId} />
