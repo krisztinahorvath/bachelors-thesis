@@ -1,42 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="app_server.Services.StudentService">
-    <Position X="0.5" Y="0.5" Width="3.25" />
+    <Position X="3.75" Y="0.5" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>ACQAAAAAAAAIBAAiAAAAAAAEABAAAAwAAAAABAEAAAA=</HashCode>
+      <HashCode>ACQAAAAAAAAIBAAiAgAAAAAEABAAAAwAAAAABAEAAAA=</HashCode>
       <FileName>Services\StudentService.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Services.AssignmentService">
-    <Position X="4.25" Y="0.5" Width="2.5" />
+    <Position X="4" Y="5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAABAAgAAABAAABAEAAABIQAAAEAAEgAAA=</HashCode>
       <FileName>Services\AssignmentService.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Services.CourseService">
-    <Position X="7.25" Y="0.5" Width="3" />
+    <Position X="10.25" Y="0.5" Width="3" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAACAAAREAAIoiIAACAAgAAABAAAAAAIQIAAAA=</HashCode>
+      <HashCode>AQAAAAAACAAAREAgIIiIAACAAgAAABAAAAAAIQIAAAA=</HashCode>
       <FileName>Services\CourseService.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Services.GradeService">
-    <Position X="10.5" Y="0.5" Width="2" />
+    <Position X="7.5" Y="3.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAgAAAAAAAAABAAAAAABAAAABAAAAAACAAAAAAAAAAA=</HashCode>
+      <HashCode>AAgAAAAAAAAABAAgAAABAAAABAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Services\GradeService.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Services.TeacherService">
-    <Position X="12.75" Y="0.5" Width="2.25" />
+    <Position X="7.5" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAQAAQBAAAAAQIAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAQAAQBAAgAAQIAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
       <FileName>Services\TeacherService.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="app_server.Services.UserService">
-    <Position X="15.5" Y="0.5" Width="2.25" />
+    <Position X="1" Y="0.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAEBQAgAAAABAAAAIQBAAAAAAAQBQIACQA=</HashCode>
       <FileName>Services\UserService.cs</FileName>
