@@ -59,8 +59,13 @@ namespace app_server.Services
         }
 
         // CREATE ASSIGNMENT
-        public async Task<AssignmentDTO?> CreateAssignment(AssignmentDTO assignmentDTO)
+        public async Task<OperationResult<AssignmentDTO>?> CreateAssignment(AssignmentDTO assignmentDTO)
         {
+            // validate fields
+            var isAssignmentValid = _validate.ValidateAssignmentFields(assignmentDTO);
+            if (isAssignmentValid != "")
+                return OperationResult<AssignmentDTO>.FailResult(isAssignmentValid);
+
             if (_context.Assignments == null)
             {
                 return null;
@@ -78,7 +83,7 @@ namespace app_server.Services
             _context.Assignments.Add(assignment);
             await _context.SaveChangesAsync();
 
-            return AssignmentToDTO(assignment);
+            return OperationResult<AssignmentDTO>.SuccessResult(AssignmentToDTO(assignment));
         }
 
         // UPDATE ASSIGNMENT

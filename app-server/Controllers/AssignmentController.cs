@@ -60,10 +60,10 @@ namespace app_server.Controllers
         public async Task<ActionResult<AssignmentDTO>> CreateAssignment(AssignmentDTO assignmentDTO)
         {
             var assignment = await _assignmentService.CreateAssignment(assignmentDTO);
-            if (assignment == null)
-                return Problem();
+            if (!assignment.Success)
+                return Problem(assignment.ErrorMessage);
 
-            return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Id }, assignment);
+            return CreatedAtAction(nameof(GetAssignmentById), new { id = assignment.Data!.Id }, assignment.Data);
         }
 
         // PUT: api/assignments/5

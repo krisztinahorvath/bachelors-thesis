@@ -55,7 +55,7 @@ export const UpdateAssignment = () => {
   const location = useLocation();
   const assignmentId = location.state;
   const [assignment, setAssignment] = useState<Assignment>();
-  const [, setDateValue] = useState();
+  const [dateValue, setDateValue] = useState<Date>();
   const [weightError, setWeightError] = useState(false);
 
   const handleWeightChange = (event: any) => {
@@ -93,7 +93,8 @@ export const UpdateAssignment = () => {
     event.preventDefault();
 
     try {
-      //assignment!.dueDate = dateValue;
+      assignment!.dueDate = new Date(dateValue!);
+      console.log(assignment?.dueDate);
       await axios.put(
         `${BACKEND_URL}/assignments/${assignmentId}`,
         assignment,
@@ -166,11 +167,9 @@ export const UpdateAssignment = () => {
             <DateTimePicker
               sx={{ marginTop: "5%" }}
               label="Due Date"
-              value={dayjs(assignment?.dueDate)}
+              value={dayjs(dateValue)}
               onChange={(newValue) => {
-                if (newValue) {
-                  setAssignment({ ...assignment, dueDate: newValue.toDate() });
-                }
+                setDateValue(newValue!.toDate());
               }}
             />
           </LocalizationProvider>
@@ -183,7 +182,7 @@ export const UpdateAssignment = () => {
             style={textFieldStyle}
             type="number"
             error={weightError}
-            helperText={weightError ? "Value must be between 0 and 100" : ""}
+            helperText={weightError ? "Value must be between 0 and 100." : ""}
             inputProps={{ min: 0, max: 100 }}
             InputLabelProps={{ shrink: true }}
             onChange={handleWeightChange}

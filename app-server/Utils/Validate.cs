@@ -42,17 +42,21 @@ namespace app_server.Utils
             return true;
         }
 
-        public bool ValidateAssignmentFields()
+        public string ValidateAssignmentFields(AssignmentDTO assignment)
         {
-            return true;
+            if (IsStringEmpty(assignment.Name))
+                return "Assignment name must not be empty.";
+
+            if (IsStringEmpty(assignment.Description))
+                return "Assignment description must not be empty.";
+
+            if (!(assignment.Weight >= 0 && assignment.Weight <= 100))
+                return "Assignment weight must be a number between 0 and 100.";
+
+            return ""; // empty string for no errors
         }
 
         public bool ValidateGradeFields()
-        {
-            return true;
-        }
-
-        public bool ValidateEnrollment()
         {
             return true;
         }

@@ -159,7 +159,7 @@ export const AddAssignment = () => {
             style={textFieldStyle}
             type="number"
             error={weightError}
-            helperText={weightError ? "Value must be between 0 and 100" : ""}
+            helperText={weightError ? "Value must be between 0 and 100." : ""}
             inputProps={{ min: 0, max: 100 }}
             onChange={handleWeightChange}
           />
