@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import {useNavigate } from "react-router-dom";
-import {UserType } from "../models/User";
-import {getToken, getUserType } from "./auth-utils";
+import { useNavigate } from "react-router-dom";
+import { UserType } from "../models/User";
+import { getToken, getUserType, handleLogoutUtil } from "./auth-utils";
 
 interface Props {
   element: JSX.Element;
@@ -9,22 +9,26 @@ interface Props {
   allowedUsers: Array<UserType>;
 }
 
-export const PrivateRoute: React.FC<Props> = ({ element: RouteElement, allowedUsers }) => {
-    const userType = getUserType();
-    const isAuthenticated = getToken() !== null;
-    const userTypeAllowed = userType && allowedUsers.includes(parseInt(userType as string));
-    const navigate = useNavigate();
-  
-    useEffect(() => {
-      if (!isAuthenticated || !userTypeAllowed) {
-        navigate("/");
-      }
-    }, [isAuthenticated, userTypeAllowed, navigate]);
-  
-    if (isAuthenticated && userTypeAllowed) {
-      return RouteElement;
+export const PrivateRoute: React.FC<Props> = ({
+  element: RouteElement,
+  allowedUsers,
+}) => {
+  const userType = getUserType();
+  const isAuthenticated = getToken() !== null;
+  const userTypeAllowed =
+    userType && allowedUsers.includes(parseInt(userType as string));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated || !userTypeAllowed) {
+      handleLogoutUtil();
+      navigate("/");
     }
-  
-    return null;
-  };
-  
+  }, [isAuthenticated, userTypeAllowed, navigate]);
+
+  if (isAuthenticated && userTypeAllowed) {
+    return RouteElement;
+  }
+
+  return null;
+};

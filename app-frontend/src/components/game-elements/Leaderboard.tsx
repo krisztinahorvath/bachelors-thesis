@@ -179,7 +179,7 @@ export const Leaderboard: React.FC<{
               },
             }}
           >
-            <h2> Leaderboard for {courseData.name}:</h2>
+            <h2> Leaderboard for {courseData.name}</h2>
             {students.map((student, index) => (
               <Card
                 key={index}

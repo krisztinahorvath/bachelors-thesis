@@ -98,7 +98,7 @@ export const GradePageStudent: React.FC<{
 
       {!loading && assignments.length !== 0 && (
         <Container>
-          <h2>Grades at {courseData.name}:</h2>
+          <h2>Grades at {courseData.name}</h2>
           <Container sx={{ width: "80%", marginBottom: "20px" }}>
             {progressBarsVisibility && (
               <>
@@ -135,7 +135,7 @@ export const GradePageStudent: React.FC<{
               },
             }}
           >
-            {levelsVisibility && (
+            {levelsVisibility ? (
               <>
                 <CustomizedSteppers activeSteps={finalGradeData.level - 1} />
                 {pointsVisibility ? (
@@ -176,6 +176,20 @@ export const GradePageStudent: React.FC<{
                     ) : (
                       <> Congratulations!. You've reached the final level!</>
                     )}
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                {pointsVisibility ? (
+                  <p>
+                    You have{" "}
+                    <strong>{finalGradeData.experiencePoints} XP</strong>.
+                  </p>
+                ) : (
+                  <p>
+                    You have{" "}
+                    <strong>{finalGradeData.finalGrade} points </strong>.
                   </p>
                 )}
               </>

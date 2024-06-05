@@ -213,7 +213,7 @@ export const StudentUserPreferences = () => {
             />
           </ListItem>
           <Button onClick={handleSave} style={submitButtonStyle}>
-            Save page preferences
+            Save page settings
           </Button>
         </List>
         <p>
