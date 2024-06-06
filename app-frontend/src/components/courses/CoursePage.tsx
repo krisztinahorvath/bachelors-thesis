@@ -158,7 +158,10 @@ export const CoursePage = () => {
             />
           )}
           {userType === UserType.Teacher && selectedTab === "grades" && (
-            <ShowAllGradesAndAssignments courseId={courseId} />
+            <ShowAllGradesAndAssignments
+              courseId={courseId}
+              courseName={course.name}
+            />
           )}
           {userType === UserType.Student && selectedTab === "achievements" && (
             <StudentAchievements courseData={course} />

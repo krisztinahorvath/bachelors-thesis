@@ -65,7 +65,7 @@ namespace app_server.Services
                         };
             var result = await query.FirstOrDefaultAsync();
 
-            gradeDTO.FinalGrade = result!.FinalGrade;
+            gradeDTO.FinalGrade = (float?)Math.Round(result!.FinalGrade, 2);
 
             return OperationResult<GradeDTO>.SuccessResult(gradeDTO);
         }

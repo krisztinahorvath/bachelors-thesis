@@ -28,9 +28,10 @@ interface RowData {
   [key: string]: number | string | null | undefined | Date;
 }
 
-export const ShowAllGradesAndAssignments: React.FC<{ courseId: any }> = ({
-  courseId,
-}) => {
+export const ShowAllGradesAndAssignments: React.FC<{
+  courseId: any;
+  courseName: any;
+}> = ({ courseId, courseName }) => {
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState<RowData[]>([]);
   const [assignments, setAssignments] = useState<AssignmentNameDTO[]>([]);
@@ -380,6 +381,12 @@ export const ShowAllGradesAndAssignments: React.FC<{ courseId: any }> = ({
 
       {!loading && (
         <>
+          <h2
+            style={{ fontSize: "24px", fontWeight: "bold", color: "#3d3d5c" }}
+          >
+            Grades at {courseName}
+          </h2>
+
           <Container sx={{ height: 600, width: "100%" }}>
             <ImportFromExcel
               courseId={courseId}

@@ -19,12 +19,8 @@ import {
 } from "@mui/material";
 import "../../components/responsive-table/ResponsiveTable.css";
 
-interface ShowStudentsAtCourseProps {
-  courseId: any;
-}
-
 let page = 1;
-export const ShowStudentsAtCourse: React.FC<ShowStudentsAtCourseProps> = ({
+export const ShowStudentsAtCourse: React.FC<{ courseId: any }> = ({
   courseId,
 }) => {
   const [loading, setLoading] = useState(false);
